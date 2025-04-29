@@ -26,9 +26,6 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #ifndef LIBCAF_H
 #define LIBCAF_H
 
-#include <stdbool.h>
-#include <stddef.h>	/* For size_t.  */
-
 #include "libgfortran.h"
 
 /* Definitions of the Fortran 2008 standard; need to kept in sync with
