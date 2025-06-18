@@ -1868,7 +1868,7 @@ gfc_check_image_status (gfc_expr *image, gfc_expr *team)
       || !positive_check (0, image))
     return false;
 
-  return !team || (scalar_check (team, 0) && team_type_check (team, 0));
+  return !team || (scalar_check (team, 1) && team_type_check (team, 1));
 }
 
 
