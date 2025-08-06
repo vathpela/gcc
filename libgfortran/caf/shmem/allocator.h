@@ -29,16 +29,16 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #define ALLOCATOR_HDR
 
 #include "shared_memory.h"
+#include "thread_support.h"
 
 #include <stddef.h>
-#include <pthread.h>
 
 /* The number of bits a void pointer has.  */
 #define VOIDP_BITS (__CHAR_BIT__ * sizeof (void *))
 
 /* The shared memory part of the allocator.  */
 typedef struct {
-  pthread_mutex_t lock;
+  caf_shmem_mutex lock;
   shared_mem_ptr free_bucket_head[VOIDP_BITS];
 } allocator_shared;
 

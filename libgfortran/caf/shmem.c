@@ -94,6 +94,8 @@ _gfortran_caf_init (int *argc, char ***argv)
 
   if (supervisor_main_loop (argc, argv, &exit_code))
     return;
+
+  thread_support_cleanup ();
   shared_memory_cleanup (&local->sm);
 
   /* Free pseudo tokens and memory to allow main process to survive caf_init.
@@ -107,6 +109,7 @@ _gfortran_caf_init (int *argc, char ***argv)
       caf_static_list = tmp;
     }
   free (local);
+
   exit (exit_code);
 }
 
@@ -150,6 +153,8 @@ _gfortran_caf_finalize (void)
   caf_teams_formed = NULL;
 
   free (local);
+
+  thread_support_cleanup ();
 }
 
 int
@@ -267,19 +272,25 @@ _gfortran_caf_register (size_t size, caf_register_t type, caf_token_t *token,
       {
 	lock_t *addr;
 	bool created;
+	size_t alloc_size;
 
 	allocator_lock (&local->ai.alloc);
-	/* Allocate enough space for the metadata infront of the lock
-	   array.  */
-	addr
-	  = alloc_get_memory_by_id_created (&local->ai, size * sizeof (lock_t),
-					    next_memid, &created);
+#if defined(WIN32) || defined(__CYGWIN__)
+	/* On Windows mutexes are not an object stored in the shmem but
+	   identified by an id.  */
+	alloc_size = size * caf_current_team->u.image_info->image_count.count;
+#else
+	alloc_size = size;
+#endif
+	addr = alloc_get_memory_by_id_created (&local->ai,
+					       alloc_size * sizeof (lock_t),
+					       next_memid, &created);
 
 	if (created)
 	  {
 	    /* Initialize the mutex only, when the memory was allocated for the
 	       first time.  */
-	    for (size_t c = 0; c < size; ++c)
+	    for (size_t c = 0; c < alloc_size; ++c)
 	      initialize_shared_errorcheck_mutex (&addr[c]);
 	  }
 	size *= sizeof (lock_t);
@@ -852,6 +863,7 @@ typedef void *opr_t;
 	default:                                                               \
 	  caf_runtime_error ("" #name                                          \
 			     " not available for type/kind combination");      \
+	  opr = NULL; /* Prevent false warnings.  */                           \
 	}                                                                      \
       break;                                                                   \
     }
@@ -873,10 +885,12 @@ typedef void *opr_t;
 	default:                                                               \
 	  caf_runtime_error ("" #name                                          \
 			     " not available for type/kind combination");      \
+	  opr = NULL; /* Prevent false warning.  */                            \
 	}                                                                      \
       break;                                                                   \
     default:                                                                   \
       caf_runtime_error ("" #name " not available for type/kind combination"); \
+      opr = NULL; /* Prevent false warning.  */                                \
     }
 
 void
@@ -1473,17 +1487,23 @@ _gfortran_caf_event_query (caf_token_t token, size_t index, int image_index,
 }
 
 void
-_gfortran_caf_lock (caf_token_t token, size_t index,
-		    int image_index __attribute__ ((unused)),
+_gfortran_caf_lock (caf_token_t token, size_t index, int image_index,
 		    int *acquired_lock, int *stat, char *errmsg,
 		    size_t errmsg_len)
 {
   const char *msg = "Already locked";
-  lock_t *lock = &((lock_t *) MEMTOK (token))[index];
+#if defined(WIN32) || defined(__CYGWIN__)
+  const size_t lock_index
+    = image_index * caf_current_team->u.image_info->image_count.count + index;
+#else
+  const size_t lock_index = index;
+  (void) image_index; // Prevent unused warnings.
+#endif
+  lock_t *lock = &((lock_t *) MEMTOK (token))[lock_index];
   int res;
 
-  res
-    = acquired_lock ? pthread_mutex_trylock (lock) : pthread_mutex_lock (lock);
+  res = acquired_lock ? caf_shmem_mutex_trylock (lock)
+		      : caf_shmem_mutex_lock (lock);
 
   if (stat)
     *stat = res == EBUSY ? GFC_STAT_LOCKED : 0;
@@ -1501,28 +1521,32 @@ _gfortran_caf_lock (caf_token_t token, size_t index,
     {
       if (errmsg_len > 0)
 	{
-	  size_t len = (sizeof (msg) > errmsg_len) ? errmsg_len
-						      : sizeof (msg);
+	  size_t len = (sizeof (msg) > errmsg_len) ? errmsg_len : sizeof (msg);
 	  memcpy (errmsg, msg, len);
 	  if (errmsg_len > len)
-	    memset (&errmsg[len], ' ', errmsg_len-len);
+	    memset (&errmsg[len], ' ', errmsg_len - len);
 	}
       return;
     }
   _gfortran_caf_error_stop_str (msg, strlen (msg), false);
 }
 
-
 void
-_gfortran_caf_unlock (caf_token_t token, size_t index,
-		      int image_index __attribute__ ((unused)),
+_gfortran_caf_unlock (caf_token_t token, size_t index, int image_index,
 		      int *stat, char *errmsg, size_t errmsg_len)
 {
   const char *msg = "Variable is not locked";
-  lock_t *lock = &((lock_t *) MEMTOK (token))[index];
+#if defined(WIN32) || defined(__CYGWIN__)
+  const size_t lock_index
+    = image_index * caf_current_team->u.image_info->image_count.count + index;
+#else
+  const size_t lock_index = index;
+  (void) image_index; // Prevent unused warnings.
+#endif
+  lock_t *lock = &((lock_t *) MEMTOK (token))[lock_index];
   int res;
 
-  res = pthread_mutex_unlock (lock);
+  res = caf_shmem_mutex_unlock (lock);
 
   if (res == 0)
     {
@@ -1535,34 +1559,33 @@ _gfortran_caf_unlock (caf_token_t token, size_t index,
     {
       /* res == EPERM means that the lock is locked.  Now figure, if by us by
 	 trying to lock it or by other image, which fails.  */
-      res = pthread_mutex_trylock (lock);
+      res = caf_shmem_mutex_trylock (lock);
       if (res == EBUSY)
 	*stat = GFC_STAT_LOCKED_OTHER_IMAGE;
       else
 	{
 	  *stat = GFC_STAT_UNLOCKED;
-	  pthread_mutex_unlock (lock);
+	  caf_shmem_mutex_unlock (lock);
 	}
 
       if (errmsg_len > 0)
 	{
-	  size_t len = (sizeof (msg) > errmsg_len) ? errmsg_len
-	    : sizeof (msg);
+	  size_t len = (sizeof (msg) > errmsg_len) ? errmsg_len : sizeof (msg);
 	  memcpy (errmsg, msg, len);
 	  if (errmsg_len > len)
-	    memset (&errmsg[len], ' ', errmsg_len-len);
+	    memset (&errmsg[len], ' ', errmsg_len - len);
 	}
       return;
     }
   _gfortran_caf_error_stop_str (msg, strlen (msg), false);
 }
 
-
 /* Reference the libraries implementation.  */
 extern void _gfortran_random_seed_i4 (int32_t *size, gfc_array_i4 *put,
 				      gfc_array_i4 *get);
 
-void _gfortran_caf_random_init (bool repeatable, bool image_distinct)
+void
+_gfortran_caf_random_init (bool repeatable, bool image_distinct)
 {
   static struct
   {
@@ -1720,8 +1743,8 @@ _gfortran_caf_form_team (int team_no, caf_team_t *team, int *new_index,
 	   ++i)
 	t->u.image_info->image_map[i] = -1;
     }
-  counter_barrier_add (&t->u.image_info->image_count, 1);
-  counter_barrier_add (&t->u.image_info->collsub.barrier, 1);
+  counter_barrier_init_add (&t->u.image_info->image_count, 1);
+  counter_barrier_init_add (&t->u.image_info->collsub.barrier, 1);
   allocator_unlock (&local->ai.alloc);
 
   if (new_index)

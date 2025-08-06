@@ -33,13 +33,13 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 static inline void
 lock_table (sync_t *si)
 {
-  pthread_mutex_lock (&si->cis->sync_images_table_lock);
+  caf_shmem_mutex_lock (&si->cis->sync_images_table_lock);
 }
 
 static inline void
 unlock_table (sync_t *si)
 {
-  pthread_mutex_unlock (&si->cis->sync_images_table_lock);
+  caf_shmem_mutex_unlock (&si->cis->sync_images_table_lock);
 }
 
 void
@@ -48,7 +48,7 @@ sync_init (sync_t *si, shared_memory sm)
   *si = (sync_t) {
     &this_image.supervisor->sync_shared,
     SHMPTR_AS (int *, this_image.supervisor->sync_shared.sync_images_table, sm),
-    SHMPTR_AS (pthread_cond_t *,
+    SHMPTR_AS (caf_shmem_condvar *,
 	       this_image.supervisor->sync_shared.sync_images_cond_vars, sm)};
 }
 
@@ -61,7 +61,7 @@ sync_init_supervisor (sync_t *si, alloc *ai)
   si->cis = &this_image.supervisor->sync_shared;
 
   initialize_shared_mutex (&si->cis->event_lock);
-  initialize_shared_condition (&si->cis->event_cond);
+  initialize_shared_condition (&si->cis->event_cond, num_images);
 
   initialize_shared_mutex (&si->cis->sync_images_table_lock);
 
@@ -69,14 +69,14 @@ sync_init_supervisor (sync_t *si, alloc *ai)
     = allocator_shared_malloc (alloc_get_allocator (ai), table_size_in_bytes);
   si->cis->sync_images_cond_vars
     = allocator_shared_malloc (alloc_get_allocator (ai),
-			       sizeof (pthread_cond_t) * num_images);
+			       sizeof (caf_shmem_condvar) * num_images);
 
   si->table = SHMPTR_AS (int *, si->cis->sync_images_table, ai->mem);
   si->triggers
-    = SHMPTR_AS (pthread_cond_t *, si->cis->sync_images_cond_vars, ai->mem);
+    = SHMPTR_AS (caf_shmem_condvar *, si->cis->sync_images_cond_vars, ai->mem);
 
   for (int i = 0; i < num_images; i++)
-    initialize_shared_condition (&si->triggers[i]);
+    initialize_shared_condition (&si->triggers[i], num_images);
 
   memset (si->table, 0, table_size_in_bytes);
 }
@@ -103,7 +103,7 @@ sync_table (sync_t *si, int *images, int size)
       for (i = 0; i < size; ++i)
 	{
 	  ++table[images[i] + img_c * this_image.image_num];
-	  pthread_cond_signal (&si->triggers[images[i]]);
+	  caf_shmem_cond_signal (&si->triggers[images[i]]);
 	}
       for (;;)
 	{
@@ -114,7 +114,7 @@ sync_table (sync_t *si, int *images, int size)
 	      break;
 	  if (i == size)
 	    break;
-	  pthread_cond_wait (&si->triggers[this_image.image_num],
+	  caf_shmem_cond_wait (&si->triggers[this_image.image_num],
 			     &si->cis->sync_images_table_lock);
 	}
     }
@@ -127,7 +127,7 @@ sync_table (sync_t *si, int *images, int size)
 	  if (this_image.supervisor->images[map[i]].status != IMAGE_OK)
 	    continue;
 	  ++table[map[i] + size * this_image.image_num];
-	  pthread_cond_signal (&si->triggers[map[i]]);
+	  caf_shmem_cond_signal (&si->triggers[map[i]]);
 	}
       for (;;)
 	{
@@ -138,7 +138,7 @@ sync_table (sync_t *si, int *images, int size)
 	      break;
 	  if (i == size)
 	    break;
-	  pthread_cond_wait (&si->triggers[this_image.image_num],
+	  caf_shmem_cond_wait (&si->triggers[this_image.image_num],
 			     &si->cis->sync_images_table_lock);
 	}
     }
@@ -160,23 +160,23 @@ sync_team (caf_shmem_team_t team)
 void
 lock_event (sync_t *si)
 {
-  pthread_mutex_lock (&si->cis->event_lock);
+  caf_shmem_mutex_lock (&si->cis->event_lock);
 }
 
 void
 unlock_event (sync_t *si)
 {
-  pthread_mutex_unlock (&si->cis->event_lock);
+  caf_shmem_mutex_unlock (&si->cis->event_lock);
 }
 
 void
 event_post (sync_t *si)
 {
-  pthread_cond_broadcast (&si->cis->event_cond);
+  caf_shmem_cond_broadcast (&si->cis->event_cond);
 }
 
 void
 event_wait (sync_t *si)
 {
-  pthread_cond_wait (&si->cis->event_cond, &si->cis->event_lock);
+  caf_shmem_cond_wait (&si->cis->event_cond, &si->cis->event_lock);
 }

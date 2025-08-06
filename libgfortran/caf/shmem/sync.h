@@ -28,13 +28,11 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #include "alloc.h"
 #include "counter_barrier.h"
 
-#include <pthread.h>
-
 typedef struct {
   /* Mutex and condition variable needed for signaling events.  */
-  pthread_mutex_t event_lock;
-  pthread_cond_t event_cond;
-  pthread_mutex_t sync_images_table_lock;
+  caf_shmem_mutex event_lock;
+  caf_shmem_condvar event_cond;
+  caf_shmem_mutex sync_images_table_lock;
   shared_mem_ptr sync_images_table;
   shared_mem_ptr sync_images_cond_vars;
 } sync_shared;
@@ -42,10 +40,10 @@ typedef struct {
 typedef struct {
   sync_shared *cis;
   int *table; // we can cache the table and the trigger pointers here
-  pthread_cond_t *triggers;
+  caf_shmem_condvar *triggers;
 } sync_t;
 
-typedef pthread_mutex_t lock_t;
+typedef caf_shmem_mutex lock_t;
 
 typedef int event_t;
 

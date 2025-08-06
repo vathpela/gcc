@@ -25,6 +25,10 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #ifndef SUPERVISOR_H
 #define SUPERVISOR_H
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "caf/libcaf.h"
 #include "alloc.h"
 #include "collective_subroutine.h"
@@ -42,7 +46,7 @@ typedef enum
 
 typedef struct
 {
-  pid_t pid;
+  caf_shmem_pid pid;
   image_status status;
 } image_tracker;
 
@@ -56,7 +60,10 @@ typedef struct supervisor
   atomic_int failed_images;
   atomic_int finished_images;
   counter_barrier num_active_images;
-  pthread_mutex_t image_tracker_lock;
+  caf_shmem_mutex image_tracker_lock;
+#ifdef WIN32
+  size_t global_used_handles;
+#endif
   image_tracker images[];
 } supervisor;
 

@@ -30,9 +30,9 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #include "../caf_error.h"
 #include "supervisor.h"
 #include "shared_memory.h"
+#include "thread_support.h"
 
 #include <assert.h>
-#include <pthread.h>
 #include <string.h>
 
 /* Worker's part to initialize the alloc interface.  */

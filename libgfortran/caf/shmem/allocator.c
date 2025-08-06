@@ -133,11 +133,11 @@ allocator_shared_free (allocator *a, shared_mem_ptr p, size_t size)
 void
 allocator_lock (allocator *a)
 {
-  pthread_mutex_lock (&a->s->lock);
+  caf_shmem_mutex_lock (&a->s->lock);
 }
 
 void
 allocator_unlock (allocator *a)
 {
-  pthread_mutex_unlock (&a->s->lock);
+  caf_shmem_mutex_unlock (&a->s->lock);
 }

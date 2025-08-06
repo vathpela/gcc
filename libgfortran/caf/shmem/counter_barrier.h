@@ -25,7 +25,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #ifndef COUNTER_BARRIER_HDR
 #define COUNTER_BARRIER_HDR
 
-#include <pthread.h>
+#include "thread_support.h"
 
 /* Usable as counter barrier and as waitable counter.
    This "class" allows to sync all images acting as a barrier.  For this the
@@ -41,8 +41,8 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 
 typedef struct
 {
-  pthread_mutex_t mutex;
-  pthread_cond_t cond;
+  caf_shmem_mutex mutex;
+  caf_shmem_condvar cond;
   volatile int wait_count;
   volatile int curr_wait_group;
   volatile int count;
@@ -64,6 +64,10 @@ int counter_barrier_add_locked (counter_barrier *, int);
    when the count drops below 0.  */
 
 int counter_barrier_add (counter_barrier *, int);
+
+/* Add the given number to the counter barrier.  This version does not signal.
+   The mutex needs to be locked for this routine to be safe.  */
+void counter_barrier_init_add (counter_barrier *, int);
 
 /* Get the count of the barrier.  */
 

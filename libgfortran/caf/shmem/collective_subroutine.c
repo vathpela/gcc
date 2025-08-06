@@ -198,7 +198,7 @@ get_collsub_buf (size_t size)
 {
   void *ret;
 
-  pthread_mutex_lock (&caf_current_team->u.image_info->collsub.mutex);
+  caf_shmem_mutex_lock (&caf_current_team->u.image_info->collsub.mutex);
   /* curr_size is always at least sizeof(double), so we don't need to worry
      about size == 0.  */
   if (size > caf_current_team->u.image_info->collsub.curr_size)
@@ -214,7 +214,7 @@ get_collsub_buf (size_t size)
 
   ret = SHMPTR_AS (void *, caf_current_team->u.image_info->collsub.collsub_buf,
 		   &local->sm);
-  pthread_mutex_unlock (&caf_current_team->u.image_info->collsub.mutex);
+  caf_shmem_mutex_unlock (&caf_current_team->u.image_info->collsub.mutex);
   return ret;
 }
 

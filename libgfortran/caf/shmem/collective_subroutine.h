@@ -36,7 +36,7 @@ typedef struct collsub_shared
   size_t curr_size;
   shared_mem_ptr collsub_buf;
   counter_barrier barrier;
-  pthread_mutex_t mutex;
+  caf_shmem_mutex mutex;
 } collsub_shared;
 
 void collsub_init_supervisor (collsub_shared *, allocator *,

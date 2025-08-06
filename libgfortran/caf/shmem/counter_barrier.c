@@ -34,7 +34,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 static inline void
 lock_counter_barrier (counter_barrier *b)
 {
-  pthread_mutex_lock (&b->mutex);
+  caf_shmem_mutex_lock (&b->mutex);
 }
 
 /* Unlock the associated counter of this barrier.  */
@@ -42,15 +42,15 @@ lock_counter_barrier (counter_barrier *b)
 static inline void
 unlock_counter_barrier (counter_barrier *b)
 {
-  pthread_mutex_unlock (&b->mutex);
+  caf_shmem_mutex_unlock (&b->mutex);
 }
 
 void
 counter_barrier_init (counter_barrier *b, int val)
 {
-  *b = (counter_barrier) {PTHREAD_MUTEX_INITIALIZER, PTHREAD_COND_INITIALIZER,
-			  val, 0, val};
-  initialize_shared_condition (&b->cond);
+  *b = (counter_barrier) {CAF_SHMEM_MUTEX_INITIALIZER,
+			  CAF_SHMEM_COND_INITIALIZER, val, 0, val};
+  initialize_shared_condition (&b->cond, val);
   initialize_shared_mutex (&b->mutex);
 }
 
@@ -60,15 +60,14 @@ counter_barrier_wait (counter_barrier *b)
   int wait_group_beginning;
 
   lock_counter_barrier (b);
-
   wait_group_beginning = b->curr_wait_group;
 
   if ((--b->wait_count) <= 0)
-    pthread_cond_broadcast (&b->cond);
+    caf_shmem_cond_broadcast (&b->cond);
   else
     {
       while (b->wait_count > 0 && b->curr_wait_group == wait_group_beginning)
-	  pthread_cond_wait (&b->cond, &b->mutex);
+	caf_shmem_cond_wait (&b->cond, &b->mutex);
     }
 
   if (b->wait_count <= 0)
@@ -80,13 +79,12 @@ counter_barrier_wait (counter_barrier *b)
   unlock_counter_barrier (b);
 }
 
-
 static inline void
 change_internal_barrier_count (counter_barrier *b, int val)
 {
   b->wait_count += val;
   if (b->wait_count <= 0)
-    pthread_cond_broadcast (&b->cond);
+    caf_shmem_cond_broadcast (&b->cond);
 }
 
 int
@@ -103,19 +101,27 @@ int
 counter_barrier_add (counter_barrier *c, int val)
 {
   int ret;
-  pthread_mutex_lock (&c->mutex);
+  caf_shmem_mutex_lock (&c->mutex);
   ret = counter_barrier_add_locked (c, val);
 
-  pthread_mutex_unlock (&c->mutex);
+  caf_shmem_mutex_unlock (&c->mutex);
   return ret;
+}
+
+void
+counter_barrier_init_add (counter_barrier *b, int val)
+{
+  b->count += val;
+  b->wait_count += val;
+  caf_shmem_cond_update_count (&b->cond, val);
 }
 
 int
 counter_barrier_get_count (counter_barrier *c)
 {
   int ret;
-  pthread_mutex_lock (&c->mutex);
+  caf_shmem_mutex_lock (&c->mutex);
   ret = c->count;
-  pthread_mutex_unlock (&c->mutex);
+  caf_shmem_mutex_unlock (&c->mutex);
   return ret;
 }

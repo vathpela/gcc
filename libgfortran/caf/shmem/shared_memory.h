@@ -25,6 +25,8 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #ifndef SHARED_MEMORY_H
 #define SHARED_MEMORY_H
 
+#include "thread_support.h"
+
 #include <stdlib.h>
 #include <stddef.h>
 #include <unistd.h>
@@ -47,6 +49,7 @@ typedef struct shared_memory_act
     global_shared_memory_meta *meta;
   } glbl;
   size_t size; // const
+  caf_shmem_fd shm_fd;
 } shared_memory_act;
 
 /* A struct to serve as shared memory object.  */

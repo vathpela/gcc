@@ -31,7 +31,7 @@ caf_shmem_team_t caf_teams_formed = NULL;
 void
 update_teams_images (caf_shmem_team_t team)
 {
-  pthread_mutex_lock (&team->u.image_info->image_count.mutex);
+  caf_shmem_mutex_lock (&team->u.image_info->image_count.mutex);
   if (team->u.image_info->num_term_images
       != this_image.supervisor->finished_images
 	   + this_image.supervisor->failed_images)
@@ -52,7 +52,7 @@ update_teams_images (caf_shmem_team_t team)
 				   old_num
 				     - team->u.image_info->num_term_images);
     }
-  pthread_mutex_unlock (&team->u.image_info->image_count.mutex);
+  caf_shmem_mutex_unlock (&team->u.image_info->image_count.mutex);
 }
 
 void
