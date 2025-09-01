@@ -25,6 +25,10 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 /* Main allocation routine, works like malloc.  Round up allocations
    to the next power of two and keep free lists in buckets.  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "libgfortran.h"
 
 #include "allocator.h"
@@ -74,8 +78,16 @@ allocator_init_supervisor (allocator *a, allocator_shared *s, shared_memory sm)
 static size_t
 next_power_of_two (size_t size)
 {
+#ifdef HAVE_SANE_BUILTIN_CLZL
   assert (size);
+#if (__INTPTR_WIDTH__ == 64)
   return 1 << (VOIDP_BITS - __builtin_clzl (size - 1));
+#else
+  return 1 << (VOIDP_BITS - __builtin_clz (size - 1));
+#endif
+#else
+  return 1 << (int)ceil(log2(size));
+#endif
 }
 
 shared_mem_ptr
