@@ -29,6 +29,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #include "libgfortran.h"
 #include "allocator.h"
 #include "shared_memory.h"
+#include "supervisor.h"
 
 #include <assert.h>
 #include <fcntl.h>
@@ -194,7 +195,7 @@ shared_memory_init (shared_memory_act *mem, size_t size)
   else
     {
 #ifdef HAVE_MMAP
-      mem->shm_fd = shm_open (shm_name, O_RDWR, 0);
+      mem->shm_fd = shm_open (shm_name, O_RDWR, 0600);
       if (mem->shm_fd == -1)
 	{
 	  perror ("opening shared memory segment failed.");
@@ -212,7 +213,14 @@ shared_memory_init (shared_memory_act *mem, size_t size)
 #ifdef HAVE_MMAP
   mem->glbl.base
     = mmap (base_ptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, mem->shm_fd, 0);
-  if (mem->glbl.base == MAP_FAILED)
+  if (base_ptr && mem->glbl.base != base_ptr)
+    {
+      /* The supervisor will start us again.  */
+      close (mem->shm_fd);
+      free (local);
+      exit (210);
+    }
+  else if (!base_ptr && !mem->glbl.base)
     {
       perror ("mmap failed");
       exit (1);
@@ -249,9 +257,6 @@ shared_memory_init (shared_memory_act *mem, size_t size)
 void
 shared_memory_cleanup (shared_memory_act *mem)
 {
-  char shm_name[NAME_MAX];
-
-  snprintf (shm_name, NAME_MAX, "/gfor-shm-%s", shared_memory_get_env ());
 #ifdef HAVE_MMAP
   int res = munmap (mem->glbl.base, mem->size);
   if (res)
@@ -263,11 +268,18 @@ shared_memory_cleanup (shared_memory_act *mem)
     {
       perror ("closing shm file handle failed. Trying to continue...");
     }
-  res = shm_unlink (shm_name);
-  if (res == -1)
+  if (this_image.image_num == -1)
     {
-      perror ("shm_unlink failed");
-      exit (1);
+      char shm_name[NAME_MAX];
+
+      snprintf (shm_name, NAME_MAX, "/gfor-shm-%s", shared_memory_get_env ());
+      /* Only the supervisor is to delete the shm-file.  */
+      res = shm_unlink (shm_name);
+      if (res == -1)
+	{
+	  perror ("shm_unlink failed");
+	  exit (1);
+	}
     }
 #elif defined(WIN32)
   if (!UnmapViewOfFile (mem->glbl.base))

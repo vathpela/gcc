@@ -2350,6 +2350,15 @@ memory.
 
 Warning: Choosing a large shared memory size may produce large coredumps!
 
+@env{GFORTRAN_IMAGE_RESTARTS_LIMIT}: On certain platforms, esp. MacOS, the
+shared memory segment needs to be placed on the same (virtual) address in every
+image or synchronisation primitives do not work as expected.  Unfortunately are
+some OSes somewhat arbitrary on when they can do this.  When the OS is not able
+to fullfill the request, then the image aborts itsself and is restarted by the
+supervisor untill the OS complies.  This environment variable limits the total
+number of restarts of all images having an issue with shared memory segment
+placement.  The default value is 4000.
+
 The shared memory coarray library internally uses some additional environment
 variables, which will be overwritten without notice or may result in failure to
 start.  These are: @code{GFORTRAN_IMAGE_NUM}, @code{GFORTRAN_SHMEM_PID} and

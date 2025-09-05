@@ -152,6 +152,7 @@ _gfortran_caf_finalize (void)
   free_team_list (caf_teams_formed);
   caf_teams_formed = NULL;
 
+  shared_memory_cleanup (&local->sm);
   free (local);
 
   thread_support_cleanup ();

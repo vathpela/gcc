@@ -50,6 +50,9 @@ initialize_shared_mutex (caf_shmem_mutex *mutex)
   pthread_mutexattr_t mattr;
   ERRCHECK (pthread_mutexattr_init (&mattr));
   ERRCHECK (pthread_mutexattr_setpshared (&mattr, PTHREAD_PROCESS_SHARED));
+#ifdef PTHREAD_MUTEX_ROBUST
+  ERRCHECK (pthread_mutexattr_setrobust (&mattr, PTHREAD_MUTEX_ROBUST));
+#endif
   ERRCHECK (pthread_mutex_init (mutex, &mattr));
   ERRCHECK (pthread_mutexattr_destroy (&mattr));
 }
@@ -61,6 +64,9 @@ initialize_shared_errorcheck_mutex (caf_shmem_mutex *mutex)
   ERRCHECK (pthread_mutexattr_init (&mattr));
   ERRCHECK (pthread_mutexattr_settype (&mattr, PTHREAD_MUTEX_ERRORCHECK));
   ERRCHECK (pthread_mutexattr_setpshared (&mattr, PTHREAD_PROCESS_SHARED));
+#ifdef PTHREAD_MUTEX_ROBUST
+  ERRCHECK (pthread_mutexattr_setrobust (&mattr, PTHREAD_MUTEX_ROBUST));
+#endif
   ERRCHECK (pthread_mutex_init (mutex, &mattr));
   ERRCHECK (pthread_mutexattr_destroy (&mattr));
 }
@@ -248,7 +254,7 @@ bm_set_mask (volatile unsigned long mask[], const int size)
     mask[i] = ~0UL >> (ULONGBITS - rem);
 }
 
-__attribute_used__ static bool
+__attribute__ ((used)) static bool
 bm_is_none (volatile unsigned long mask[], const int size)
 {
   const int entries = size / ULONGBITS;

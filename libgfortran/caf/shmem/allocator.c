@@ -101,6 +101,8 @@ allocator_shared_malloc (allocator *a, size_t size)
   sz = next_power_of_two (size);
   act_size = sz > sizeof (bucket) ? sz : sizeof (bucket);
   bucket_list_index = __builtin_clzl (act_size);
+  assert (bucket_list_index
+	  < (int) (sizeof (a->s->free_bucket_head) / sizeof (shared_mem_ptr)));
 
   if (SHMPTR_IS_NULL (a->s->free_bucket_head[bucket_list_index]))
     return shared_memory_get_mem_with_alignment (a->shm, act_size, MAX_ALIGN);

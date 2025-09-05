@@ -43,6 +43,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #define GFORTRAN_ENV_NUM_IMAGES "GFORTRAN_NUM_IMAGES"
 #define GFORTRAN_ENV_SHARED_MEMORY_SIZE "GFORTRAN_SHARED_MEMORY_SIZE"
 #define GFORTRAN_ENV_IMAGE_NUM "GFORTRAN_IMAGE_NUM"
+#define GFORTRAN_ENV_IMAGE_RESTARTS_LIMITS "GFORTRAN_IMAGE_RESTARTS_LIMIT"
 
 image_local *local = NULL;
 
@@ -66,6 +67,21 @@ get_image_num_from_envvar (void)
 #endif
   nimages = atoi (num_images_char);
   return nimages;
+}
+
+/* Get the number of restarts allowed when the shared memory could not be placed
+at the same location in each image.  This is mostly important for MacOS, because
+this OS acts somewhat arbitrary/indeterministic.  */
+
+static unsigned
+get_image_restarts_limit (void)
+{
+  char *limit_chars;
+  unsigned limit = 4000;
+  limit_chars = getenv (GFORTRAN_ENV_IMAGE_RESTARTS_LIMITS);
+  if (limit_chars)
+    limit = atoi (limit_chars);
+  return limit;
 }
 
 /* Get the amount of memory for the shared memory block.  This is picked from
@@ -157,6 +173,11 @@ ensure_shmem_initialization (void)
     return;
 
   local = malloc (sizeof (image_local));
+  if (!local)
+    {
+      caf_runtime_error ("can not initialize memory for local cache");
+      exit (1);
+    }
 #if defined(_SC_PAGE_SIZE)
   pagesize = sysconf (_SC_PAGE_SIZE);
 #elif defined(WIN32)
@@ -234,6 +255,54 @@ ensure_shmem_initialization (void)
 extern char **environ;
 #endif
 
+static bool
+startWorker (image *im __attribute__ ((unused)),
+	     char ***argv __attribute__ ((unused)))
+{
+#ifdef HAVE_FORK
+  caf_shmem_pid new_pid;
+  if ((new_pid = fork ()))
+    {
+      im->supervisor->images[im->image_num]
+	= (image_tracker) {new_pid, IMAGE_OK};
+      return false;
+    }
+  else
+    {
+      if (new_pid == -1)
+	caf_runtime_error ("error spawning child\n");
+      static char **new_env;
+      static char num_image[32];
+      size_t n = 2; /* Add one env-var and one for the term NULL.  */
+
+      /* Count the number of entries in the current environment.  */
+      for (char **e = environ; *e; ++e, ++n)
+	;
+      new_env = (char **) malloc (sizeof (char *) * n);
+      memcpy (new_env, environ, sizeof (char *) * (n - 2));
+      snprintf (num_image, 32, "%s=%d", GFORTRAN_ENV_IMAGE_NUM, im->image_num);
+      new_env[n - 2] = num_image;
+      new_env[n - 1] = NULL;
+      if (execve ((*argv)[0], *argv, new_env) == -1)
+	{
+	  perror ("execve failed");
+	}
+      exit (255);
+    }
+#endif
+  return true;
+}
+
+#ifndef WIN32
+static void
+kill_all_images (supervisor *m)
+{
+  for (int j = 0; j < local->total_num_images; j++)
+    if (m->images[j].status == IMAGE_OK)
+      kill (m->images[j].pid, SIGKILL);
+}
+#endif
+
 /* argc and argv may not be used on certain OSes.  Flag them unused therefore.
  */
 int
@@ -254,40 +323,19 @@ supervisor_main_loop (int *argc __attribute__ ((unused)),
   GetCurrentDirectory (cdLen, currentDir);
 #else
   int chstatus;
+  unsigned restarts = 0, restarts_limit;
+  restarts_limit = get_image_restarts_limit ();
 #endif
 
   *exit_code = 0;
   shared_memory_set_env (getpid ());
-  m = this_image.supervisor;
+  im.supervisor = m = this_image.supervisor;
 
   for (im.image_num = 0; im.image_num < local->total_num_images; im.image_num++)
     {
 #ifdef HAVE_FORK
-      caf_shmem_pid new_pid;
-      if ((new_pid = fork ()))
-	{
-	  if (new_pid == -1)
-	    caf_runtime_error ("error spawning child\n");
-	  m->images[im.image_num] = (image_tracker) {new_pid, IMAGE_OK};
-	}
-      else
-	{
-	  static char **new_env;
-	  static char num_image[32];
-	  size_t n = 2; /* Add one env-var and one for the term NULL.  */
-
-	  /* Count the number of entries in the current environment.  */
-	  for (char **e = environ; *e; ++e, ++n)
-	    ;
-	  new_env = (char **) malloc (sizeof (char *) * n);
-	  memcpy (new_env, environ, sizeof (char *) * (n - 2));
-	  snprintf (num_image, 32, "%s=%d", GFORTRAN_ENV_IMAGE_NUM,
-		    im.image_num);
-	  new_env[n - 2] = num_image;
-	  new_env[n - 1] = NULL;
-	  execve ((*argv)[0], *argv, new_env);
-	  return 1;
-	}
+      if (startWorker (&im, argv))
+	return 1;
 #elif defined(WIN32)
       LPTCH new_env;
       size_t n = 0, es;
@@ -345,6 +393,14 @@ supervisor_main_loop (int *argc __attribute__ ((unused)),
 #ifdef HAVE_FORK
       caf_shmem_pid finished_pid = wait (&chstatus);
       int j;
+
+      if (finished_pid == -1)
+	{
+	  /* Skip wait having an issue.  */
+	  perror ("wait failed");
+	  --i;
+	  continue;
+	}
       if (WIFEXITED (chstatus) && !WEXITSTATUS (chstatus))
 	{
 	  for (j = 0;
@@ -365,35 +421,56 @@ supervisor_main_loop (int *argc __attribute__ ((unused)),
 	       j < local->total_num_images && m->images[j].pid != finished_pid;
 	       j++)
 	    ;
-	  dprintf (2, "ERROR: Image %d(pid: %d) failed with %d.\n", j + 1,
-		   finished_pid, WTERMSIG (chstatus));
-	  if (j == local->total_num_images)
+	  if (WEXITSTATUS (chstatus) == 210)
 	    {
-	      if (finished_pid == getpid ())
+	      --i;
+	      im.image_num = j;
+	      ++restarts;
+	      if (restarts > restarts_limit)
 		{
-		  dprintf (2,
-			   "WARNING: Supervisor process got signal %d. Killing "
-			   "childs and exiting.\n",
-			   WTERMSIG (chstatus));
-		  for (j = 0; j < local->total_num_images; j++)
-		    {
-		      if (m->images[j].status == IMAGE_OK)
-			kill (m->images[j].pid, SIGKILL);
-		    }
+		  kill_all_images (m);
+		  caf_runtime_error (
+		    "After restarting images %d times, no common state on "
+		    "shared memory could be reached. Giving up...",
+		    restarts);
 		  exit (1);
 		}
-	      dprintf (2,
-		       "WARNING: Got signal %d for unknown process %d. "
-		       "Ignoring and trying to continue.\n",
-		       WTERMSIG (chstatus), finished_pid);
+	      if (startWorker (&im, argv))
+		return 1;
 	      continue;
 	    }
-	  m->images[j].status = IMAGE_FAILED;
-	  atomic_fetch_add (&m->failed_images, 1);
-	  if (*exit_code < WTERMSIG (chstatus))
-	    *exit_code = WTERMSIG (chstatus);
-	  else if (*exit_code == 0)
-	    *exit_code = 1;
+	  else
+	    {
+	      dprintf (2,
+		       "ERROR: Image %d(pid: %d) failed with signal %d, "
+		       "exitstatus %d.\n",
+		       j + 1, finished_pid, WTERMSIG (chstatus),
+		       WEXITSTATUS (chstatus));
+	      if (j == local->total_num_images)
+		{
+		  if (finished_pid == getpid ())
+		    {
+		      dprintf (
+			2,
+			"WARNING: Supervisor process got signal %d. Killing "
+			"childs and exiting.\n",
+			WTERMSIG (chstatus));
+		      kill_all_images (m);
+		      exit (1);
+		    }
+		  dprintf (2,
+			   "WARNING: Got signal %d for unknown process %d. "
+			   "Ignoring and trying to continue.\n",
+			   WTERMSIG (chstatus), finished_pid);
+		  continue;
+		}
+	      m->images[j].status = IMAGE_FAILED;
+	      atomic_fetch_add (&m->failed_images, 1);
+	      if (*exit_code < WTERMSIG (chstatus))
+		*exit_code = WTERMSIG (chstatus);
+	      else if (*exit_code == 0)
+		*exit_code = 1;
+	    }
 	}
       /* Trigger waiting sync images aka sync_table.  */
       for (j = 0; j < local->total_num_images; j++)
