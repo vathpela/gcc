@@ -1087,7 +1087,8 @@ Objective-C and Objective-C++ Dialects}.
 @gccoptlist{-mbig-endian  -mlittle-endian
 -mframe-limit=@var{bytes}  -mxbpf  -mco-re  -mjmpext  -mjmp32
 -malu32  -mv3-atomics  -mbswap  -msdiv  -msmov  -mcpu=@var{version}
--masm=@var{dialect}  -minline-memops-threshold=@var{bytes}}
+-masm=@var{dialect}  -minline-memops-threshold=@var{bytes}
+-Wco-re}
 
 @emph{FR30 Options} (@ref{FR30 Options})
 @gccoptlist{-msmall-model  -mno-lsim}
@@ -26440,6 +26441,11 @@ sizes larger than this threshold would have to be implemented using
 a library call instead of being expanded inline, but since BPF doesn't
 allow libcalls, exceeding this threshold results in a compile-time
 error.  The default is @samp{1024} bytes.
+
+@opindex Wco-re
+@item -Wco-re
+Enable warnings for scenarios where -mco-re is enabled, but it may not be
+possible to generate CO-RE compatible code.
 
 @end table
 
