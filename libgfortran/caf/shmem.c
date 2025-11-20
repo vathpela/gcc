@@ -147,6 +147,8 @@ _gfortran_caf_finalize (void)
       caf_static_list = tmp;
     }
 
+  /* Make sure to wait for all images to finish.  */
+  sync_team (caf_initial_team);
   free_team_list (caf_current_team);
   caf_initial_team = caf_current_team = NULL;
   free_team_list (caf_teams_formed);
