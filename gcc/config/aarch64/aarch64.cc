@@ -9526,11 +9526,30 @@ aarch64_save_callee_saves (poly_int64 bytes_below_sp,
       machine_mode mode = aarch64_reg_save_mode (regno);
       rtx reg = gen_rtx_REG (mode, regno);
       rtx move_src = reg;
+      rtx old_r0 = NULL_RTX;
       offset = frame.reg_offset[regno] - bytes_below_sp;
       if (regno == VG_REGNUM)
 	{
-	  move_src = gen_rtx_REG (DImode, IP0_REGNUM);
-	  emit_move_insn (move_src, gen_int_mode (aarch64_sve_vg, DImode));
+	  if (AARCH64_HAVE_ISA (SVE)
+	      || aarch64_cfun_incoming_pstate_sm () == AARCH64_ISA_MODE_SM_ON)
+	    {
+	      /* This check cannot just use TARGET_SVE, because the streaming
+		 state (and hence instruction availability) differs between the
+		 function body and prologue in locally streaming functions.  */
+	      move_src = gen_rtx_REG (DImode, IP0_REGNUM);
+	      emit_move_insn (move_src, gen_int_mode (aarch64_sve_vg, DImode));
+	    }
+	  else
+	    {
+	      auto &args = crtl->args.info;
+	      if (args.aapcs_ncrn > 0)
+		{
+		  old_r0 = gen_rtx_REG (DImode, PROBE_STACK_FIRST_REGNUM);
+		  emit_move_insn (old_r0, gen_rtx_REG (DImode, R0_REGNUM));
+		}
+	      emit_insn (gen_aarch64_get_current_vg ());
+	      move_src = gen_rtx_REG (DImode, R0_REGNUM);
+	    }
 	}
       rtx base_rtx = stack_pointer_rtx;
       poly_int64 sp_offset = offset;
@@ -9621,9 +9640,13 @@ aarch64_save_callee_saves (poly_int64 bytes_below_sp,
       RTX_FRAME_RELATED_P (insn) = frame_related_p;
 
       /* Emit a fake instruction to indicate that the VG save slot has
-	 been initialized.  */
+	 been initialized, and then restore R0 if necessary.  */
       if (regno == VG_REGNUM)
-	emit_insn (gen_aarch64_old_vg_saved (move_src, mem));
+	{
+	  emit_insn (gen_aarch64_old_vg_saved (move_src, mem));
+	  if (old_r0)
+	    emit_move_insn (gen_rtx_REG (DImode, R0_REGNUM), old_r0);
+	}
     }
 }
 
