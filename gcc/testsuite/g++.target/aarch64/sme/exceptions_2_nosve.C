@@ -1,7 +1,7 @@
 // { dg-options "-O -fno-optimize-sibling-calls" }
 // { dg-final { check-function-bodies "**" "" } }
 
-#pragma GCC target "+sve"
+#pragma GCC target "+nosve"
 
 void n_callee();
 void s_callee() __arm_streaming;
@@ -29,8 +29,8 @@ void n_caller1()
 /*
 ** _Z9n_caller2v:
 **	...
-**	cntd	(x[0-9]+)
-**	str	\1, [^\n]+
+**	bl	__arm_get_current_vg
+**	str	x0, [^\n]+
 **	...
 **	bl	__cxa_begin_catch
 **	smstart	sm
@@ -100,14 +100,14 @@ int s_caller2() __arm_streaming
 /*
 ** _Z10sc_caller1v:
 **	...
-**	cntd	(x[0-9]+)
-**	str	\1, [^\n]+
+**	bl	__arm_get_current_vg
+**	str	x0, [^\n]+
 **	mrs	(x[0-9]+), svcr
-**	str	\2, ([^\n]+)
+**	str	\1, ([^\n]+)
 **	...
 **	bl	__cxa_end_catch
-**	ldr	(x[0-9]+), \3
-**	tbz	\4, 0, [^\n]+
+**	ldr	(x[0-9]+), \2
+**	tbz	\3, 0, [^\n]+
 **	smstart	sm
 **	...
 */
@@ -127,8 +127,8 @@ int sc_caller1() __arm_streaming_compatible
 /*
 ** _Z10ls_caller1v:
 **	...
-**	cntd	(x[0-9]+)
-**	str	\1, [^\n]+
+**	bl	__arm_get_current_vg
+**	str	x0, [^\n]+
 **	...
 **	bl	__cxa_begin_catch
 **	smstart	sm

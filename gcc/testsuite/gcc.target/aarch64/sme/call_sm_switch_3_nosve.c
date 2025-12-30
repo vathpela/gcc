@@ -1,7 +1,7 @@
 // { dg-options "-O -fomit-frame-pointer -fno-optimize-sibling-calls -funwind-tables" }
 // { dg-final { check-function-bodies "**" "" } }
 
-#pragma GCC target "+sve"
+#pragma GCC target "+nosve"
 
 __attribute__((aarch64_vector_pcs)) void ns_callee ();
 __attribute__((aarch64_vector_pcs)) void s_callee () [[arm::streaming]];
@@ -16,8 +16,9 @@ struct callbacks {
 /*
 ** n_caller:	{ target lp64 }
 **	stp	x30, (x19|x2[0-8]), \[sp, #?-288\]!
-**	cntd	x16
-**	str	x16, \[sp, #?16\]
+**	mov	(x9|x1[0-5]), x0
+**	bl	__arm_get_current_vg
+**	str	x0, \[sp, #?16\]
 **	stp	q8, q9, \[sp, #?32\]
 **	stp	q10, q11, \[sp, #?64\]
 **	stp	q12, q13, \[sp, #?96\]
@@ -26,20 +27,20 @@ struct callbacks {
 **	stp	q18, q19, \[sp, #?192\]
 **	stp	q20, q21, \[sp, #?224\]
 **	stp	q22, q23, \[sp, #?256\]
-**	mov	\1, x0
+**	mov	\1, \2
 **	bl	ns_callee
 **	smstart	sm
 **	bl	s_callee
 **	smstop	sm
 **	bl	sc_callee
 **	ldr	(x[0-9]+), \[\1\]
-**	blr	\2
+**	blr	\3
 **	ldr	(x[0-9]+), \[\1, #?8\]
 **	smstart	sm
-**	blr	\3
+**	blr	\4
 **	smstop	sm
 **	ldr	(x[0-9]+), \[\1, #?16\]
-**	blr	\4
+**	blr	\5
 **	ldp	q8, q9, \[sp, #?32\]
 **	ldp	q10, q11, \[sp, #?64\]
 **	ldp	q12, q13, \[sp, #?96\]
@@ -117,8 +118,8 @@ s_caller (struct callbacks *c) [[arm::streaming]]
 ** sc_caller:
 **	stp	x29, x30, \[sp, #?-288\]!
 **	mov	x29, sp
-**	cntd	x16
-**	str	x16, \[sp, #?24\]
+**	bl	__arm_get_current_vg
+**	str	x0, \[sp, #?24\]
 **	stp	q8, q9, \[sp, #?32\]
 **	stp	q10, q11, \[sp, #?64\]
 **	stp	q12, q13, \[sp, #?96\]

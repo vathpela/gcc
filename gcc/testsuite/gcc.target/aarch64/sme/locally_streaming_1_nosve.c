@@ -1,15 +1,15 @@
 // { dg-options "-O -fomit-frame-pointer -fno-stack-clash-protection" }
 // { dg-final { check-function-bodies "**" "" } }
 
-#pragma GCC target "+sve"
+#pragma GCC target "+nosve"
 
 void consume_za () [[arm::streaming, arm::inout("za")]];
 
 /*
 ** n_ls:
 **	sub	sp, sp, #?80
-**	cntd	x16
-**	str	x16, \[sp\]
+**	bl	__arm_get_current_vg
+**	str	x0, \[sp\]
 **	stp	d8, d9, \[sp, #?16\]
 **	stp	d10, d11, \[sp, #?32\]
 **	stp	d12, d13, \[sp, #?48\]
@@ -43,8 +43,8 @@ s_ls () [[arm::streaming]]
 ** sc_ls:
 **	stp	x29, x30, \[sp, #?-96\]!
 **	mov	x29, sp
-**	cntd	x16
-**	str	x16, \[sp, #?24\]
+**	bl	__arm_get_current_vg
+**	str	x0, \[sp, #?24\]
 **	stp	d8, d9, \[sp, #?32\]
 **	stp	d10, d11, \[sp, #?48\]
 **	stp	d12, d13, \[sp, #?64\]
@@ -72,8 +72,8 @@ sc_ls () [[arm::streaming_compatible]]
 /*
 ** n_ls_new_za:
 **	str	x30, \[sp, #?-80\]!
-**	cntd	x16
-**	str	x16, \[sp, #?8\]
+**	bl	__arm_get_current_vg
+**	str	x0, \[sp, #?8\]
 **	stp	d8, d9, \[sp, #?16\]
 **	stp	d10, d11, \[sp, #?32\]
 **	stp	d12, d13, \[sp, #?48\]
@@ -127,8 +127,8 @@ s_ls_new_za () [[arm::streaming]]
 ** sc_ls_new_za:
 **	stp	x29, x30, \[sp, #?-96\]!
 **	mov	x29, sp
-**	cntd	x16
-**	str	x16, \[sp, #?24\]
+**	bl	__arm_get_current_vg
+**	str	x0, \[sp, #?24\]
 **	stp	d8, d9, \[sp, #?32\]
 **	stp	d10, d11, \[sp, #?48\]
 **	stp	d12, d13, \[sp, #?64\]
@@ -165,8 +165,8 @@ sc_ls_new_za () [[arm::streaming_compatible]]
 /*
 ** n_ls_shared_za:
 **	str	x30, \[sp, #?-80\]!
-**	cntd	x16
-**	str	x16, \[sp, #?8\]
+**	bl	__arm_get_current_vg
+**	str	x0, \[sp, #?8\]
 **	stp	d8, d9, \[sp, #?16\]
 **	stp	d10, d11, \[sp, #?32\]
 **	stp	d12, d13, \[sp, #?48\]
@@ -206,8 +206,8 @@ s_ls_shared_za () [[arm::streaming, arm::inout("za")]]
 ** sc_ls_shared_za:
 **	stp	x29, x30, \[sp, #?-96\]!
 **	mov	x29, sp
-**	cntd	x16
-**	str	x16, \[sp, #?24\]
+**	bl	__arm_get_current_vg
+**	str	x0, \[sp, #?24\]
 **	stp	d8, d9, \[sp, #?32\]
 **	stp	d10, d11, \[sp, #?48\]
 **	stp	d12, d13, \[sp, #?64\]
@@ -237,8 +237,8 @@ sc_ls_shared_za () [[arm::streaming_compatible, arm::inout("za")]]
 /*
 ** n_ls_vector_pcs:
 **	sub	sp, sp, #?272
-**	cntd	x16
-**	str	x16, \[sp\]
+**	bl	__arm_get_current_vg
+**	str	x0, \[sp\]
 **	stp	q8, q9, \[sp, #?16\]
 **	stp	q10, q11, \[sp, #?48\]
 **	stp	q12, q13, \[sp, #?80\]
@@ -269,8 +269,8 @@ n_ls_vector_pcs ()
 /*
 ** n_ls_sve_pcs:	{ target aarch64_little_endian }
 **	sub	sp, sp, #?16
-**	cntd	x16
-**	str	x16, \[sp\]
+**	bl	__arm_get_current_vg
+**	str	x0, \[sp\]
 **	addsvl	sp, sp, #-18
 **	str	p4, \[sp\]
 **	str	p5, \[sp, #1, mul vl\]

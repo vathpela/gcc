@@ -1,7 +1,7 @@
 // { dg-options "-O -fomit-frame-pointer -fno-optimize-sibling-calls -funwind-tables -mtrack-speculation" }
 // { dg-final { check-function-bodies "**" "" "" { target "*-*-*" } {\t\.inst} } }
 
-#pragma GCC target "+sve"
+#pragma GCC target "+nosve"
 
 void ns_callee ();
  void s_callee () [[arm::streaming]];
@@ -21,8 +21,13 @@ struct callbacks {
 **	csetm	x15, ne
 **	stp	x29, x30, \[sp, #?-96\]!
 **	mov	x29, sp
-**	cntd	x16
-**	str	x16, \[sp, #?24\]
+**	mov	x14, sp
+**	and	x14, x14, x15
+**	mov	sp, x14
+**	bl	__arm_get_current_vg
+**	cmp	sp, #?0
+**	csetm	x15, ne
+**	str	x0, \[sp, #?24\]
 **	stp	d8, d9, \[sp, #?32\]
 **	stp	d10, d11, \[sp, #?48\]
 **	stp	d12, d13, \[sp, #?64\]
@@ -101,15 +106,15 @@ sc_caller_sme () [[arm::streaming_compatible]]
 **	csetm	x15, ne
 **	stp	x29, x30, \[sp, #?-96\]!
 **	mov	x29, sp
-**	cntd	x16
-**	str	x16, \[sp, #?24\]
+**	mov	x14, sp
+**	and	x14, x14, x15
+**	mov	sp, x14
+**	bl	__arm_get_current_vg
+**	str	x0, \[sp, #?24\]
 **	stp	d8, d9, \[sp, #?32\]
 **	stp	d10, d11, \[sp, #?48\]
 **	stp	d12, d13, \[sp, #?64\]
 **	stp	d14, d15, \[sp, #?80\]
-**	mov	x14, sp
-**	and	x14, x14, x15
-**	mov	sp, x14
 **	bl	__arm_sme_state
 **	cmp	sp, #?0
 **	csetm	x15, ne
@@ -142,6 +147,8 @@ sc_caller () [[arm::streaming_compatible]]
 **	mov	x14, sp
 **	and	x14, x14, x15
 **	mov	sp, x14
+**	bl	__arm_get_current_vg
+**	...
 **	bl	__arm_sme_state
 **	...
 **	str	wzr, \[x10\]
@@ -159,10 +166,12 @@ sc_caller_x0 (int *ptr) [[arm::streaming_compatible]]
 ** sc_caller_x1:
 **	...
 **	mov	x10, x0
-**	mov	x11, x1
 **	mov	x14, sp
 **	and	x14, x14, x15
 **	mov	sp, x14
+**	bl	__arm_get_current_vg
+**	...
+**	mov	x11, x1
 **	bl	__arm_sme_state
 **	...
 **	str	w11, \[x10\]
@@ -183,6 +192,8 @@ sc_caller_x1 (int *ptr, int a) [[arm::streaming_compatible]]
 **	sub	sp, sp, #112
 **	stp	x29, x30, \[sp, #?16\]
 **	add	x29, sp, #?16
+**	...
+**	bl	__arm_get_current_vg
 **	...
 **	stp	d8, d9, \[sp, #?48\]
 **	...
