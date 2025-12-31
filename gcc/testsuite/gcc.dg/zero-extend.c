@@ -1,4 +1,4 @@
-/* { dg-do compile } */
+/* { dg-do compile { target mcore-*-* xtensa-*-* } } */
 /* { dg-options "-O1 -fdump-rtl-expand" } */
 
 void u8(unsigned char c);
