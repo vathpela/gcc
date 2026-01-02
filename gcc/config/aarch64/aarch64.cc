@@ -19525,7 +19525,7 @@ aarch64_adjust_generic_arch_tuning (struct tune_params &current_tune)
   /* Neoverse V1 is the only core that is known to benefit from
      AARCH64_EXTRA_TUNE_CSE_SVE_VL_CONSTANTS.  There is therefore no
      point enabling it for SVE2 and above.  */
-  if (TARGET_SVE2)
+  if (TARGET_SVE2 || TARGET_SME)
     current_tune.extra_tuning_flags
       &= ~AARCH64_EXTRA_TUNE_CSE_SVE_VL_CONSTANTS;
   if (!AARCH64_HAVE_ISA(V8_8A))
