@@ -19695,10 +19695,7 @@ aarch64_override_options_internal (struct gcc_options *opts)
 	      " option %<-march%>, or by using the %<target%>"
 	      " attribute or pragma", "sme");
       opts->x_target_flags &= ~MASK_GENERAL_REGS_ONLY;
-      auto new_flags = (isa_flags
-			| feature_deps::SME ().enable
-			/* TODO: Remove once we support SME without SVE2.  */
-			| feature_deps::SVE2 ().enable);
+      auto new_flags = isa_flags | feature_deps::SME ().enable;
       aarch64_set_asm_isa_flags (opts, new_flags);
     }
 
@@ -19830,12 +19827,6 @@ aarch64_override_options_internal (struct gcc_options *opts)
   if (aarch64_tune_params.extra_tuning_flags
       & AARCH64_EXTRA_TUNE_DISPATCH_SCHED)
     gcc_assert (aarch64_tune_params.dispatch_constraints != NULL);
-
-  /* TODO: SME codegen without SVE2 is not supported, once this support is added
-     remove this 'sorry' and the implicit enablement of SVE2 in the checks for
-     streaming mode above in this function.  */
-  if (TARGET_SME && !TARGET_SVE2)
-    sorry ("no support for %qs without %qs", "sme", "sve2");
 
   /* Set scalar costing to a high value such that we always pick
      vectorization.  Increase scalar costing by 10000%.  */
