@@ -1486,7 +1486,8 @@ conv_caf_send_to_remote (gfc_code *code)
   gfc_init_se (&rhs_se, NULL);
   if (rhs_expr->rank == 0)
     {
-      rhs_se.want_pointer = rhs_expr->ts.type == BT_CHARACTER;
+      rhs_se.want_pointer = rhs_expr->ts.type == BT_CHARACTER
+			    && rhs_expr->expr_type != EXPR_CONSTANT;
       gfc_conv_expr (&rhs_se, rhs_expr);
       gfc_add_block_to_block (&block, &rhs_se.pre);
       opt_rhs_desc = null_pointer_node;
