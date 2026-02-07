@@ -1633,12 +1633,145 @@ are documented in this section.
 GCC provides two different ways to specify attributes: the traditional
 GNU syntax using @samp{__attribute__ ((...))} annotations, and the
 newer standard C and C++ syntax using @samp{[[...]]} with the
-@samp{gnu::} namespace prefix on attribute names.
-The traditional syntax, described in detail in @ref{Attribute Syntax},
-is supported in all non-strict C and C++ language dialects.
-The standard syntax is supported in C with @option{-std=c23} or later,
-in C++ with @option{-std=c++11} or later, and as an extension in older
-GNU C and C++ dialects.
+@samp{gnu::} namespace prefix on attribute names.  Both syntaxes are
+accepted in all supported C and C++ dialects.  However, if you use the
+@option{-Wpedantic} option (@pxref{Warning Options}), GCC warns about
+uses of the standard attribute syntax in C dialects prior to C23 and
+C++ dialects prior to C++11, which did not include this feature.  You
+can suppress these warnings by prefixing the attribute name with the
+@code{__extension__} keyword; @xref{Alternate Keywords}.
+
+The traditional syntax is described in detail in @ref{GNU Attribute Syntax}.
+Refer to the C or C++ standards for the exact rules regarding placement
+of standard attributes.
+
+Here are some examples showing the use of attributes.
+
+No matter which syntax is used, attributes in a variable declaration can be
+placed at the beginning of the declaration (in which case they apply
+to all declarators in the declaration), or after a particular
+declarator (applying only to that variable).
+
+@smallexample
+[[gnu::aligned (16)]] int v1 = 0;
+int v2 __attribute__ ((aligned (16))) = 0;
+int v3 [[gnu::aligned (16)]] = 0;
+int v4 __attribute__ ((aligned (16))) = 0;
+@end smallexample
+
+@cindex function attributes
+@cindex declaring attributes of functions
+Attributes for a function declaration or definition can appear first
+in both syntaxes:
+
+@smallexample
+[[gnu::section ("bar")]] extern void f1 (void);
+__attribute__ ((section ("bar"))) extern void f2 (void);
+@end smallexample
+
+@noindent
+But, watch out for the common style of placing of attributes after
+the argument list when using the GNU syntax.  With the standard
+syntax, attributes in this location are treated as modifying the
+@emph{type} of the function rather than the function itself, or its
+name.
+
+@smallexample
+extern void f3 (void) [[gnu::section ("bar")]];  /* Error!  */
+extern void f4 (void) __attribute__ ((section ("bar")));
+@end smallexample
+
+@noindent
+An error is diagnosed on the declaration of @code{f3} because the
+@code{section} attribute can't apply to types.  To apply it correctly
+to the function, either put the attribute at the beginning of the
+declaration, or put it after the name of the function, like this:
+
+@smallexample
+extern void f3 [[gnu::section ("bar")]] (void);
+@end smallexample
+
+Typedefs follow the same attribute placement rules for other as other
+declarations.  These declarations are all valid with similiar meanings.
+
+@smallexample
+[[gnu::unavailable]] typedef int *t1;
+typedef int *t2 [[gnu::unavailable]];
+__attribute__ ((unavailable)) typedef int *t3;
+typedef int *t4 __attribute__ ((unavailable));
+@end smallexample
+
+Members of a struct, union, or C++ class follow similar rules for
+attribute placement as other declarations, but beware that many
+attributes intended for use in top-level declarations, such as those
+that specify linker attributes of symbols, do not make sense here.
+
+Put attributes that apply to a @code{struct}, @code{union}, @code{class}, or
+@code{enum} type as a whole between the keyword and the type name:
+
+@smallexample
+struct [[gnu::aligned (8)]] s1 @{ short f[3]; @};
+struct __attribute__ ((aligned (8))) s2 @{ short f[3]; @};
+@end smallexample
+
+There are only a few attributes that apply to enumerators; those are
+placed directly after the enumerator name.
+
+Statement attributes are placed before a statement or label.  An
+attribute placed before an empty statement is a special case, an
+@dfn{attribute declaration}, with semantics that depend on the
+particular attribute.  Otherwise statement attributes usually apply to
+the statement or label they prefix.
+
+These two functions are equivalent:
+
+@smallexample
+int foo1 (int x, int y)
+@{
+  [[gnu::assume (x == 42)]];
+  return x + y;
+@}
+
+int foo2 (int x, int y)
+@{
+  __attribute__((assume(x == 42)));
+  return x + y;
+@}
+@end smallexample
+
+If you want to specify multiple attributes on the same entity, both
+syntaxes allow you to to list them in the same attribute specifier,
+separated by commas:
+
+@smallexample
+[[gnu::section ("bar"), gnu::weak]]
+void g1 (void) @{ f1 (); @}
+
+__attribute__ ((section ("bar"), weak))
+void g2 (void) @{ f2 (); @}
+@end smallexample
+
+@noindent
+Alternatively, you can use multiple attribute specifiers:
+
+@smallexample
+[[gnu::section ("bar")]] [[gnu::weak]]
+void g3 (void) @{ f1 (); @}
+
+__attribute__ ((section ("bar"))) __attribute__ ((weak))
+void g4 (void) @{ f2 (); @}
+@end smallexample
+
+Compatible attribute specifications on distinct declarations
+of the same entity are merged.  An attribute specification that is not
+compatible with attributes already applied to a declaration of the same
+entity is ignored with a warning.
+
+Every GNU-specific attribute has an alternate name that is prefixed
+and suffixed by two underscores; for example, the alternate name of
+@code{weak} is @code{__weak__}.  These alternate names are useful in
+library header files in case they are included into files that have
+redefined the base name of the attribute as a preprocessor macro.
 
 @menu
 * Function Attributes:: Declaring that functions have no side effects,
@@ -1648,7 +1781,7 @@ GNU C and C++ dialects.
 * Label Attributes::    Specifying attributes on labels.
 * Enumerator Attributes:: Specifying attributes on enumerators.
 * Statement Attributes:: Specifying attributes on statements.
-* Attribute Syntax::    Formal syntax for attributes.
+* GNU Attribute Syntax::    Formal syntax for attributes.
 @end menu
 
 @node Function Attributes
@@ -1679,7 +1812,7 @@ GNU syntax using @samp{__attribute__ ((...))} annotations, and the
 newer standard C and C++ syntax using @samp{[[...]]} with the
 @samp{gnu::} prefix on attribute names.  Note that the exact rules for
 placement of attributes in your source code are different depending on
-which syntax you use.  @xref{Attribute Syntax}, for details.
+which syntax you use.  @xref{GNU Attribute Syntax}, for details.
 
 Compatible attribute specifications on distinct declarations
 of the same function are merged.  An attribute specification that is not
@@ -1756,7 +1889,16 @@ GCC plugins may provide their own attributes.
 @node Common Function Attributes
 @subsubsection Common Function Attributes
 
-The following attributes are supported on most targets.
+The following GNU-specific attributes are supported on most targets in
+both C and C++.  When using the standard syntax, you must prefix their
+names with @samp{gnu::}, such as @code{gnu::section}.
+
+@xref{C++ Attributes}, for additional GNU attributes that are specific
+to C++.
+
+With the @option{-fopenmp} option, GCC additionally recognizes OpenMP
+directives, with names prefixed with @samp{omp::}, using the standard
+@samp{[[]]} syntax.  @xref{OpenMP}.
 
 @table @code
 @c Keep this table alphabetized by attribute name.  Treat _ as space.
@@ -7327,7 +7469,7 @@ GNU syntax using @samp{__attribute__ ((...))} annotations, and the
 newer standard C and C++ syntax using @samp{[[...]]} with the
 @samp{gnu::} prefix on attribute names.  Note that the exact rules for
 placement of attributes in your source code are different depending on
-which syntax you use.  @xref{Attribute Syntax}, for details.
+which syntax you use.  @xref{GNU Attribute Syntax}, for details.
 
 @menu
 * Common Variable Attributes::
@@ -8577,7 +8719,7 @@ GNU syntax using @samp{__attribute__ ((...))} annotations, and the
 newer standard C and C++ syntax using @samp{[[...]]} with the
 @samp{gnu::} prefix on attribute names.  Note that the exact rules for
 placement of attributes in your source code are different depending on
-which syntax you use.  @xref{Attribute Syntax}, for details.
+which syntax you use.  @xref{GNU Attribute Syntax}, for details.
 
 You may specify type attributes in an enum, struct or union type
 declaration or definition by placing them immediately after the
@@ -9609,7 +9751,7 @@ attributes on variables.
 @subsection Label Attributes
 @cindex Label Attributes
 
-GCC allows attributes to be set on C labels.  @xref{Attribute Syntax}, for 
+GCC allows attributes to be set on C labels.  @xref{GNU Attribute Syntax}, for
 details of the exact syntax for using attributes.  Other attributes are 
 available for functions (@pxref{Function Attributes}), variables 
 (@pxref{Variable Attributes}), enumerators (@pxref{Enumerator Attributes}),
@@ -9665,7 +9807,7 @@ with computed goto or @code{asm goto}.
 @subsection Enumerator Attributes
 @cindex Enumerator Attributes
 
-GCC allows attributes to be set on enumerators.  @xref{Attribute Syntax}, for
+GCC allows attributes to be set on enumerators.  @xref{GNU Attribute Syntax}, for
 details of the exact syntax for using attributes.  Other attributes are
 available for functions (@pxref{Function Attributes}), variables
 (@pxref{Variable Attributes}), labels (@pxref{Label Attributes}), statements
@@ -9710,7 +9852,7 @@ same manner as the @code{deprecated} attribute.
 @subsection Statement Attributes
 @cindex Statement Attributes
 
-GCC allows attributes to be set on statements.  @xref{Attribute Syntax},
+GCC allows attributes to be set on statements.  @xref{GNU Attribute Syntax},
 for details of the exact syntax for using attributes.  Other attributes are
 available for functions (@pxref{Function Attributes}), variables
 (@pxref{Variable Attributes}), labels (@pxref{Label Attributes}), enumerators
@@ -9858,8 +10000,8 @@ variable is a function argument, because those are in scope
 for the whole function.
 @end table
 
-@node Attribute Syntax
-@subsection Attribute Syntax
+@node GNU Attribute Syntax
+@subsection GNU Attribute Syntax
 @cindex attribute syntax
 @cindex C standard attributes
 @cindex C++ standard attributes
@@ -9870,27 +10012,7 @@ GCC provides two different ways to specify attributes: the standard C
 and C++ syntax using double square brackets, and the older GNU
 extension syntax using the @code{@w{__attribute__}} keyword, which predates
 the adoption of the standard syntax and is still widely used in older
-code.
-
-The standard @samp{[[]]} attribute syntax is recognized by GCC's
-default language dialect for both C and C++.  More specifically, this
-syntax was first introduced in the C++11 language standard
-(@pxref{Standards}), and is supported by GCC in C++ code with
-@option{-std=c++11} or @option{-std=gnu++11} or later.  It is also
-part of the C23 language standard and is supported when compiling C
-code with @option{-std=c23} or @option{-std=gnu17} or later.
-
-When using GNU-specific attributes in the standard syntax, you must
-prefix their names with @samp{gnu::}, such as @code{gnu::section}.
-Refer to the relevant language standards for exact details on the
-placement of @samp{[[]]} attributes within your code, as they differ
-in some details from the rules for the GNU attribute syntax.
-
-With the @option{-fopenmp} option, GCC additionally recognizes OpenMP
-directives, with names prefixed with @samp{omp::}, using the standard
-@samp{[[]]} syntax.  @xref{OpenMP}.
-
-The remainder of this section describes the details of the GNU extension
+code.  This section describes the details of the GNU extension
 @code{__attribute__} syntax,
 and the constructs to which attribute specifiers bind, for the C
 language.  Some details may vary for C++ and Objective-C@.  Because of
@@ -17854,7 +17976,7 @@ restrictions as the argument to @code{typeof} (@pxref{Typeof}).  The
 @var{attribute} argument is an attribute name optionally followed by
 a comma-separated list of arguments enclosed in parentheses.  Both forms
 of attribute names---with and without double leading and trailing
-underscores---are recognized.  @xref{Attribute Syntax}, for details.
+underscores---are recognized.  @xref{GNU Attribute Syntax}, for details.
 When no attribute arguments are specified for an attribute that expects
 one or more arguments the function returns @code{true} if
 @var{type-or-expression} has been declared with the attribute regardless
