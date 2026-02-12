@@ -1768,26 +1768,51 @@ _gfortran_caf_form_team (int team_no, caf_team_t *team, int *new_index,
     }
   else
     {
-      int im;
-      int exp = -1;
+      int im, cnt;
+      int exp;
 
       __atomic_fetch_add (&t->u.image_info->image_map_size, 1,
 			  __ATOMIC_SEQ_CST);
       sync_team (caf_current_team);
 
-      im = caf_current_team->index * t->u.image_info->image_map_size
+      cnt = t->u.image_info->image_map_size;
+      /* Try to map the source team's images linearly into the domain of the
+	 new team.  This works for scattered teams distributions.  I.e. when a
+	 set of images is distritubed in this way:
+	 Image no: 1 2 3 4 5 6
+	 New team: 1 2 1 2 1 2
+	 but not for:
+	 Image no: 1 2 3 4 5 6
+	 New team: 1 1 1 2 2 2
+      */
+      im = caf_current_team->index * cnt
 	   / caf_current_team->u.image_info->image_count.count;
       /* Map our old index into the domain of the new team's size.  */
-      if (__atomic_compare_exchange_n (&t->u.image_info->image_map[im], &exp,
-				       this_image.image_num, false,
-				       __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST))
-	t->index = im;
-      else
+      do
 	{
-	  caf_internal_error (cannot_assign_index, stat, errmsg, errmsg_len);
-	  return;
+	  /* (Re-)set exp.  */
+	  exp = -1;
+	  if (__atomic_compare_exchange_n (&t->u.image_info->image_map[im],
+					   &exp, this_image.image_num, false,
+					   __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST))
+	    {
+	      t->index = im;
+	      goto form_team_finish;
+	    }
+	  /* Find a free new_index in the newly formed team for this image.
+	     There no longer is any order to the teams.  */
+	  ++im;
+	  if (im >= t->u.image_info->image_map_size)
+	    im = 0;
+	  --cnt;
 	}
+      while (cnt > 0);
+
+      caf_internal_error (cannot_assign_index, stat, errmsg, errmsg_len);
+      return;
     }
+
+form_team_finish:
   sync_team (caf_current_team);
 
   caf_teams_formed = t;
