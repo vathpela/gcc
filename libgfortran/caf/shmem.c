@@ -465,6 +465,7 @@ _gfortran_caf_deregister (caf_token_t *token, caf_deregister_t type, int *stat,
       free (ca);
       free (TOKEN (*token));
       *token = NULL;
+      sync_team (caf_current_team);
     }
   else
     {
