@@ -45,8 +45,8 @@ typedef struct
 
 /* 64 bit to 64 bit hash function.  */
 
-static inline uint64_t
-hash (uint64_t key)
+static inline size_t
+hash (size_t key)
 {
   key ^= (key >> 30);
   key *= 0xbf58476d1ce4e5b9ul;
@@ -83,7 +83,7 @@ hmiadd (hashmap *hm, size_t s, ssize_t o)
 
 /* Get the expected offset for entry id.  */
 
-static inline ssize_t
+static inline size_t
 get_expected_offset (hashmap *hm, memid id)
 {
   return hash (id) >> (VOIDP_BITS - hm->s->bitnum);
@@ -115,7 +115,7 @@ hashmap_init_supervisor (hashmap *hm, hashmap_shared *hs, allocator *a)
    the expected position and the maximum lookahead.  */
 
 static ssize_t
-scan_inside_lookahead (hashmap *hm, ssize_t expected_off, memid id)
+scan_inside_lookahead (hashmap *hm, size_t expected_off, memid id)
 {
   ssize_t lookahead;
   hashmap_entry *data;
@@ -135,7 +135,7 @@ scan_inside_lookahead (hashmap *hm, ssize_t expected_off, memid id)
    to the expected position.  */
 
 static ssize_t
-scan_empty (hashmap *hm, ssize_t expected_off)
+scan_empty (hashmap *hm, size_t expected_off)
 {
   hashmap_entry *data;
 
