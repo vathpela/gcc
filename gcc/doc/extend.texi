@@ -5599,12 +5599,71 @@ The default for the attribute is controlled by @option{-fzero-call-used-regs}.
 @subsubsection AArch64 Attributes
 
 The following target-specific function attributes are available for the
-AArch64 target.  For the most part, these options mirror the behavior of
-similar command-line options (@pxref{AArch64 Options}), but on a
-per-function basis.
+AArch64 target.
 
 @table @code
-@cindex @code{general-regs-only} function attribute, AArch64
+
+@cindex @code{target} function attribute, AArch64
+@item target (@var{options})
+This attribute applies to functions.
+
+As discussed in @ref{Common Attributes}, the @code{target} function attribute
+allows you to specify target-specific compilation options on a per-function
+basis.
+For the most part, these options mirror the behavior of
+similar command-line options (@pxref{AArch64 Options}).
+
+The target attributes can be specified as follows:
+
+@smallexample
+__attribute__((target("@var{attr-string}")))
+int
+f (int a)
+@{
+  return a + 5;
+@}
+@end smallexample
+
+@noindent
+where @code{@var{attr-string}} is one of the option name strings
+specified below.
+
+Additionally, the architectural extension string may be specified on its
+own.  This can be used to turn on and off particular architectural extensions
+without having to specify a particular architecture version or core.  Example:
+
+@smallexample
+__attribute__((target("+crc+nocrypto")))
+int
+foo (int a)
+@{
+  return a + 5;
+@}
+@end smallexample
+
+In this example @code{target("+crc+nocrypto")} enables the @code{crc}
+extension and disables the @code{crypto} extension for the function @code{foo}
+without modifying an existing @option{-march=} or @option{-mcpu} option.
+
+Multiple options can be specified in the same attribute by separating them with
+a comma.  For example:
+@smallexample
+__attribute__((target("arch=armv8-a+crc+crypto,tune=cortex-a53")))
+int
+foo (int a)
+@{
+  return a + 5;
+@}
+@end smallexample
+
+@noindent
+is valid; this compiles function @code{foo} for ARMv8-A with @code{crc}
+and @code{crypto} extensions, and tunes it for @code{cortex-a53}.
+
+These are the permitted options:
+
+@table @samp
+@cindex @code{target("general-regs-only")} function attribute, AArch64
 @item general-regs-only
 Indicates that no floating-point or Advanced SIMD registers should be
 used when generating code for this function.  If the function explicitly
@@ -5612,7 +5671,7 @@ uses floating-point code, then the compiler gives an error.  This is
 the same behavior as that of the command-line option
 @option{-mgeneral-regs-only}.
 
-@cindex @code{fix-cortex-a53-835769} function attribute, AArch64
+@cindex @code{target("fix-cortex-a53-835769")} function attribute, AArch64
 @item fix-cortex-a53-835769
 Indicates that the workaround for the Cortex-A53 erratum 835769 should be
 applied to this function.  To explicitly disable the workaround for this
@@ -5620,13 +5679,13 @@ function specify the negated form: @code{no-fix-cortex-a53-835769}.
 This corresponds to the behavior of the command-line options
 @option{-mfix-cortex-a53-835769} and @option{-mno-fix-cortex-a53-835769}.
 
-@cindex @code{cmodel=} function attribute, AArch64
+@cindex @code{target("cmodel=")} function attribute, AArch64
 @item cmodel=
 Indicates that code should be generated for a particular code model for
 this function.  The behavior and permissible arguments are the same as
 for the command-line option @option{-mcmodel=}.
 
-@cindex @code{strict-align} function attribute, AArch64
+@cindex @code{target("strict-align")} function attribute, AArch64
 @item strict-align
 @itemx no-strict-align
 @code{strict-align} indicates that the compiler should not assume that unaligned
@@ -5635,7 +5694,7 @@ that aligned memory references are handled by the system, the inverse attribute
 @code{no-strict-align} can be specified.  The behavior is same as for the
 command-line option @option{-mstrict-align} and @option{-mno-strict-align}.
 
-@cindex @code{omit-leaf-frame-pointer} function attribute, AArch64
+@cindex @code{target("omit-leaf-frame-pointer")} function attribute, AArch64
 @item omit-leaf-frame-pointer
 Indicates that the frame pointer should be omitted for a leaf function call.
 To keep the frame pointer, the inverse attribute
@@ -5643,31 +5702,31 @@ To keep the frame pointer, the inverse attribute
 the same behavior as the command-line options @option{-momit-leaf-frame-pointer}
 and @option{-mno-omit-leaf-frame-pointer}.
 
-@cindex @code{tls-dialect=} function attribute, AArch64
+@cindex @code{target("tls-dialect=")} function attribute, AArch64
 @item tls-dialect=
 Specifies the TLS dialect to use for this function.  The behavior and
 permissible arguments are the same as for the command-line option
 @option{-mtls-dialect=}.
 
-@cindex @code{arch=} function attribute, AArch64
+@cindex @code{target("arch=")} function attribute, AArch64
 @item arch=
 Specifies the architecture version and architectural extensions to use
 for this function.  The behavior and permissible arguments are the same as
 for the @option{-march=} command-line option.
 
-@cindex @code{tune=} function attribute, AArch64
+@cindex @code{target("tune=")} function attribute, AArch64
 @item tune=
 Specifies the core for which to tune the performance of this function.
 The behavior and permissible arguments are the same as for the @option{-mtune=}
 command-line option.
 
-@cindex @code{cpu=} function attribute, AArch64
+@cindex @code{target("cpu=")} function attribute, AArch64
 @item cpu=
 Specifies the core for which to tune the performance of this function and also
 whose architectural features to use.  The behavior and valid arguments are the
 same as for the @option{-mcpu=} command-line option.
 
-@cindex @code{sign-return-address} function attribute, AArch64
+@cindex @code{target("sign-return-address")} function attribute, AArch64
 @item sign-return-address
 Select the function scope on which return address signing will be applied.  The
 behavior and permissible arguments are the same as for the command-line option
@@ -5675,20 +5734,20 @@ behavior and permissible arguments are the same as for the command-line option
 attribute is deprecated.  The @code{branch-protection} attribute should
 be used instead.
 
-@cindex @code{branch-protection} function attribute, AArch64
+@cindex @code{target("branch-protection")} function attribute, AArch64
 @item branch-protection
 Select the function scope on which branch protection will be applied.  The
 behavior and permissible arguments are the same as for the command-line option
 @option{-mbranch-protection=}.  The default value is @code{none}.
 
-@cindex @code{outline-atomics} function attribute, AArch64
+@cindex @code{target("outline-atomics")} function attribute, AArch64
 @item outline-atomics
 @itemx no-outline-atomics
 Enable or disable calls to out-of-line helpers to implement atomic operations.
 This corresponds to the behavior of the command-line options
 @option{-moutline-atomics} and @option{-mno-outline-atomics}.
 
-@cindex @code{max-vectorization} function attribute, AArch64
+@cindex @code{target("max-vectorization")} function attribute, AArch64
 @item max-vectorization
 @itemx no-max-vectorization
 @code{max-vectorization} tells GCC's vectorizer to treat all vector
@@ -5698,7 +5757,7 @@ this behavior.
 This corresponds to the behavior of the command-line options
 @option{-mmax-vectorization} and @option{-mno-max-vectorization}.
 
-@cindex @code{indirect_return} function attribute, AArch64
+@cindex @code{target("indirect_return")} function attribute, AArch64
 @item indirect_return
 The @code{indirect_return} attribute can be applied to a function type
 to indicate that the function may return via an indirect branch instead
@@ -5708,7 +5767,7 @@ threads, such as the POSIX @code{swapcontext} function.  This attribute
 adds a @code{BTI J} instruction when BTI is enabled e.g. via
 @option{-mbranch-protection}.
 
-@cindex @code{preserve_none} function attribute, AArch64
+@cindex @code{target("preserve_none")} function attribute, AArch64
 @item preserve_none
 Use this attribute to change the procedure call standard of the specified
 function to the preserve-none variant.
@@ -5731,54 +5790,9 @@ This ABI has not been stabilized, and may be subject to change in future
 versions.
 @end table
 
-The above target attributes can be specified as follows:
-
-@smallexample
-__attribute__((target("@var{attr-string}")))
-int
-f (int a)
-@{
-  return a + 5;
-@}
-@end smallexample
-
-where @code{@var{attr-string}} is one of the attribute strings specified above.
-
-Additionally, the architectural extension string may be specified on its
-own.  This can be used to turn on and off particular architectural extensions
-without having to specify a particular architecture version or core.  Example:
-
-@smallexample
-__attribute__((target("+crc+nocrypto")))
-int
-foo (int a)
-@{
-  return a + 5;
-@}
-@end smallexample
-
-In this example @code{target("+crc+nocrypto")} enables the @code{crc}
-extension and disables the @code{crypto} extension for the function @code{foo}
-without modifying an existing @option{-march=} or @option{-mcpu} option.
-
-Multiple target function attributes can be specified by separating them with
-a comma.  For example:
-@smallexample
-__attribute__((target("arch=armv8-a+crc+crypto,tune=cortex-a53")))
-int
-foo (int a)
-@{
-  return a + 5;
-@}
-@end smallexample
-
-is valid and compiles function @code{foo} for ARMv8-A with @code{crc}
-and @code{crypto} extensions and tunes it for @code{cortex-a53}.
-
-@subsubheading Inlining rules
-Specifying target attributes on individual functions or performing link-time
-optimization across translation units compiled with different target options
-can affect function inlining rules:
+Specifying @code{target} attributes on individual functions or performing
+link-time optimization across translation units compiled with different
+target options can affect function inlining rules.
 
 In particular, a caller function can inline a callee function only if the
 architectural features available to the callee are a subset of the features
@@ -5799,6 +5813,8 @@ Note that CPU tuning options and attributes such as the @option{-mcpu=},
 @option{-mtune=} do not inhibit inlining unless the CPU specified by the
 @option{-mcpu=} option or the @code{cpu=} attribute conflicts with the
 architectural feature rules specified above.
+
+@end table
 
 @node AMD GCN Attributes
 @subsubsection AMD GCN Attributes
