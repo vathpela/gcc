@@ -5394,7 +5394,11 @@ eval_substitute (location_t loc, const constexpr_ctx *ctx,
       ret = finish_template_variable (ret, tf_none);
     }
   else
-    ret = lookup_template_function (r, rvec);
+    {
+      if (DECL_FUNCTION_TEMPLATE_P (r))
+	r = ovl_make (r, NULL_TREE);
+      ret = lookup_template_function (r, rvec);
+    }
   return get_reflection_raw (loc, ret);
 }
 
