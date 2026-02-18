@@ -343,6 +343,16 @@ else
    freelocale uselocale strerror_l strtof128 strfromf128)
 fi
 
+# Check for existing and usable pthreads.
+AX_PTHREAD([
+  enable_caf_shmem=true
+  CAF_SHMEM_CFLAGS="$PTHREAD_CFLAGS"
+  CAF_SHMEM_LIBS="$PTHREAD_LIBS"
+  ], [
+  enable_caf_shmem=false
+  ])
+AM_CONDITIONAL([ENABLE_CAF_SHMEM], [test x$enable_caf_shmem = xtrue])
+
 # Check strerror_r, cannot be above as versions with two and three arguments exist
 LIBGFOR_CHECK_STRERROR_R
 

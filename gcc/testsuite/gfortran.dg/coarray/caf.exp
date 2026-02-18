@@ -29,6 +29,7 @@
 # Load procedures from common libraries. 
 load_lib gfortran-dg.exp
 load_lib atomic-dg.exp
+load_lib target-libpath.exp
 
 # If a testcase doesn't have special options, use these.
 global DEFAULT_FFLAGS
@@ -48,6 +49,11 @@ global gfortran_test_path
 global gfortran_aux_module_flags
 set gfortran_test_path $srcdir/$subdir
 set gfortran_aux_module_flags $DEFAULT_FFLAGS
+global enable_caf_shmem
+set gccpath [get_multilibs]
+set shlib_ext [get_shlib_extension]
+set enable_caf_shmem [expr [file exists "${gccpath}/libgfortran/.libs/libcaf_shmem.a"] || \
+    [file exists "${gccpath}/libgfortran/.libs/libcaf_shmem.${shlib_ext}"] ]
 
 proc dg-compile-aux-modules { args } {
     global gfortran_test_path
@@ -110,11 +116,13 @@ foreach test [lsort [glob -nocomplain $srcdir/$subdir/*.\[fF\]{,90,95,03,08} ]] 
 	cleanup-modules ""
     }
 
-    foreach flags $option_list {
-        verbose "Testing $nshort (libcaf_shmem), $flags" 1
-        set gfortran_aux_module_flags "-fcoarray=lib $flags -lcaf_shmem"
-        dg-test $test "-fcoarray=lib $flags -lcaf_shmem" {}
-        cleanup-modules ""
+    if "$enable_caf_shmem" {
+        foreach flags $option_list {
+            verbose "Testing $nshort (libcaf_shmem), $flags" 1
+            set gfortran_aux_module_flags "-fcoarray=lib $flags -lcaf_shmem"
+            dg-test $test "-fcoarray=lib $flags -lcaf_shmem" {}
+            cleanup-modules ""
+        }
     }
 }
 torture-finish

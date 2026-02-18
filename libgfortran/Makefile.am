@@ -68,6 +68,8 @@ libcaf_single_la_LDFLAGS = -static
 libcaf_single_la_DEPENDENCIES = $(libcaf_shared_DEPS)
 libcaf_single_la_LINK = $(LINK) $(libcaf_single_la_LDFLAGS)
 
+if ENABLE_CAF_SHMEM
+libcaf_shmem_la_CFLAGS = $(CAF_SHMEM_CFLAGS)
 libcaf_shmem_la_SOURCES = $(libcaf_shared_SRCS) \
 	caf/shmem.c caf/shmem/alloc.c caf/shmem/allocator.c \
 	caf/shmem/collective_subroutine.c caf/shmem/counter_barrier.c \
@@ -80,7 +82,8 @@ libcaf_shmem_la_DEPENDENCIES = $(libcaf_shared_DEPS) caf/shmem/alloc.h \
 	caf/shmem/counter_barrier.h caf/shmem/hashmap.h \
 	caf/shmem/shared_memory.h caf/shmem/supervisor.h caf/shmem/sync.h \
 	caf/shmem/teams_mgmt.h caf/shmem/thread_support.h
-libcaf_shmem_la_LINK = $(LINK) $(libcaf_shmem_la_LDFLAGS)
+libcaf_shmem_la_LINK = $(LINK) $(libcaf_shmem_la_LDFLAGS) $(CAF_SHMEM_LIBS)
+endif
 
 if IEEE_SUPPORT
 fincludedir = $(libdir)/gcc/$(target_alias)/$(gcc_version)$(MULTISUBDIR)/finclude
