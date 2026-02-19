@@ -8120,8 +8120,6 @@ check_out_of_consteval_use_r (tree *tp, int *walk_subtrees, void *pset)
       /* Don't walk INIT_EXPRs, because we'd emit bogus errors about
 	 member initializers.  */
       || TREE_CODE (t) == INIT_EXPR
-      /* Don't walk BIND_EXPR_VARS.  */
-      || TREE_CODE (t) == BIND_EXPR
       /* And don't recurse on DECL_EXPRs.  */
       || TREE_CODE (t) == DECL_EXPR)
     {
@@ -8149,6 +8147,46 @@ check_out_of_consteval_use_r (tree *tp, int *walk_subtrees, void *pset)
       if (tree ret = cp_walk_tree (&vexpr, check_out_of_consteval_use_r, pset,
 				   (hash_set<tree> *) pset))
 	return ret;
+    }
+
+  if (TREE_CODE (t) == BIND_EXPR)
+    {
+      if (tree r = cp_walk_tree (&BIND_EXPR_BODY (t),
+				 check_out_of_consteval_use_r, pset,
+				 static_cast<hash_set<tree> *>(pset)))
+	return r;
+      /* Don't walk BIND_EXPR_VARS.  */
+      *walk_subtrees = false;
+      return NULL_TREE;
+    }
+
+  if (TREE_CODE (t) == IF_STMT)
+    {
+      if (IF_STMT_CONSTEVAL_P (t))
+	{
+	  if (tree r = cp_walk_tree (&ELSE_CLAUSE (t),
+				     check_out_of_consteval_use_r, pset,
+				     static_cast<hash_set<tree> *>(pset)))
+	    return r;
+	  /* Don't walk the consteval branch.  */
+	  *walk_subtrees = false;
+	  return NULL_TREE;
+	}
+      else if (IF_STMT_CONSTEXPR_P (t))
+	{
+	  if (tree r = cp_walk_tree (&THEN_CLAUSE (t),
+				     check_out_of_consteval_use_r, pset,
+				     static_cast<hash_set<tree> *>(pset)))
+	    return r;
+	  if (tree r = cp_walk_tree (&ELSE_CLAUSE (t),
+				     check_out_of_consteval_use_r, pset,
+				     static_cast<hash_set<tree> *>(pset)))
+	    return r;
+	  /* Don't walk the condition -- it's a manifestly constant-evaluated
+	     context.  */
+	  *walk_subtrees = false;
+	  return NULL_TREE;
+	}
     }
 
   /* Now check the type to see if we are dealing with a consteval-only
