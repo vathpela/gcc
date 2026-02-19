@@ -2305,10 +2305,14 @@ It is undefined what happens if @var{cleanup_function} does not
 return normally.
 
 @cindex @code{cold} attribute
+@cindex @code{hot} attribute
 @item cold
-The @code{cold} attribute can apply to functions or labels.
+@itemx hot
 
-The @code{cold} attribute on functions is used to inform the compiler that
+These attributes can apply to functions or labels.  In C++,
+they can also apply to classes, structs, or unions.
+
+The @code{cold} attribute on a function informs the compiler that
 the function is unlikely to be executed.  The function is optimized for
 size rather than speed and on many targets it is placed into a special
 subsection of the text section so all cold functions appear close together,
@@ -2316,17 +2320,29 @@ improving code locality of non-cold parts of program.  The paths leading
 to calls of cold functions within code are marked as unlikely by the branch
 prediction mechanism.  It is thus useful to mark functions used to handle
 unlikely conditions, such as @code{perror}, as cold to improve optimization
-of hot functions that do call marked functions in rare occasions.  In C++,
-the @code{cold} attribute can be applied to types with the effect of being
-propagated to member functions.  See
-@ref{C++ Attributes}.
+of hot functions that do call marked functions in rare occasions.
 
-When profile feedback is available, via @option{-fprofile-use}, cold functions
-are automatically detected and this attribute is ignored.
+The @code{hot} attribute on a function informs the compiler that
+the function is a hot spot of the compiled program.  The function is
+optimized more aggressively and on many targets it is placed into a special
+subsection of the text section so all hot functions appear close together,
+improving locality.
 
-Used as a statement attribute associated with a label,
+In C++, the @code{cold} or @code{hot} attribute on a type has the
+effect of treating every member function of the type,
+including implicit special member functions, as having that attribute.
+If a member function is marked with the opposite @code{hot} or @code{cold}
+attribute, that takes precedence over the attribute specified on the class.
+
+When profile feedback is available, via @option{-fprofile-use}, hot and
+cold functions are automatically detected and this attribute is ignored.
+
+When used as a statement attribute associated with a label,
 the @code{cold} attribute informs the compiler that
-the path following the label is unlikely to be executed.  This attribute
+the path following the label is unlikely to be executed, and
+@code{hot} informs the compiler that the
+path following the label is more likely than paths that are not so
+annotated.  This attribute
 is used in cases where @code{__builtin_expect} cannot be used, for instance
 with computed goto or @code{asm goto}.
 
@@ -3082,27 +3098,6 @@ with other languages may pose difficulties.  It should interoperate with
 Ada Booleans defined with the same size and equivalent representation
 clauses, and with enumerations or other languages' integral types that
 correspond to C's chosen integral type.
-
-@cindex @code{hot} attribute
-@item hot
-This attribute can appear as a function attribute or as a statement
-attribute applying to a label.
-
-The @code{hot} attribute on a function is used to inform the compiler that
-the function is a hot spot of the compiled program.  The function is
-optimized more aggressively and on many targets it is placed into a special
-subsection of the text section so all hot functions appear close together,
-improving locality.  In C++, the @code{hot} attribute can be applied to types
-with the effect of being propagated to member functions.  See
-@ref{C++ Attributes}.
-
-When profile feedback is available, via @option{-fprofile-use}, hot functions
-are automatically detected and this attribute is ignored.
-
-The @code{hot} attribute on a label is used to inform the compiler that
-the path following the label is more likely than paths that are not so
-annotated.  This attribute is used in cases where @code{__builtin_expect}
-cannot be used, for instance with computed goto or @code{asm goto}.
 
 @cindex @code{ifunc} function attribute
 @cindex indirect functions
@@ -31171,34 +31166,16 @@ does not have constructors or destructors.
 
 @cindex @code{cold} type attribute
 @item cold
-
-In addition to functions and labels, GNU C++ allows the @code{cold}
-attribute to be used on C++ classes, structs, or unions.
-
-Applying the @code{cold} attribute on a type has the effect of
-treating every member function of the type, including implicit special
-member functions, as cold.  If a member function is marked with the
-@code{hot} function attribute, the @code{hot} attribute takes
-precedence and the @code{cold} attribute is not propagated.
-
-For the effects of the @code{cold} attribute on functions, see
-@ref{Common Attributes}.
-
 @cindex @code{hot} type attribute
-@item hot
-
-In addition to functions and labels, GNU C++ allows the @code{hot}
-attribute to be used on C++ classes, structs, or unions.
+@item cold
+@itemx hot
+In addition to functions and labels, GNU C++ allows the @code{cold} and
+@code{hot} attributes to be used on C++ classes, structs, or unions.
 
 Applying
-the @code{hot} attribute on a type has the effect of treating every
+these attributes on a type has the effect of propagating it to every
 member function of the type, including implicit special member
-functions, as hot.  If a member function is marked with the
-@code{cold} function attribute, the @code{cold} attribute takes
-precedence and the @code{hot} attribute is not propagated.
-
-For the effects of the @code{hot} attribute on functions, see
-@ref{Common Attributes}.
+functions.  @xref{Common Attributes}.
 
 @end table
 
