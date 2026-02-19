@@ -13789,7 +13789,7 @@ proc check_effective_target_arm_v8_3a_complex_neon_ok_nocache { } {
     if { [istarget arm*-*-*] } {
 	set flag_opts {
 	    ""
-	    "-mcpu=unset -march=armv8.3-a+simd"
+	    "-mfpu=auto -mcpu=unset -march=armv8.3-a+simd"
 	    "-mfloat-abi=softfp -mfpu=auto -mcpu=unset -march=armv8.3-a+simd"
 	    "-mfloat-abi=hard -mfpu=auto -mcpu=unset -march=armv8.3-a+simd"
 	}
