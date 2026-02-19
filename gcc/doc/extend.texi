@@ -2491,8 +2491,8 @@ member or a pointer field of a structure.
 It indicates that the number
 of the elements of the array that is held by the flexible array member
 field, or is pointed to by the pointer field, is given by the field
-"@var{count}" in the same structure as the flexible array member or the
-pointer field.
+named by the identifer @var{count} in the same structure as the
+flexible array member or the pointer field.
 
 This attribute is available only in C for now.
 In C++ this attribute is ignored.
@@ -2721,7 +2721,7 @@ object remains visible outside the current compilation unit.
 If @option{-fwhole-program} is used together with @option{-flto} and 
 @command{gold} is used as the linker plugin, 
 @code{externally_visible} attributes are automatically added to functions 
-(not variable yet due to a current @command{gold} issue) 
+(not variables yet due to a current @command{gold} issue)
 that are accessed outside of LTO objects according to resolution file
 produced by @command{gold}.
 For other linkers that cannot generate resolution file,
@@ -3808,7 +3808,7 @@ This is useful in detecting uses of such arrays or pointers with functions
 that expect @code{NUL}-terminated strings, and to avoid warnings when such
 an array or pointer is used as an argument to a bounded string manipulation
 function such as @code{strncpy}.  For example, without the attribute, GCC
-will issue a warning for the @code{strncpy} call below because it may
+issues a warning for the @code{strncpy} call below because it may
 truncate the copy without appending the terminating @code{NUL} character.
 Using the attribute makes it possible to suppress the warning.  However,
 when the array is declared with the attribute the call to @code{strlen} is
@@ -3891,7 +3891,7 @@ fatal (/* @r{@dots{}} */)
 @noindent
 The @code{noreturn} keyword tells the compiler to assume that
 @code{fatal} cannot return.  It can then optimize without regard to what
-would happen if @code{fatal} ever did return.  This makes slightly
+would happen if @code{fatal} ever does return.  This makes slightly
 better code.  More importantly, it helps avoid spurious warnings of
 uninitialized variables.
 
@@ -3899,7 +3899,7 @@ The @code{noreturn} keyword does not affect the exceptional path when that
 applies: a @code{noreturn}-marked function may still return to the caller
 by throwing an exception or calling @code{longjmp}.
 
-In order to preserve backtraces, GCC will never turn calls to
+In order to preserve backtraces, GCC never turns calls to
 @code{noreturn} functions into tail calls.
 
 Do not assume that registers saved by the calling function are
@@ -3943,7 +3943,8 @@ char *example_1 (const char *p)
   __attribute__((null_terminated_string_arg (1)));
 @end smallexample
 
-the analyzer will check that any non-null pointers passed to the function
+@noindent
+the analyzer checks that any non-null pointers passed to the function
 are validly terminated.
 
 If the parameter must be non-null, it is appropriate to use both this
@@ -3971,7 +3972,8 @@ extern char *example_fn (const char *p, size_t n)
                  nonnull (1)));
 @end smallexample
 
-the analyzer will require the first parameter to be non-null, and either
+@noindent
+the analyzer requires the first parameter to be non-null, and either
 be validly null-terminated, or validly readable up to the size specified by
 the second parameter.
 
@@ -4066,9 +4068,9 @@ struct foo
 @};
 @end smallexample
 
-@emph{Note:} The 4.1, 4.2 and 4.3 series of GCC ignore the
-@code{packed} attribute on bit-fields of type @code{char}.  This has
-been fixed in GCC 4.4 but the change can lead to differences in the
+@emph{Note:} The 4.1, 4.2 and 4.3 series of GCC ignored the
+@code{packed} attribute on bit-fields of type @code{char}.  This was
+fixed in GCC 4.4 but the change could lead to differences in the
 structure layout.  See the documentation of
 @option{-Wpacked-bitfield-compat} for more information.
 
@@ -4137,8 +4139,8 @@ to prevent recursion.
 @item persistent
 This attribute applies to variables.
 
-Any variables with the @code{persistent} attribute will not be initialized by
-the C runtime startup code, but will be initialized by the program
+Any variables with the @code{persistent} attribute are not initialized by
+the C runtime startup code, but instead are initialized by the program
 loader.  This enables the value of the variable to persist
 between processor resets.
 
@@ -4218,7 +4220,8 @@ similar to functions with the @code{pure} attribute, except that
 @code{pure} and with @code{reproducible} attributes can be optimized by common
 subexpression elimination if the global state or anything reachable through
 the pointer/reference arguments isn't modified, but only functions with
-@code{pure} attribute can be optimized by dead code elimination if their result is
+@code{pure} attribute can be optimized by dead code elimination if their
+result is
 unused or is used only by dead code.  Reproducible functions without pointer
 or reference arguments with @code{void} return type are diagnosed because
 they can't store any results and don't have other observable side-effects
@@ -4420,7 +4423,7 @@ assume that such versions are available at link time (provided
 in the same or another translation unit).  Generated versions are
 target-dependent and described in the corresponding Vector ABI document.  For
 x86_64 target this document can be found
-@w{@uref{https://sourceware.org/glibc/wiki/libmvec?action=AttachFile&do=view&target=VectorABI.txt,here}}.
+@uref{https://sourceware.org/glibc/wiki/libmvec?action=AttachFile&do=view&target=VectorABI.txt,here}.
 
 The optional argument @var{mask} may have the value
 @code{notinbranch} or @code{inbranch},
@@ -4480,7 +4483,7 @@ declarations.
 
 The @code{strub} attribute defines stack-scrubbing properties of functions and
 variables, so that functions that access sensitive data can have their
-stack frames zeroed-out upon returning or propagating exceptions.  This
+stack frames zeroed out upon returning or propagating exceptions.  This
 may be enabled explicitly, by selecting certain @code{strub} modes for
 specific functions, or implicitly, by means of @code{strub} variables.
 
@@ -4579,7 +4582,7 @@ function that has @code{strub} enabled, be it explicitly, by
 @code{strub} variables or command-line options.
 
 A function of a type associated with the @code{disabled} @code{strub}
-mode (@code{strub("disabled")} will not have its own stack space
+mode (@code{strub("disabled")} does not have its own stack space
 scrubbed.  Such functions @emph{cannot} be called from within
 @code{strub} contexts.
 
@@ -4592,7 +4595,7 @@ implicitly, the mode defaults to @code{callable}, except when compiling
 with @option{-fstrub=strict}, that causes @code{strub} mode to default
 to @code{disabled}.
 
-@example
+@smallexample
 extern int __attribute__ ((strub ("callable"))) bac (void);
 extern int __attribute__ ((strub ("disabled"))) bad (void);
  /* Implicitly disabled with -fstrub=strict, otherwise callable.  */
@@ -4608,7 +4611,7 @@ bal (void)
   /* Not allowed with -fstrub=strict, otherwise allowed.  */
   bah ();
 @}
-@end example
+@end smallexample
 
 Function types marked @code{callable} and @code{disabled} are not
 mutually compatible types, but the underlying interfaces are compatible,
@@ -4618,7 +4621,7 @@ interchangeable between them and @code{internal} (but not
 @code{at-calls}!), but adding @code{internal} to a pointer type will not
 cause the pointed-to function to perform stack scrubbing.
 
-@example
+@smallexample
 void __attribute__ ((strub))
 bap (void)
 @{
@@ -4648,7 +4651,7 @@ bap (void)
      likely to misbehave at runtime.  */
   c_p ();
 @}
-@end example
+@end smallexample
 
 @code{Strub} contexts are never inlined into non-@code{strub} contexts.
 When an @code{internal}-strub function is split up, the wrapper can
@@ -4657,7 +4660,7 @@ marked as @code{always_inline}, even if explicitly assigned
 @code{internal} strub mode, will not undergo wrapping, so its body gets
 inlined as required.
 
-@example
+@smallexample
 inline int __attribute__ ((strub ("at-calls")))
 inl_atc (void)
 @{
@@ -4683,7 +4686,7 @@ bat (void)
   /* Not allowed, cannot inline into a non-strub context.  */
   inl_int_ali ();
 @}
-@end example
+@end smallexample
 
 @cindex strub eligibility and viability
 Some @option{-fstrub=*} command-line options enable @code{strub} modes
@@ -4734,7 +4737,8 @@ __attribute__ ((noipa)) void flop (void) @{@}
 /* flip is eligible and viable for at-calls strub mode.
    It would be ineligible for internal strub mode, because of noclone,
    if it weren't for always_inline.  With always_inline, noclone is not
-   an obstacle, so it is also eligible and viable for internal strub mode.  */
+   an obstacle, so it is also eligible and viable for internal strub
+   mode.  */
 inline __attribute__ ((noclone, always_inline)) void flip (void) @{@}
 @end smallexample
 
@@ -4760,11 +4764,8 @@ foo_v1 (void)
 @}
 @end smallexample
 
-Will produce a @code{.symver foo_v1, foo@@VERS_1} directive in the assembler
-output. 
-
-One can also define multiple version for a given symbol
-(starting from binutils 2.35).
+You can also define multiple versions for a given symbol
+(starting from binutils 2.35):
 
 @smallexample
 __attribute__ ((__symver__ ("foo@@VERS_2"), __symver__ ("foo@@VERS_3")))
@@ -4773,11 +4774,11 @@ int symver_foo_v1 (void)
 @}
 @end smallexample
 
+@noindent
 This example creates a symbol name @code{symver_foo_v1}
 which will be version @code{VERS_2} and @code{VERS_3} of @code{foo}.
 
-If you have an older release of binutils, then symbol alias needs to
-be used:
+If you have an older release of binutils, then you need to use a symbol alias:
 
 @smallexample
 __attribute__ ((__symver__ ("foo@@VERS_2")))
@@ -4791,9 +4792,9 @@ __attribute__ ((alias ("foo_v1")))
 int symver_foo_v1 (void);
 @end smallexample
 
-Finally if the parameter is @code{"@var{name2}@@@@@var{nodename}"} then in
+Finally, if the parameter is @code{"@var{name2}@@@@@var{nodename}"}, then in
 addition to creating a symbol version (as if
-@code{"@var{name2}@@@var{nodename}"} was used) the version will be also used
+@code{"@var{name2}@@@var{nodename}"} was used) the version is also used
 to resolve @var{name2} by the linker.
 
 @cindex @code{tainted_args} function attribute
@@ -4806,10 +4807,10 @@ call in an operating system kernel.  Such a function can be considered part
 of the ``attack surface'' of the program.  The attribute can be used both
 on function declarations, and on field declarations containing function
 pointers.  In the latter case, any function used as an initializer of
-such a callback field will be treated as being called with tainted
+such a callback field is treated as being called with tainted
 arguments.
 
-The analyzer will pay particular attention to such functions when
+The analyzer pays particular attention to such functions when
 @option{-fanalyzer} is supplied, potentially issuing warnings guarded by
 @option{-Wanalyzer-tainted-allocation-size},
 @option{-Wanalyzer-tainted-array-index},
@@ -4859,7 +4860,7 @@ within the strings.
 
 The options supported are specific to each target; refer to @ref{x86
 Attributes}, @ref{PowerPC Attributes},
-@ref{ARM Attributes}, @ref{AArch64 Attributes},
+@ref{ARM Attributes}, @ref{AArch64 Attributes}, @ref{LoongArch Attributes},
 and @ref{S/390 Attributes} for details.
 
 On targets supporting @code{target} function multiversioning (x86), when using
@@ -5972,7 +5973,7 @@ This attribute applies to functions.
 
 It allows the compiler to construct the requisite function
 declaration, while allowing the body of the function to be assembly
-code.  The specified function will not have prologue/epilogue
+code.  The specified function does not have prologue/epilogue
 sequences generated by the compiler.  Only basic @code{asm} statements
 can safely be included in naked functions (@pxref{Basic Asm}).  While
 using extended @code{asm} or a mixture of basic @code{asm} and C code
@@ -6070,7 +6071,7 @@ This attribute applies to functions.
 
 It allows the compiler to construct the
 requisite function declaration, while allowing the body of the
-function to be assembly code. The specified function will not have
+function to be assembly code. The specified function does not have
 prologue/epilogue sequences generated by the compiler. Only basic
 @code{asm} statements can safely be included in naked functions
 (@pxref{Basic Asm}). While using extended @code{asm} or a mixture of
@@ -6216,6 +6217,7 @@ It is save to enable interrupts in a @code{signal} handler.
 This ``save'' only applies to the code
 generated by the compiler and not to the IRQ layout of the
 application which is responsibility of the application.
+@c FIXME: what do those last two sentences mean?
 
 @item ISRs with the @code{interrupt} attribute re-enable interrupts.
 The first instruction of the routine is a @code{SEI} instruction to
@@ -6225,7 +6227,7 @@ globally enable interrupts.
 The recommended way to use these attributes is by means of the
 @code{ISR} macro provided by @code{avr/interrupt.h} from
 @w{@uref{https://avrdudes.github.io/avr-libc/avr-libc-user-manual/group__avr__interrupts.html,,AVR-LibC}}:
-@example
+@smallexample
 #include <avr/interrupt.h>
 
 ISR (INT0_vect) // Uses the "signal" attribute.
@@ -6237,7 +6239,7 @@ ISR (ADC_vect, ISR_NOBLOCK) // Uses the "interrupt" attribute.
 @{
     // Code
 @}
-@end example
+@end smallexample
 
 When both @code{signal} and @code{interrupt} are specified for the same
 function, then @code{signal} is silently ignored.
@@ -6253,20 +6255,20 @@ They are similar to the @code{signal} and @code{interrupt} attributes
 but the IRQ number is supplied as an argument @var{num} to
 the attribute, rather than providing the ISR name itself as the function name:
 
-@example
+@smallexample
 __attribute__((signal(1)))
 static void my_handler (void)
 @{
    // Code for __vector_1
 @}
-@end example
+@end smallexample
 
 Notice that the handler function needs not to be externally visible.
 The recommended way to use these attributes is by means of the
 @code{ISR_N} macro provided by @code{avr/interrupt.h} from
 @w{@uref{https://avrdudes.github.io/avr-libc/avr-libc-user-manual/group__avr__interrupts.html,,AVR-LibC}}:
 
-@example
+@smallexample
 #include <avr/interrupt.h>
 
 ISR_N (PCINT0_vect_num)
@@ -6280,7 +6282,7 @@ static void my_adc_handler (void)
 @{
     // Code
 @}
-@end example
+@end smallexample
 
 @code{ISR_N} can be specified more than once, in which case several
 interrupt vectors are pointing to the same handler function.  This
@@ -6305,7 +6307,7 @@ This attribute applies to functions.
 
 It allows the compiler to construct the
 requisite function declaration, while allowing the body of the
-function to be assembly code. The specified function will not have
+function to be assembly code. The specified function does not have
 prologue/epilogue sequences generated by the compiler. Only basic
 @code{asm} statements can safely be included in naked functions
 (@pxref{Basic Asm}). While using extended @code{asm} or a mixture of
@@ -6322,14 +6324,15 @@ in a function with
 the @code{interrupt} or @code{signal} attribute aka. interrupt
 service routine (ISR).
 Use this attribute if the preamble of the ISR prologue should always read
-@example
+@smallexample
 push  __zero_reg__
 push  __tmp_reg__
 in    __tmp_reg__, __SREG__
 push  __tmp_reg__
 clr   __zero_reg__
-@end example
-and accordingly for the postamble of the epilogue --- no matter whether
+@end smallexample
+@noindent
+and accordingly for the postamble of the epilogue---no matter whether
 the mentioned registers are actually used in the ISR or not.
 Situations where you might want to use this attribute include:
 @itemize @bullet
@@ -6340,8 +6343,9 @@ Code that (effectively) clobbers bits of @code{SREG} other than the
 Code that uses inline assembler to jump to a different function which
 expects (parts of) the prologue code as outlined above to be present.
 @end itemize
+
 To disable @code{__gcc_isr} generation for the whole compilation unit,
-there is option @option{-mno-gas-isr-prologues}, @pxref{AVR Options}.
+use option @option{-mno-gas-isr-prologues}, @pxref{AVR Options}.
 
 @cindex @code{OS_main} function attribute, AVR
 @cindex @code{OS_task} function attribute, AVR
@@ -6685,7 +6689,7 @@ This attribute applies to functions.
 
 It allows the compiler to construct the requisite function
 declaration, while allowing the body of the function to be assembly
-code.  The specified function will not have prologue/epilogue
+code.  The specified function does not have prologue/epilogue
 sequences generated by the compiler.  Only basic @code{asm} statements
 can safely be included in naked functions (@pxref{Basic Asm}).  While
 using extended @code{asm} or a mixture of basic @code{asm} and C code
@@ -6732,7 +6736,7 @@ This attribute applies to functions.
 
 This attribute allows the compiler to construct the
 requisite function declaration, while allowing the body of the
-function to be assembly code. The specified function will not have
+function to be assembly code. The specified function does not have
 prologue/epilogue sequences generated by the compiler. Only basic
 @code{asm} statements can safely be included in naked functions
 (@pxref{Basic Asm}). While using extended @code{asm} or a mixture of
@@ -7380,7 +7384,7 @@ This attribute applies to functions.
 
 It allows the compiler to construct the
 requisite function declaration, while allowing the body of the
-function to be assembly code. The specified function will not have
+function to be assembly code. The specified function does not have
 prologue/epilogue sequences generated by the compiler. Only basic
 @code{asm} statements can safely be included in naked functions
 (@pxref{Basic Asm}). While using extended @code{asm} or a mixture of
@@ -7799,7 +7803,7 @@ This attribute applies to functions.
 
 This attribute allows the compiler to construct the
 requisite function declaration, while allowing the body of the
-function to be assembly code. The specified function will not have
+function to be assembly code. The specified function does not have
 prologue/epilogue sequences generated by the compiler. Only basic
 @code{asm} statements can safely be included in naked functions
 (@pxref{Basic Asm}). While using extended @code{asm} or a mixture of
@@ -7924,7 +7928,7 @@ This attribute applies to functions.
 
 It allows the compiler to construct the
 requisite function declaration, while allowing the body of the
-function to be assembly code. The specified function will not have
+function to be assembly code. The specified function does not have
 prologue/epilogue sequences generated by the compiler. Only basic
 @code{asm} statements can safely be included in naked functions
 (@pxref{Basic Asm}). While using extended @code{asm} or a mixture of
@@ -8218,7 +8222,7 @@ This attribute applies to functions.
 
 It allows the compiler to construct the
 requisite function declaration, while allowing the body of the
-function to be assembly code. The specified function will not have
+function to be assembly code. The specified function does not have
 prologue/epilogue sequences generated by the compiler. Only basic
 @code{asm} statements can safely be included in naked functions
 (@pxref{Basic Asm}). While using extended @code{asm} or a mixture of
@@ -8352,7 +8356,7 @@ This attribute applies to functions.
 
 It allows the compiler to construct the
 requisite function declaration, while allowing the body of the
-function to be assembly code. The specified function will not have
+function to be assembly code. The specified function does not have
 prologue/epilogue sequences generated by the compiler. Only basic
 @code{asm} statements can safely be included in naked functions
 (@pxref{Basic Asm}). While using extended @code{asm} or a mixture of
@@ -8421,7 +8425,7 @@ This attribute applies to functions.
 
 It allows the compiler to construct the
 requisite function declaration, while allowing the body of the
-function to be assembly code. The specified function will not have
+function to be assembly code. The specified function does not have
 prologue/epilogue sequences generated by the compiler. Only basic
 @code{asm} statements can safely be included in naked functions
 (@pxref{Basic Asm}). While using extended @code{asm} or a mixture of
@@ -8755,7 +8759,7 @@ This attribute applies to functions.
 
 It allows the compiler to construct the
 requisite function declaration, while allowing the body of the
-function to be assembly code. The specified function will not have
+function to be assembly code. The specified function does not have
 prologue/epilogue sequences generated by the compiler. Only basic
 @code{asm} statements can safely be included in naked functions
 (@pxref{Basic Asm}). While using extended @code{asm} or a mixture of
@@ -30979,19 +30983,20 @@ A redeclaration of an entity must not add new ABI tags,
 since doing so would change the mangled name.
 
 The ABI tags apply to a name, so all instantiations and
-specializations of a template have the same tags.  The attribute will
-be ignored if applied to an explicit specialization or instantiation.
+specializations of a template have the same tags.  The attribute is
+ignored if applied to an explicit specialization or instantiation.
 
 The @option{-Wabi-tag} flag enables a warning about a class which does
-not have all the ABI tags used by its subobjects and virtual functions; for users with code
-that needs to coexist with an earlier ABI, using this option can help
+not have all the ABI tags used by its subobjects and virtual functions;
+if your code
+needs to coexist with an earlier ABI, using this option can help
 to find all affected types that need to be tagged.
 
 When a type involving an ABI tag is used as the type of a variable or
 return type of a function where that tag is not already present in the
 signature of the function, the tag is automatically applied to the
 variable or function.  @option{-Wabi-tag} also warns about this
-situation; this warning can be avoided by explicitly tagging the
+situation; you can avoid this warning by explicitly tagging the
 variable or function or moving it into a tagged inline namespace.
 
 @cindex @code{init_priority} variable attribute
@@ -31007,7 +31012,7 @@ order of initialization of objects defined at namespace scope with the
 with the same meaning as for the @code{constructor} attribute
 (@pxref{Common Attributes}).
 
-In the following example, @code{A} would normally be created before
+In the following example, @code{A} is normally created before
 @code{B}, but the @code{init_priority} attribute reverses that order:
 
 @smallexample
@@ -31039,6 +31044,7 @@ functions.  For example:
 class [[gnu::no_dangling]] S @{ @dots{} @};
 @end smallexample
 
+@noindent
 Or:
 
 @smallexample
@@ -31064,6 +31070,7 @@ struct [[gnu::no_dangling(std::is_reference_v<T>)]] S @{
 @};
 @end smallexample
 
+@noindent
 Or:
 
 @smallexample
@@ -31078,7 +31085,7 @@ decltype(auto) foo(T&& t) @{
 @item warn_unused
 This attribute applies to types.
 
-For C++ types with non-trivial constructors and/or destructors it is
+For C++ types with non-trivial constructors and/or destructors, it is
 impossible for the compiler to determine whether a variable of this
 type is truly unused if it is not referenced. This type attribute
 informs the compiler that variables of this type should be warned
