@@ -2906,20 +2906,6 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
     };
 #endif
 
-  namespace __mdspan
-  {
-    template<typename _Extents, typename _IndexType, size_t _Nm>
-      constexpr bool
-      __is_multi_index(const _Extents& __exts, span<_IndexType, _Nm> __indices)
-      {
-	static_assert(__exts.rank() == _Nm);
-	for (size_t __i = 0; __i < __exts.rank(); ++__i)
-	  if (__indices[__i] >= __exts.extent(__i))
-	    return false;
-	return true;
-      }
-  }
-
   template<typename _ElementType, typename _Extents,
 	   typename _LayoutPolicy = layout_right,
 	   typename _AccessorPolicy = default_accessor<_ElementType>>
@@ -3056,17 +3042,19 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	constexpr reference
 	operator[](_OIndexTypes... __indices) const
 	{
-	  auto __checked_call = [this](auto... __idxs) -> index_type
-	    {
-	      if constexpr (sizeof...(__idxs) > 0)
-		__glibcxx_assert(__mdspan::__is_multi_index(extents(),
-		  span<const index_type, sizeof...(__idxs)>({__idxs...})));
-	      return _M_mapping(__idxs...);
-	    };
+	  if constexpr (rank() == 0)
+	    return _M_accessor.access(_M_handle, _M_mapping());
+	  else if constexpr (!(is_same_v<_OIndexTypes, index_type> && ...))
+	    return operator[](
+	      __mdspan::__index_type_cast<index_type>(std::move(__indices))...);
+	  else
+	   {
+	     auto __is_multi_index = [&]<size_t... _Counts>(index_sequence<_Counts...>)
+	     { return ((__indices < extents().extent(_Counts)) && ...); };
 
-	  auto __index = __checked_call(
-	    static_cast<index_type>(std::move(__indices))...);
-	  return _M_accessor.access(_M_handle, __index);
+	     __glibcxx_assert(__is_multi_index(make_index_sequence<rank()>()));
+	     return _M_accessor.access(_M_handle, _M_mapping(__indices...));
+	   }
 	}
 
       template<typename _OIndexType>
@@ -3076,7 +3064,10 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	{
 	  auto __call = [&]<size_t... _Counts>(index_sequence<_Counts...>)
 	    -> reference
-	    { return (*this)[index_type(as_const(__indices[_Counts]))...]; };
+	    {
+	       return operator[](
+		 __mdspan::__index_type_cast<index_type>(as_const(__indices[_Counts]))...);
+	    };
 	  return __call(make_index_sequence<rank()>());
 	}
 
@@ -3084,7 +3075,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	requires __mdspan::__valid_index_type<const _OIndexType&, index_type>
 	constexpr reference
 	operator[](const array<_OIndexType, rank()>& __indices) const
-	{ return (*this)[span<const _OIndexType, rank()>(__indices)]; }
+	{ return operator[](span<const _OIndexType, rank()>(__indices)); }
 
 #if __cplusplus > 202302L
       template<__mdspan::__valid_index_type<index_type>... _OIndexTypes>
