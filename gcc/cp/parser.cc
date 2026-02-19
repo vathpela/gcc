@@ -6313,6 +6313,7 @@ cp_parser_splice_expression (cp_parser *parser, bool template_p,
       SET_SPLICE_EXPR_EXPRESSION_P (t);
       SET_SPLICE_EXPR_MEMBER_ACCESS_P (t, member_access_p);
       SET_SPLICE_EXPR_ADDRESS_P (t, address_p);
+      return t;
     }
 
   if (error_operand_p (t))
@@ -6358,6 +6359,8 @@ cp_parser_splice_expression (cp_parser *parser, bool template_p,
     /* Were 'template' present, this would be valid code, so keep going.  */
     missing_template_diag (loc, diagnostics::kind::pedwarn);
 
+  cp_unevaluated u;
+
   /* When doing foo.[: bar :], cp_parser_postfix_dot_deref_expression wants
      to see an identifier or a TEMPLATE_ID_EXPR, if we have something like
      s.template [: ^^S::var :]<int> where S::var is a variable template.  */
@@ -6377,24 +6380,23 @@ cp_parser_splice_expression (cp_parser *parser, bool template_p,
 		  || TREE_CODE (t) == TREE_BINFO);
       /* ??? We're not setting *idk here.  */
     }
+  else if (address_p
+	   && (BASELINK_P (t) || DECL_NONSTATIC_MEMBER_P (t)))
+    {
+      /* CWG 3109 adjusted [class.protected] to say that checking access to
+	 protected non-static members is disabled for members designated by
+	 a splice-expression.  */
+      push_deferring_access_checks (dk_no_check);
+      tree type = (BASELINK_P (t)
+		   ? BINFO_TYPE (BASELINK_ACCESS_BINFO (t))
+		   : DECL_CONTEXT (t));
+      t = build_offset_ref (type, t, /*address_p=*/true, tf_warning_or_error);
+      pop_deferring_access_checks ();
+    }
   else
     {
-      /* We may have to instantiate; for instance, if we're dealing with
-	 a variable template.  For &[: ^^S::x :], we have to create an
-	 OFFSET_REF.  For a VAR_DECL, we need the convert_from_reference.  */
-      cp_unevaluated u;
-      /* CWG 3109 adjusted [class.protected] to say that checking access to
-	 protected non-static members is disabled for members designated by a
-	 splice-expression.  */
-      push_deferring_access_checks (dk_no_check);
       const char *error_msg;
-      /* We don't have the parser scope here, so figure out the context.  In
-	   struct S { static constexpr int i = 42; };
-	   constexpr auto r = ^^S::i;
-	   int i = [: r :];
-	 we need to pass down 'S'.  */
-      tree ctx = DECL_P (t) ? DECL_CONTEXT (t) : NULL_TREE;
-      t = finish_id_expression (t, t, ctx, idk,
+      t = finish_id_expression (t, t, NULL_TREE, idk,
 				/*integral_constant_expression_p=*/false,
 				/*allow_non_integral_constant_expr_p=*/true,
 				&parser->non_integral_constant_expression_p,
@@ -6406,7 +6408,6 @@ cp_parser_splice_expression (cp_parser *parser, bool template_p,
 				loc);
       if (error_msg)
 	cp_parser_error (parser, error_msg);
-      pop_deferring_access_checks ();
     }
 
   return t;
