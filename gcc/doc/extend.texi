@@ -8322,15 +8322,20 @@ void foo() __attribute__((riscv_vector_cc));
 [[riscv::vector_cc]] void foo(); // For C++11 and C23
 @end smallexample
 
-@end table
+@cindex @code{target} function attribute
+@item target (@var{options})
+This attribute applies to functions.
 
-The following target-specific function attributes are available for the
+As discussed in @ref{Common Attributes}, this attribute
+allows specification of target-specific compilation options.
+
+The following options are available for the
 RISC-V target.  For the most part, these options mirror the behavior of
 similar command-line options (@pxref{RISC-V Options}), but on a
 per-function basis.
 
-@table @code
-@cindex @code{arch=} function attribute, RISC-V
+@table @samp
+@cindex @code{target("arch=")} function attribute, RISC-V
 @item arch=
 Specifies the architecture version and architectural extensions to use
 for this function.  The behavior and permissible arguments are the same as
@@ -8340,19 +8345,19 @@ like @code{arch=+zba} means enable @code{zba} extension.
 Multiple extension can be enabled by separating them with a comma.  For example:
 @code{arch=+zba,+zbb}.
 
-@cindex @code{tune=} function attribute, RISC-V
+@cindex @code{target("tune=")} function attribute, RISC-V
 @item tune=
 Specifies the core for which to tune the performance of this function.
 The behavior and permissible arguments are the same as for the @option{-mtune=}
 command-line option.
 
-@cindex @code{cpu=} function attribute, RISC-V
+@cindex @code{target("cpu=")} function attribute, RISC-V
 @item cpu=
 Specifies the core for which to tune the performance of this function and also
 whose architectural features to use.  The behavior and valid arguments are the
 same as for the @option{-mcpu=} command-line option.
 
-@cindex @code{max-vectorization} function attribute, RISC-V
+@cindex @code{target("max-vectorization")} function attribute, RISC-V
 @item max-vectorization
 @itemx no-max-vectorization
 @code{max-vectorization} tells GCC's vectorizer to treat all vector
@@ -8390,6 +8395,9 @@ foo (int a)
 
 is valid and compiles function @code{foo} with @code{zba}
 and @code{zbb} extensions and tunes it for @code{rocket}.
+
+@end table
+
 
 @node RL78 Attributes
 @subsubsection RL78 Attributes
