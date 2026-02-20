@@ -1809,7 +1809,8 @@ directives, with names prefixed with @samp{omp::}, using the standard
 @c Every entry should start with a sentence that says where the attribute
 @c may appear.
 
-@cindex @code{access} function attribute
+@atindex @code{access}
+@cindex functions that restrict access to pointer arguments
 @item access (@var{access-mode}, @var{ref-index})
 @itemx access (@var{access-mode}, @var{ref-index}, @var{size-index})
 This attribute applies to functions.
@@ -1910,7 +1911,7 @@ that unconditionally manipulates a buffer via a pointer argument.  See the
 documented later in this section, for more information and
 caveats.
 
-@cindex @code{alias} attribute
+@atindex @code{alias}
 @item alias ("@var{target}")
 This attribute applies to variables and functions.
 
@@ -1950,7 +1951,8 @@ in a translation unit without a declaration of the alias with the attribute.
 This attribute requires assembler and object file support,
 and may not be available on all targets.
 
-@cindex @code{aligned} attribute
+@atindex @code{aligned}
+@cindex alignment of functions and data
 @item aligned
 @itemx aligned (@var{alignment})
 This attribute applies to functions, variables, typedefs, structs, and
@@ -2051,7 +2053,8 @@ further information.
 Stack variables are not affected by linker restrictions; GCC can properly
 align them on any target.
 
-@cindex @code{alloc_align} function attribute
+@atindex @code{alloc_align}
+@cindex alignment of allocated data
 @item alloc_align (@var{position})
 The @code{alloc_align} attribute may be applied to a function that
 returns a pointer and takes at least one argument of an integer or
@@ -2076,7 +2079,8 @@ void* my_memalign (size_t, size_t) __attribute__ ((alloc_align (1)));
 declares that @code{my_memalign} returns memory with minimum alignment
 given by parameter 1.
 
-@cindex @code{alloc_size} attribute
+@atindex @code{alloc_size}
+@cindex size of objects
 @item alloc_size (@var{position})
 @itemx alloc_size (@var{position-1}, @var{position-2})
 The @code{alloc_size} attribute may be applied to a function that
@@ -2125,7 +2129,9 @@ is given by the product of arguments 1 and 2, and similarly, that
 is a pointer to a function that returns an object whose size is
 given by argument 1 to the function.
 
-@cindex @code{always_inline} function attribute
+@atindex @code{always_inline}
+@cindex inlining
+@cindex function inlining
 @item always_inline
 The @code{always_inline} attribute applies to functions.
 
@@ -2144,7 +2150,7 @@ where the function is used.  Link-time optimization can inline
 functions across translation units, but only if an optimization level
 that normally enables inlining is additionally specified.
 
-@cindex @code{artificial} function attribute
+@atindex @code{artificial}
 @item artificial
 This attribute applies to functions.
 
@@ -2155,7 +2161,7 @@ info format it either means marking the function as artificial
 or using the caller location for all instructions within the inlined
 body.
 
-@cindex @code{assume} statement attribute
+@atindex @code{assume}
 @item assume
 This is a statement attribute that can appear only as an
 attribute declaration.
@@ -2181,7 +2187,8 @@ foo (int x, int y)
 @code{y} is not actually incremented and the compiler can but does not
 have to optimize it to just @code{return 42 + 42;}.
 
-@cindex @code{assume_aligned} function attribute
+@atindex @code{assume_aligned}
+@cindex alignment of data
 @item assume_aligned (@var{alignment})
 @itemx assume_aligned (@var{alignment}, @var{offset})
 The @code{assume_aligned} attribute may be applied to a function that
@@ -2205,7 +2212,7 @@ declares that @code{my_alloc1} returns 16-byte aligned pointers and
 that @code{my_alloc2} returns a pointer whose value modulo 32 is equal
 to 8.
 
-@cindex @code{btf_decl_tag} attribute
+@atindex @code{btf_decl_tag}
 @item btf_decl_tag
 This attribute can be applied to functions, variables, struct or union member
 declarations, and function parameter declarations.
@@ -2242,7 +2249,7 @@ when compiled with @option{-gbtf} results in an additional
 associating the string @samp{__percpu} with the @code{BTF_KIND_VAR}
 record for the variable @code{foo}.
 
-@cindex @code{btf_type_tag} type attribute
+@atindex @code{btf_type_tag}
 @item btf_type_tag (@var{argument})
 This attribute applies to types.
 
@@ -2281,7 +2288,8 @@ Note that the BTF format currently only has a representation for type
 tags associated with pointer types.  Type tags on non-pointer types
 may be silently skipped when generating BTF.
 
-@cindex @code{cleanup} variable attribute
+@atindex @code{cleanup}
+@cindex cleanup functions
 @item cleanup (@var{cleanup_function})
 This attribute applies to variables.
 
@@ -2304,8 +2312,10 @@ does not allow the exception to be caught, only to perform an action.
 It is undefined what happens if @var{cleanup_function} does not
 return normally.
 
-@cindex @code{cold} attribute
-@cindex @code{hot} attribute
+@atindex @code{cold}
+@atindex @code{hot}
+@cindex cold functions and code regions
+@cindex hot functions and code regions
 @item cold
 @itemx hot
 
@@ -2346,8 +2356,9 @@ annotated.  This attribute
 is used in cases where @code{__builtin_expect} cannot be used, for instance
 with computed goto or @code{asm goto}.
 
-@cindex @code{common} variable attribute
-@cindex @code{nocommon} variable attribute
+@atindex @code{common}
+@atindex @code{nocommon}
+@cindex common storage
 @opindex fcommon
 @opindex fno-common
 @item common
@@ -2361,7 +2372,7 @@ opposite---to allocate space for it directly.
 These attributes override the default chosen by the
 @option{-fno-common} and @option{-fcommon} flags respectively.
 
-@cindex @code{const} function attribute
+@atindex @code{const}
 @cindex functions that have no side effects
 @item const
 This attribute applies to functions.
@@ -2406,8 +2417,9 @@ from data that cannot, const functions should never take pointer or,
 in C++, reference arguments. Likewise, a function that calls a non-const
 function usually must not be const itself.
 
-@cindex @code{constructor} function attribute
-@cindex @code{destructor} function attribute
+@atindex @code{constructor}
+@atindex @code{destructor}
+@cindex functions that are called on program startup or exit
 @item constructor
 @itemx destructor
 @itemx constructor (@var{priority})
@@ -2449,7 +2461,7 @@ supported is rejected with an error.  Only a few targets (typically
 those not using ELF object format, or the GNU linker) reject this
 usage.
 
-@cindex @code{copy} attribute
+@atindex @code{copy}
 @item copy
 @itemx copy (@var{name})
 The @code{copy} attribute can appear on function, variable, and type
@@ -2499,7 +2511,8 @@ A @{ /* @r{@dots{}} */ @};
 struct __attribute__ ((copy ( (struct A *)0)) B @{ /* @r{@dots{}} */ @};
 @end smallexample
 
-@cindex @code{counted_by} variable attribute
+@atindex @code{counted_by}
+@cindex flexible array members
 @item counted_by (@var{count})
 The @code{counted_by} attribute may be attached to a C99 flexible array
 member or a pointer field of a structure.
@@ -2609,7 +2622,8 @@ in @code{p->array}.
 
 Note, however, the above feature is not valid for the pointer field.
 
-@cindex @code{deprecated} attribute
+@atindex @code{deprecated}
+@cindex deprecated entities
 @item deprecated
 @itemx deprecated (@var{msg})
 This attribute can appear on function, variable, type, or enumerator
@@ -2678,7 +2692,7 @@ Control characters in the @var{msg} string are replaced with
 escape sequences, and if the @option{-fmessage-length} option is set
 to 0 (its default value) then any newline characters are ignored.
 
-@cindex @code{designated_init} type attribute
+@atindex @code{designated_init}
 @item designated_init
 This attribute may only be applied to structure types.
 
@@ -2691,8 +2705,9 @@ positional initialization will result in future breakage.
 GCC emits warnings based on this attribute by default; use
 @option{-Wno-designated-init} to suppress them.
 
-@cindex @code{error} function attribute
-@cindex @code{warning} function attribute
+@atindex @code{error}
+@atindex @code{warning}
+@cindex functions that are supposed to be optimized away
 @item error ("@var{message}")
 @itemx warning ("@var{message}")
 This attribute applies to functions.
@@ -2713,7 +2728,8 @@ when using these attributes the problem is diagnosed
 earlier and with exact location of the call even in presence of inline
 functions or when not emitting debugging information.
 
-@cindex @code{expected_throw} function attribute
+@atindex @code{expected_throw}
+@cindex functions that are expected to throw exceptions
 @item expected_throw
 This attribute applies to functions.
 
@@ -2726,7 +2742,7 @@ it's applied to @code{noreturn} functions and
 @samp{-fharden-control-flow-redundancy} is enabled, and
 @samp{-fhardcfr-check-noreturn-calls=not-always} is not overridden.
 
-@cindex @code{externally_visible} attribute
+@atindex @code{externally_visible}
 @item externally_visible
 This attribute applies to global variables and functions.
 
@@ -2743,7 +2759,9 @@ produced by @command{gold}.
 For other linkers that cannot generate resolution file,
 explicit @code{externally_visible} attributes are still necessary.
 
-@cindex @code{fallthrough} statement attribute
+@atindex @code{fallthrough}
+@cindex fallthrough in switch statements
+@cindex switch statement fallthrough
 @item fallthrough
 This statement attribute can appear only as an attribute declaration.
 
@@ -2772,9 +2790,10 @@ switch (cond)
   @}
 @end smallexample
 
-@cindex @code{fd_arg} function attribute
-@cindex @code{fd_arg_read} function attribute
-@cindex @code{fd_arg_write} function attribute
+@atindex @code{fd_arg}
+@atindex @code{fd_arg_read}
+@atindex @code{fd_arg_write}
+@cindex functions that take file descriptor arguments
 @item fd_arg (@var{N})
 @itemx fd_arg_read (@var{N})
 @itemx fd_arg_write (@var{N})
@@ -2820,7 +2839,9 @@ that its enumerators are used in bitwise operations, so e.g. @option{-Wswitch}
 should not warn about a @code{case} that corresponds to a bitwise
 combination of enumerators.
 
-@cindex @code{flatten} function attribute
+@atindex @code{flatten}
+@cindex inlining
+@cindex function inlining
 @item flatten
 This attribute applies to functions.
 
@@ -2832,8 +2853,9 @@ Functions declared with attribute @code{noinline} and similar are not
 inlined.  Whether the function itself is considered for inlining depends
 on its size and the current inlining parameters.
 
-@cindex @code{format} function attribute
+@atindex @code{format}
 @cindex functions with @code{printf}, @code{scanf}, @code{strftime} or @code{strfmon} style arguments
+@cindex functions that have format string arguments
 @opindex Wformat
 @item format (@var{archetype}, @var{string-index}, @var{first-to-check})
 The @code{format} attribute applies to functions.
@@ -2926,7 +2948,8 @@ standard modes, the X/Open function @code{strfmon} is also checked as
 are @code{printf_unlocked} and @code{fprintf_unlocked}.
 @xref{C Dialect Options,,Options Controlling C Dialect}.
 
-@cindex @code{format_arg} function attribute
+@atindex @code{format_arg}
+@cindex functions that have format string arguments
 @opindex Wformat-nonliteral
 @item format_arg (@var{string-index})
 The @code{format_arg} attribute applies to functions.
@@ -2993,7 +3016,9 @@ system documentation provide descriptions of @code{CFString},
 @code{CFStringRefs} and associated functions.
 
 
-@cindex @code{gnu_inline} function attribute
+@atindex @code{gnu_inline}
+@cindex inlining
+@cindex function inlining
 @item gnu_inline
 This attribute applies to functions.
 
@@ -3033,7 +3058,8 @@ In C++, this attribute does not depend on @code{extern} in any way,
 but it still requires the @code{inline} keyword to enable its special
 behavior.
 
-@cindex @code{hardbool} type attribute
+@atindex @code{hardbool}
+@cindex hardened boolean types
 @item hardbool
 @itemx hardbool (@var{false_value})
 @itemx hardbool (@var{false_value}, @var{true_value})
@@ -3099,7 +3125,7 @@ Ada Booleans defined with the same size and equivalent representation
 clauses, and with enumerations or other languages' integral types that
 correspond to C's chosen integral type.
 
-@cindex @code{ifunc} function attribute
+@atindex @code{ifunc}
 @cindex indirect functions
 @cindex functions that are dynamically resolved
 @item ifunc ("@var{resolver}")
@@ -3193,8 +3219,10 @@ int S::interface (int) __attribute__ ((ifunc ("_ZN1S8resolverEv")));
 Indirect functions cannot be weak.  Binutils version 2.20.1 or higher
 and GNU C Library version 2.11.1 are required to use this feature.
 
-@cindex @code{interrupt_handler} function attribute
-@cindex @code{interrupt} function attribute
+@atindex @code{interrupt_handler}
+@atindex @code{interrupt}
+@cindex interrupt handlers
+@cindex functions that handle interrupts
 @item interrupt
 @itemx interrupt_handler
 These attributes apply to functions.
@@ -3205,7 +3233,7 @@ entry and exit sequences that differ from those from regular
 functions.  The exact syntax and behavior are target-specific;
 refer to the following subsections for details.
 
-@cindex @code{leaf} function attribute
+@atindex @code{leaf}
 @item leaf
 This attribute applies to functions.
 
@@ -3244,7 +3272,7 @@ units into one, for example, by using the link-time optimization.  For
 this reason the attribute is not allowed on types to annotate indirect
 calls.
 
-@cindex @code{malloc} function attribute
+@atindex @code{malloc}
 @cindex functions that behave like malloc
 @item malloc
 @item malloc (@var{deallocator})
@@ -3363,7 +3391,8 @@ pointer.  If this is not the case, the deallocator can be marked with
 a @option{-Wanalyzer-possible-null-argument} diagnostic for code paths
 in which the deallocator is called with null.
 
-@cindex @code{may_alias} type attribute
+@atindex @code{may_alias}
+@cindex pointer aliasing
 @item may_alias
 The @code{may_alias} attribute applies to pointer type declarations.
 
@@ -3406,7 +3435,7 @@ declaration, the above program would abort when compiled with
 @option{-fstrict-aliasing}, which is on by default at @option{-O2} or
 above.
 
-@cindex @code{mode} attribute
+@atindex @code{mode}
 @item mode (@var{mode})
 This attribute can apply to a variable or type declaration.
 
@@ -3421,7 +3450,9 @@ indicate the mode corresponding to a one-byte integer, @code{word} or
 @code{__word__} for the mode of a one-word integer, and @code{pointer}
 or @code{__pointer__} for the mode used to represent pointers.
 
-@cindex @code{musttail} statement attribute
+@atindex @code{musttail}
+@cindex tail recursion
+@cindex functions that return via tail call
 @item musttail
 This attribute can be applied to a @code{return} statement
 with a return-value expression that is a function call.
@@ -3511,7 +3542,9 @@ It is not possible to avoid the warning in this way if the maybe-escaped
 variable is a function argument, because those are in scope
 for the whole function.
 
-@cindex @code{naked} function attribute
+@atindex @code{naked}
+@cindex naked functions
+@cindex functions that do not have prologue/epilogue code
 @item naked
 This attribute applies to functions.
 
@@ -3527,14 +3560,16 @@ are not supported.
 Not all targets support this attribute.  Those that do include ARC, ARM,
 AVR, BPF, C-SKY, MCORE, MSP430, NDS32, RISC-V, RL78, RX, and x86.
 
-@cindex @code{no_icf} attribute
+@atindex @code{no_icf}
 @item no_icf
 This attribute can be applied to functions or variables.
 
 It prevents the entity from being
 merged with another semantically equivalent function or variable.
 
-@cindex @code{no_instrument_function} function attribute
+@atindex @code{no_instrument_function}
+@cindex functions that should not be instrumented
+@cindex function instrumentation
 @opindex finstrument-functions
 @opindex p
 @opindex pg
@@ -3555,7 +3590,7 @@ The @code{no_profile_instrument_function} attribute informs
 the compiler that it should not process any code instrumentation
 for profile-feedback-based optimization code instrumentation.
 
-@cindex @code{no_reorder} attribute
+@atindex @code{no_reorder}
 @item no_reorder
 This attribute applies to functions or variables.
 
@@ -3568,6 +3603,7 @@ as the @option{-fno-toplevel-reorder} option, but only applies to the
 marked symbols.
 
 @cindex @code{no_sanitize} function attribute
+@cindex functions that should not be sanitized
 @item no_sanitize ("@var{sanitize_option}")
 This attribute applies to functions.
 
@@ -3583,7 +3619,8 @@ void __attribute__ ((no_sanitize ("alignment,object-size")))
 g () @{ /* @r{Do something.} */; @}
 @end smallexample
 
-@cindex @code{no_sanitize_address} function attribute
+@atindex @code{no_sanitize_address}
+@cindex functions that should not be sanitized
 @item no_sanitize_address
 @itemx no_address_safety_analysis
 This attribute applies to functions.
@@ -3597,6 +3634,7 @@ in the function when compiling with the @option{-fsanitize=address} option.
 @code{no_sanitize_address}.
 
 @cindex @code{no_sanitize_coverage} function attribute
+@cindex functions that should not be sanitized
 @item no_sanitize_coverage
 This attribute applies to functions.
 
@@ -3604,7 +3642,8 @@ The @code{no_sanitize_coverage} attribute
 informs the compiler that it should not do coverage-guided
 fuzzing code instrumentation (@option{-fsanitize-coverage}).
 
-@cindex @code{no_sanitize_thread} function attribute
+@atindex @code{no_sanitize_thread}
+@cindex functions that should not be sanitized
 @item no_sanitize_thread
 This attribute applies to functions.
 
@@ -3612,7 +3651,8 @@ The @code{no_sanitize_thread} attribute
 informs the compiler that it should not instrument memory accesses
 in the function when compiling with the @option{-fsanitize=thread} option.
 
-@cindex @code{no_sanitize_undefined} function attribute
+@atindex @code{no_sanitize_undefined}
+@cindex functions that should not be sanitized
 @item no_sanitize_undefined
 This attribute applies to functions.
 
@@ -3620,7 +3660,7 @@ The @code{no_sanitize_undefined} attribute
 informs the compiler that it should not check for undefined behavior
 in the function when compiling with the @option{-fsanitize=undefined} option.
 
-@cindex @code{no_split_stack} function attribute
+@atindex @code{no_split_stack}
 @opindex fsplit-stack
 @item no_split_stack
 This attribute applies to functions.
@@ -3630,7 +3670,9 @@ prologue which decides whether to split the stack.  Functions with the
 @code{no_split_stack} attribute do not have that prologue, and thus
 may run with only a small amount of stack space available.
 
-@cindex @code{no_stack_limit} function attribute
+@atindex @code{no_stack_limit}
+@cindex stack protection
+@cindex functions that should not have stack limit checking
 @item no_stack_limit
 This attribute applies to functions.
 
@@ -3638,13 +3680,15 @@ This attribute locally overrides the @option{-fstack-limit-register}
 and @option{-fstack-limit-symbol} command-line options; it has the effect
 of disabling stack limit checking in the function it applies to.
 
-@cindex @code{no_stack_protector} function attribute
+@atindex @code{no_stack_protector}
+@cindex stack protection
+@cindex functions that should not have stack protection
 @item no_stack_protector
 This attribute applies to functions.
 
 It prevents GCC from generating stack protection code for the function.
 
-@cindex @code{noclone} function attribute
+@atindex @code{noclone}
 @item noclone
 This attribute applies to functions.
 
@@ -3653,7 +3697,8 @@ cloning---a mechanism that produces specialized copies of functions
 and which is (currently) performed by interprocedural constant
 propagation.
 
-@cindex @code{noinit} variable attribute
+@atindex @code{noinit}
+@cindex variables that should not be initialized
 @item noinit
 This attribute applies to variables.
 
@@ -3665,7 +3710,10 @@ This attribute is specific to ELF targets and relies on the linker
 script to place sections with the @code{.noinit} prefix in the right
 location.
 
-@cindex @code{noinline} function attribute
+@atindex @code{noinline}
+@cindex inlining, suppressing
+@cindex function inlining, suppressing
+@cindex suppressing inlining
 @item noinline
 This attribute applies to functions.
 
@@ -3689,7 +3737,7 @@ asm ("");
 (@pxref{Extended Asm}) in the called function, to serve as a special
 side effect.
 
-@cindex @code{noipa} function attribute
+@atindex @code{noipa}
 @item noipa
 This attribute applies to functions.
 
@@ -3703,8 +3751,8 @@ existing and future optimizations employing interprocedural analysis,
 including those that do not have an attribute suitable for disabling
 them individually.
 
-@cindex @code{nonnull} function attribute
-@cindex functions with non-null pointer arguments
+@atindex @code{nonnull}
+@cindex functions that have non-null pointer arguments
 @item nonnull
 @itemx nonnull (@var{arg-index}, @dots{})
 The @code{nonnull} attribute may be applied to a function that takes at
@@ -3762,7 +3810,8 @@ my_memcpy (void *dest, const void *src, size_t len)
         __attribute__((nonnull));
 @end smallexample
 
-@cindex @code{nonnull_if_nonzero} function attribute
+@atindex @code{nonnull_if_nonzero}
+@cindex functions that have non-null pointer arguments
 @item nonnull_if_nonzero (@var{arg-index}, @var{arg2-index})
 @itemx nonnull_if_nonzero (@var{arg-index}, @var{arg2-index}, @var{arg3-index})
 This attribute may be applied to a function that takes at
@@ -3806,7 +3855,9 @@ to call @code{my_memcpy2 (NULL, NULL, 0);} or
 used on declarations which have e.g.@: an exception for zero sizes,
 in which case null may be passed.
 
-@cindex @code{nonstring} variable attribute
+@atindex @code{nonstring}
+@cindex nonstring character arrays
+@cindex character arrays, non-null-terminated
 @item nonstring
 This attribute applies to variables or members of a struct, union, or class
 that have type array of @code{char}, @code{signed char}, or
@@ -3844,7 +3895,7 @@ int f (struct Data *pd, const char *s)
 @}
 @end smallexample
 
-@cindex @code{noplt} function attribute
+@atindex @code{noplt}
 @item noplt
 This attribute applies to functions.
 
@@ -3876,7 +3927,7 @@ in position-independent code.
 In position-dependent code, a few targets also convert calls to
 functions that are marked to not use the PLT to use the GOT instead.
 
-@cindex @code{noreturn} function attribute
+@atindex @code{noreturn}
 @cindex functions that never return
 @item noreturn
 This attribute applies to functions.
@@ -3919,7 +3970,8 @@ restored before calling the @code{noreturn} function.
 It does not make sense for a @code{noreturn} function to have a return
 type other than @code{void}.
 
-@cindex @code{nothrow} function attribute
+@atindex @code{nothrow}
+@cindex functions that do not throw exceptions
 @item nothrow
 This attribute applies to functions.
 
@@ -3929,7 +3981,8 @@ the standard C library can be guaranteed not to throw an exception
 with the notable exceptions of @code{qsort} and @code{bsearch} that
 take function pointer arguments.
 
-@cindex @code{null_terminated_string_arg} function attribute
+@atindex @code{null_terminated_string_arg}
+@cindex character arrays, null-terminated
 @item null_terminated_string_arg
 @itemx null_terminated_string_arg (@var{N})
 The @code{null_terminated_string_arg} attribute may be applied to a
@@ -3988,7 +4041,7 @@ the analyzer requires the first parameter to be non-null, and either
 be validly null-terminated, or validly readable up to the size specified by
 the second parameter.
 
-@cindex @code{objc_nullability} variable attribute
+@atindex @code{objc_nullability}
 @item objc_nullability (@var{nullability kind}) @r{(Objective-C and Objective-C++ only)}
 This attribute applies to pointer variables only.
 
@@ -4016,7 +4069,7 @@ property setter may take the value @code{nil} (which perhaps causes the
 property to be reset in some manner to a default) but for which the property
 getter will never validly return @code{nil}.
 
-@cindex @code{objc_root_class} type attribute
+@atindex @code{objc_root_class}
 @item objc_root_class @r{(Objective-C and Objective-C++ only)}
 This attribute applies to Objective-C and Objective-C++ classes.
 
@@ -4024,7 +4077,9 @@ It marks the class as being a root class, and thus allows
 the compiler to elide any warnings about a missing superclass and to
 make additional checks for mandatory methods as needed.
 
-@cindex @code{optimize} function attribute
+@atindex @code{optimize}
+@cindex optimization, per-function
+@cindex functions that are compiled with specific optimizations
 @item optimize (@var{level}, @dots{})
 @item optimize (@var{string}, @dots{})
 This attribute applies to functions.
@@ -4056,7 +4111,9 @@ specified by the attribute necessarily has an effect on the function.
 The @code{optimize} attribute should be used for debugging purposes only.
 It is not suitable in production code.
 
-@cindex @code{packed} attribute
+@atindex @code{packed}
+@cindex packed data
+@cindex alignment of structure fields
 @item packed
 This attribute can be attached to a @code{struct}, @code{union}, or
 C++ @code{class} definition, to a member of one, or to an @code{enum}
@@ -4112,7 +4169,7 @@ struct __attribute__ ((__packed__)) my_packed_struct
 @end smallexample
 
 @opindex fshort-enums
-When attached to an @code{enum} definition, the @code{packed} attribute
+When attached to an @code{enum}
 indicates that the smallest integral type should be used to represent the type.
 Specifying the @option{-fshort-enums} flag on the command line
 is equivalent to specifying the @code{packed}
@@ -4123,8 +4180,9 @@ of an @code{enum}, @code{struct}, @code{union}, or @code{class},
 not on a @code{typedef} that does not also define the enumerated type,
 structure, union, or class.
 
-@cindex @code{patchable_function_entry} function attribute
+@atindex @code{patchable_function_entry}
 @cindex extra NOP instructions at the function entry point
+@cindex functions that have patchable entries
 @item patchable_function_entry
 This attribute applies to functions.
 
@@ -4146,7 +4204,8 @@ instrumentation on all functions that are part of the instrumentation
 framework with the attribute @code{patchable_function_entry (0)}
 to prevent recursion.
 
-@cindex @code{persistent} variable attribute
+@atindex @code{persistent}
+@cindex persistent data
 @item persistent
 This attribute applies to variables.
 
@@ -4160,7 +4219,7 @@ script to place the sections with the @code{.persistent} prefix in the
 right location.  Specifically, some type of non-volatile, writable
 memory is required.
 
-@cindex @code{pure} function attribute
+@atindex @code{pure}
 @cindex functions that have no side effects
 @item pure
 This attribute applies to functions.
@@ -4211,7 +4270,7 @@ diagnosed.  Because a pure function cannot have any observable side
 effects it does not make sense for such a function to return @code{void}.
 Declaring such a function is diagnosed.
 
-@cindex @code{reproducible} function type attribute
+@atindex @code{reproducible}
 @cindex functions that have no side effects
 @item reproducible
 This attribute applies to function types.
@@ -4242,7 +4301,8 @@ Reproducible functions with pointer or reference arguments can store
 additional results through those pointers or references or references to
 pointers.
 
-@cindex @code{retain} attribute
+@atindex @code{retain}
+@cindex linker garbage collection
 @item retain
 This attribute applies to functions and variables.
 
@@ -4255,7 +4315,7 @@ or @code{-fdata-sections} options) are placed in new, unique sections.
 
 This additional functionality requires Binutils version 2.36 or later.
 
-@cindex @code{returns_nonnull} function attribute
+@atindex @code{returns_nonnull}
 @item returns_nonnull
 This attribute applies to functions returning a pointer type.
 
@@ -4271,7 +4331,7 @@ mymalloc (size_t len) __attribute__((returns_nonnull));
 lets the compiler optimize callers based on the knowledge
 that the return value will never be null.
 
-@cindex @code{returns_twice} function attribute
+@atindex @code{returns_twice}
 @cindex functions that return more than once
 @item returns_twice
 This attribute applies to functions.
@@ -4284,7 +4344,9 @@ function.  Examples of such functions are @code{setjmp} and @code{vfork}.
 The @code{longjmp}-like counterpart of such function, if any, might need
 to be marked with the @code{noreturn} attribute.
 
-@cindex @code{scalar_storage_order} type attribute
+@atindex @code{scalar_storage_order}
+@cindex endianness
+@cindex byte order
 @item scalar_storage_order ("@var{endianness}")
 This attribute applies to a @code{union} or @code{struct}.
 
@@ -4329,9 +4391,10 @@ is not supported; that is to say, if a given scalar object can be accessed
 through distinct types that assign a different storage order to it, then the
 behavior is undefined.
 
-@cindex @code{section} attribute
+@atindex @code{section}
 @cindex functions in arbitrary sections
 @cindex variables in arbitrary sections
+@cindex program sections
 @item section ("@var{section-name}")
 This attribute applies to functions and variables.
 
@@ -4391,7 +4454,9 @@ attribute is not available on all platforms.
 If you need to map the entire contents of a module to a particular
 section, consider using the facilities of the linker instead.
 
-@cindex @code{sentinel} function attribute
+@atindex @code{sentinel}
+@cindex variadic function sentinel
+@cindex functions that have a null-terminated argument list
 @item sentinel
 @itemx sentinel (@var{position})
 This attribute applies to functions.
@@ -4422,7 +4487,9 @@ a copy that redefines NULL appropriately.
 The warnings for missing or incorrect sentinels are enabled with
 @option{-Wformat}.
 
-@cindex @code{simd} function attribute
+@atindex @code{simd}
+@cindex SIMD function cloning
+@cindex functions that have SIMD clones
 @item simd
 @itemx simd("@var{mask}")
 This attribute applies to functions.
@@ -4445,7 +4512,9 @@ If the attribute is specified and @code{#pragma omp declare simd} is
 present on a declaration and the @option{-fopenmp} or @option{-fopenmp-simd}
 switch is specified, then the attribute is ignored.
 
-@cindex @code{stack_protect} function attribute
+@atindex @code{stack_protect}
+@cindex stack protection
+@cindex functions that should have stack protection
 @item stack_protect
 This attribute applies to functions.
 
@@ -4453,7 +4522,8 @@ It adds stack protection code to the function it applies to if
 flags @option{-fstack-protector}, @option{-fstack-protector-strong}
 or @option{-fstack-protector-explicit} are set.
 
-@cindex @code{strict_flex_array} variable attribute
+@atindex @code{strict_flex_array}
+@cindex flexible array members
 @item strict_flex_array (@var{level})
 The @code{strict_flex_array} attribute can be attached to the trailing
 array field of a structure.
@@ -4487,7 +4557,8 @@ The @code{strict_flex_array} attribute interacts with the
 @option{-Wstrict-flex-arrays} option.  @xref{Warning Options}, for more
 information.
 
-@cindex @code{strub} type attribute
+@atindex @code{strub}
+@cindex stack scrubbing
 @item strub
 This attribute applies to types, and may also appear in variable and function
 declarations.
@@ -4753,7 +4824,8 @@ __attribute__ ((noipa)) void flop (void) @{@}
 inline __attribute__ ((noclone, always_inline)) void flip (void) @{@}
 @end smallexample
 
-@cindex @code{symver} function attribute
+@atindex @code{symver}
+@cindex symbol versioning
 @item symver ("@var{name2}@@@var{nodename}")
 This attribute applies to functions.
 
@@ -4808,7 +4880,9 @@ addition to creating a symbol version (as if
 @code{"@var{name2}@@@var{nodename}"} was used) the version is also used
 to resolve @var{name2} by the linker.
 
-@cindex @code{tainted_args} function attribute
+@atindex @code{tainted_args}
+@cindex tainted arguments
+@cindex functions that have tainted arguments
 @item tainted_args
 This attribute applies to functions.
 
@@ -4829,7 +4903,8 @@ The analyzer pays particular attention to such functions when
 @option{-Wanalyzer-tainted-offset},
 and @option{-Wanalyzer-tainted-size}.
 
-@cindex @code{target} function attribute
+@atindex @code{target}
+@cindex target-specific code generation attributes
 @item target (@var{string}, @dots{})
 This attribute applies to functions.
 
@@ -4892,7 +4967,8 @@ function definition.
 
 @xref{Function Multiversioning} for more details.
 
-@cindex @code{target_version} function attribute
+@atindex @code{target_version}
+@cindex function multiversioning
 @item target_version (@var{option})
 This attribute applies to functions.
 
@@ -4904,7 +4980,8 @@ version set.
 
 @xref{Function Multiversioning} for more details.
 
-@cindex @code{target_clones} function attribute
+@atindex @code{target_clones}
+@cindex function multiversioning
 @item target_clones (@var{options})
 This attribute applies to functions.
 
@@ -4942,7 +5019,7 @@ the @code{target_version} attribute.
 
 @xref{Function Multiversioning} for more details.
 
-@cindex @code{tls_model} variable attribute
+@atindex @code{tls_model}
 @item tls_model ("@var{tls_model}")
 This attribute applies to variables.
 
@@ -4955,7 +5032,8 @@ The @var{tls_model} argument should be one of @code{global-dynamic},
 
 Not all targets support this attribute.
 
-@cindex @code{transparent_union} type attribute
+@atindex @code{transparent_union}
+@cindex transparent unions
 @item transparent_union
 This attribute applies to @code{union} type definitions.
 
@@ -5018,7 +5096,7 @@ pid_t wait (wait_status_ptr_t p)
 @}
 @end smallexample
 
-@cindex @code{unavailable} attribute
+@atindex @code{unavailable}
 @item unavailable
 @itemx unavailable (@var{msg})
 The @code{unavailable} attribute can apply to functions, variables, types,
@@ -5032,7 +5110,7 @@ interface.  Other than emitting an error rather than a warning, the
 @code{unavailable} attribute behaves in the same manner as
 @code{deprecated}.
 
-@cindex @code{uninitialized} variable attribute
+@atindex @code{uninitialized}
 @item uninitialized
 This variable applies to variables with automatic storage.
 
@@ -5050,7 +5128,7 @@ overhead.
 This attribute has no effect when the option @code{-ftrivial-auto-var-init}
 is not present.
 
-@cindex @code{unsequenced} function type attribute
+@atindex @code{unsequenced}
 @cindex functions that have no side effects
 @item unsequenced
 This type attribute can appear on both function declarations and declarations
@@ -5086,7 +5164,8 @@ the @code{const} attribute, so during optimization @code{const} has
 precedence over @code{unsequenced} which has precedence over
 @code{reproducible}.
 
-@cindex @code{unused} attribute
+@atindex @code{unused}
+@cindex unused entities
 @item unused
 This attribute can be attached to a function, variable, structure field,
 type declaration, or label.
@@ -5111,7 +5190,8 @@ not normally appropriate to use it in human-written code, though it
 could be useful in cases where the code that jumps to the label is
 contained within an @code{#ifdef} conditional.
 
-@cindex @code{used} attribute
+@atindex @code{used}
+@cindex used entities
 @item used
 The @code{used} attribute applies to functions and variables.
 
@@ -5132,7 +5212,8 @@ When applied to a static data member of a C++ class template, the
 attribute also means that the member is instantiated if the
 class itself is instantiated.
 
-@cindex @code{vector_size} attribute
+@atindex @code{vector_size}
+@cindex vector types
 @item vector_size (@var{bytes})
 The @code{vector_size} attribute can be attached to type, variable,
 and function declarations.
@@ -5198,7 +5279,9 @@ the @code{int}.
 
 @xref{Vector Extensions}, for details of manipulating objects of vector types.
 
-@cindex @code{visibility} attribute
+@atindex @code{visibility}
+@cindex visibility of symbols
+@cindex linker visibility
 @item visibility ("@var{visibility_type}")
 This attribute can be applied to functions, variables, and types.
 
@@ -5315,6 +5398,7 @@ Otherwise the two shared objects are unable to use the same
 typeinfo node and exception handling will break.
 
 @cindex @code{warn_if_not_aligned} attribute
+@cindex alignment of structure fields
 @item warn_if_not_aligned (@var{alignment})
 This attribute applies to structure fields.
 
@@ -5371,7 +5455,9 @@ has similar behavior to the first example above.
 
 This warning can be disabled by @option{-Wno-if-not-aligned}.
 
-@cindex @code{warn_unused_result} function attribute
+@atindex @code{warn_unused_result}
+@cindex unused function result
+@cindex functions whose return value must be used
 @item warn_unused_result
 This attribute applies to functions.
 
@@ -5394,7 +5480,8 @@ int foo ()
 @noindent
 results in warning on line 5.
 
-@cindex @code{weak} attribute
+@atindex @code{weak}
+@cindex weak symbols
 @item weak
 This attribute applies to function and variable declarations.
 
@@ -5407,7 +5494,8 @@ designates a variable it must also have the same size and alignment as
 the weak symbol.  Weak symbols are supported for ELF targets, and also
 for a.out targets when using the GNU assembler and linker.
 
-@cindex @code{weakref} attribute
+@atindex @code{weakref}
+@cindex weak symbols
 @item weakref
 @itemx weakref ("@var{target}")
 This attribute applies to function or variable declarations.
@@ -5455,7 +5543,7 @@ performing a link with relocatable output (i.e.@: @code{ld -r}) on them.
 A declaration to which @code{weakref} is attached and that is associated
 with a named @code{target} must be @code{static}.
 
-@cindex @code{zero_call_used_regs} function attribute
+@atindex @code{zero_call_used_regs}
 @item zero_call_used_regs ("@var{choice}")
 This attribute applies to functions.
 
@@ -5616,7 +5704,8 @@ AArch64 target.
 
 @table @code
 
-@cindex @code{target} function attribute, AArch64
+@atindex @code{target}, AArch64
+@cindex AArch64 code generation attributes
 @item target (@var{options})
 This attribute applies to functions.
 
@@ -5676,7 +5765,7 @@ and @code{crypto} extensions, and tunes it for @code{cortex-a53}.
 These are the permitted options:
 
 @table @samp
-@cindex @code{target("general-regs-only")} function attribute, AArch64
+@atindex @code{target("general-regs-only")}, AArch64
 @item general-regs-only
 Indicates that no floating-point or Advanced SIMD registers should be
 used when generating code for this function.  If the function explicitly
@@ -5684,7 +5773,7 @@ uses floating-point code, then the compiler gives an error.  This is
 the same behavior as that of the command-line option
 @option{-mgeneral-regs-only}.
 
-@cindex @code{target("fix-cortex-a53-835769")} function attribute, AArch64
+@atindex @code{target("fix-cortex-a53-835769")}, AArch64
 @item fix-cortex-a53-835769
 Indicates that the workaround for the Cortex-A53 erratum 835769 should be
 applied to this function.  To explicitly disable the workaround for this
@@ -5692,13 +5781,13 @@ function specify the negated form: @code{no-fix-cortex-a53-835769}.
 This corresponds to the behavior of the command-line options
 @option{-mfix-cortex-a53-835769} and @option{-mno-fix-cortex-a53-835769}.
 
-@cindex @code{target("cmodel=")} function attribute, AArch64
+@atindex @code{target("cmodel=")}, AArch64
 @item cmodel=
 Indicates that code should be generated for a particular code model for
 this function.  The behavior and permissible arguments are the same as
 for the command-line option @option{-mcmodel=}.
 
-@cindex @code{target("strict-align")} function attribute, AArch64
+@atindex @code{target("strict-align")}, AArch64
 @item strict-align
 @itemx no-strict-align
 @code{strict-align} indicates that the compiler should not assume that unaligned
@@ -5707,7 +5796,7 @@ that aligned memory references are handled by the system, the inverse attribute
 @code{no-strict-align} can be specified.  The behavior is same as for the
 command-line option @option{-mstrict-align} and @option{-mno-strict-align}.
 
-@cindex @code{target("omit-leaf-frame-pointer")} function attribute, AArch64
+@atindex @code{target("omit-leaf-frame-pointer")}, AArch64
 @item omit-leaf-frame-pointer
 Indicates that the frame pointer should be omitted for a leaf function call.
 To keep the frame pointer, the inverse attribute
@@ -5715,31 +5804,31 @@ To keep the frame pointer, the inverse attribute
 the same behavior as the command-line options @option{-momit-leaf-frame-pointer}
 and @option{-mno-omit-leaf-frame-pointer}.
 
-@cindex @code{target("tls-dialect=")} function attribute, AArch64
+@atindex @code{target("tls-dialect=")}, AArch64
 @item tls-dialect=
 Specifies the TLS dialect to use for this function.  The behavior and
 permissible arguments are the same as for the command-line option
 @option{-mtls-dialect=}.
 
-@cindex @code{target("arch=")} function attribute, AArch64
+@atindex @code{target("arch=")}, AArch64
 @item arch=
 Specifies the architecture version and architectural extensions to use
 for this function.  The behavior and permissible arguments are the same as
 for the @option{-march=} command-line option.
 
-@cindex @code{target("tune=")} function attribute, AArch64
+@atindex @code{target("tune=")}, AArch64
 @item tune=
 Specifies the core for which to tune the performance of this function.
 The behavior and permissible arguments are the same as for the @option{-mtune=}
 command-line option.
 
-@cindex @code{target("cpu=")} function attribute, AArch64
+@atindex @code{target("cpu=")}, AArch64
 @item cpu=
 Specifies the core for which to tune the performance of this function and also
 whose architectural features to use.  The behavior and valid arguments are the
 same as for the @option{-mcpu=} command-line option.
 
-@cindex @code{target("sign-return-address")} function attribute, AArch64
+@atindex @code{target("sign-return-address")}, AArch64
 @item sign-return-address
 Select the function scope on which return address signing will be applied.  The
 behavior and permissible arguments are the same as for the command-line option
@@ -5747,20 +5836,20 @@ behavior and permissible arguments are the same as for the command-line option
 attribute is deprecated.  The @code{branch-protection} attribute should
 be used instead.
 
-@cindex @code{target("branch-protection")} function attribute, AArch64
+@atindex @code{target("branch-protection")}, AArch64
 @item branch-protection
 Select the function scope on which branch protection will be applied.  The
 behavior and permissible arguments are the same as for the command-line option
 @option{-mbranch-protection=}.  The default value is @code{none}.
 
-@cindex @code{target("outline-atomics")} function attribute, AArch64
+@atindex @code{target("outline-atomics")}, AArch64
 @item outline-atomics
 @itemx no-outline-atomics
 Enable or disable calls to out-of-line helpers to implement atomic operations.
 This corresponds to the behavior of the command-line options
 @option{-moutline-atomics} and @option{-mno-outline-atomics}.
 
-@cindex @code{target("max-vectorization")} function attribute, AArch64
+@atindex @code{target("max-vectorization")}, AArch64
 @item max-vectorization
 @itemx no-max-vectorization
 @code{max-vectorization} tells GCC's vectorizer to treat all vector
@@ -5770,7 +5859,7 @@ this behavior.
 This corresponds to the behavior of the command-line options
 @option{-mmax-vectorization} and @option{-mno-max-vectorization}.
 
-@cindex @code{target("indirect_return")} function attribute, AArch64
+@atindex @code{target("indirect_return")}, AArch64
 @item indirect_return
 The @code{indirect_return} attribute can be applied to a function type
 to indicate that the function may return via an indirect branch instead
@@ -5780,7 +5869,7 @@ threads, such as the POSIX @code{swapcontext} function.  This attribute
 adds a @code{BTI J} instruction when BTI is enabled e.g. via
 @option{-mbranch-protection}.
 
-@cindex @code{target("preserve_none")} function attribute, AArch64
+@atindex @code{target("preserve_none")}, AArch64
 @item preserve_none
 Use this attribute to change the procedure call standard of the specified
 function to the preserve-none variant.
@@ -5835,7 +5924,7 @@ architectural feature rules specified above.
 These attributes are supported by the AMD GCN back end:
 
 @table @code
-@cindex @code{amdgpu_hsa_kernel} function attribute, AMD GCN
+@atindex @code{amdgpu_hsa_kernel}, AMD GCN
 @item amdgpu_hsa_kernel
 This attribute applies to functions.
 
@@ -5927,7 +6016,7 @@ OpenACC/OpenMP).
 These attributes are supported by the ARC back end:
 
 @table @code
-@cindex @code{interrupt} function attribute, ARC
+@atindex @code{interrupt}, ARC
 @item interrupt
 This attribute applies to functions.
 
@@ -5947,9 +6036,9 @@ Permissible values for this parameter are: @w{@code{ilink1}} and
 @w{@code{ilink2}} for ARCv1 architecture, and @w{@code{ilink}} and
 @w{@code{firq}} for ARCv2 architecture.
 
-@cindex @code{long_call} function attribute, ARC
-@cindex @code{medium_call} function attribute, ARC
-@cindex @code{short_call} function attribute, ARC
+@atindex @code{long_call}, ARC
+@atindex @code{medium_call}, ARC
+@atindex @code{short_call}, ARC
 @cindex indirect calls, ARC
 @item long_call
 @itemx medium_call
@@ -5972,7 +6061,7 @@ attribute will always be close enough to be called with a conditional
 branch-and-link instruction, which has a 21-bit offset from
 the call site.
 
-@cindex @code{jli_always} function attribute, ARC
+@atindex @code{jli_always}, ARC
 @item jli_always
 This attribute applies to functions.
 
@@ -5981,14 +6070,14 @@ instruction.  The @code{jli} instruction makes use of a table stored
 into @code{.jlitab} section, which holds the location of the functions
 which are addressed using this instruction.
 
-@cindex @code{jli_fixed} function attribute, ARC
+@atindex @code{jli_fixed}, ARC
 @item jli_fixed
 This attribute applies to functions.
 
 Identical to @code{jli_always} above, but the location of the function in the
 @code{jli} table is known and given as an attribute parameter.
 
-@cindex @code{secure_call} function attribute, ARC
+@atindex @code{secure_call}, ARC
 @item secure_call
 This attribute applies to functions.
 
@@ -5996,7 +6085,7 @@ It allows you to mark secure-code functions that are
 callable from normal mode.  The location of the secure call function
 into the @code{sjli} table needs to be passed as argument.
 
-@cindex @code{aux} variable attribute, ARC
+@atindex @code{aux}, ARC
 @item aux
 This attribute applies to variables.
 
@@ -6005,7 +6094,7 @@ auxiliary register space from C.  The auxiliary register number is
 given via attribute argument.
 
 @item uncached
-@cindex @code{uncached} type attribute, ARC
+@atindex @code{uncached}, ARC
 This attribute applies to types.
 
 Declaring objects with the @code{uncached} type attribute
@@ -6023,7 +6112,7 @@ These attributes are supported for ARM targets:
 
 @table @code
 
-@cindex @code{general-regs-only} function attribute, ARM
+@atindex @code{general-regs-only}, ARM
 @item general-regs-only
 This attribute applies to functions.
 
@@ -6033,7 +6122,7 @@ uses floating-point code, then the compiler gives an error.  This is
 the same behavior as that of the command-line option
 @option{-mgeneral-regs-only}.
 
-@cindex @code{interrupt} function attribute, ARM
+@atindex @code{interrupt}, ARM
 @item interrupt
 This attribute applies to functions.
 
@@ -6056,15 +6145,15 @@ Permissible values for this parameter are: @code{IRQ}, @code{FIQ},
 On ARMv7-M the interrupt type is ignored, and the attribute means the function
 may be called with a word-aligned stack pointer.
 
-@cindex @code{isr} function attribute, ARM
+@atindex @code{isr}, ARM
 @item isr
 This attribute applies to functions.
 
 Use this attribute on ARM to write Interrupt Service Routines. This is an
 alias to the @code{interrupt} attribute above.
 
-@cindex @code{long_call} function attribute, ARM
-@cindex @code{short_call} function attribute, ARM
+@atindex @code{long_call}, ARM
+@atindex @code{short_call}, ARM
 @cindex indirect calls, ARM
 @item long_call
 @itemx short_call
@@ -6081,7 +6170,7 @@ calling sequence.   The @code{short_call} attribute always places
 the offset to the function from the call site into the @samp{BL}
 instruction directly.
 
-@cindex @code{pcs} function attribute, ARM
+@atindex @code{pcs}, ARM
 @item pcs
 This attribute applies to functions.
 
@@ -6104,7 +6193,7 @@ double f2d (float) __attribute__((pcs("aapcs")));
 Variadic functions always use the @code{"aapcs"} calling convention and
 the compiler rejects attempts to specify an alternative.
 
-@cindex @code{target} function attribute
+@atindex @code{target}, ARM
 @item target (@var{options})
 This attribute applies to functions.
 
@@ -6114,24 +6203,24 @@ allows specification of target-specific compilation options.
 On ARM, the following options are allowed:
 
 @table @samp
-@cindex @code{target("thumb")} function attribute, ARM
+@atindex @code{target("thumb")}, ARM
 @item thumb
 Force code generation in the Thumb (T16/T32) ISA, depending on the
 architecture level.
 
-@cindex @code{target("arm")} function attribute, ARM
+@atindex @code{target("arm")}, ARM
 @item arm
 Force code generation in the ARM (A32) ISA.
 
 Functions from different modes can be inlined in the caller's mode.
 
-@cindex @code{target("fpu=")} function attribute, ARM
+@atindex @code{target("fpu=")}, ARM
 @item fpu=
 Specifies the fpu for which to tune the performance of this function.
 The behavior and permissible arguments are the same as for the @option{-mfpu=}
 command-line option.
 
-@cindex @code{arch=} function attribute, ARM
+@atindex @code{arch=}, ARM
 @item arch=
 Specifies the architecture version and architectural extensions to use
 for this function.  The behavior and permissible arguments are the same as
@@ -6167,7 +6256,7 @@ without modifying an existing @option{-march=} or @option{-mcpu} option.
 
 @end table
 
-@cindex @code{notshared} type attribute, ARM
+@atindex @code{notshared}, ARM
 @item notshared
 This attributes applies to class types.
 
@@ -6201,8 +6290,8 @@ most Symbian OS code uses @code{__declspec}.)
 These attributes are supported by the AVR back end:
 
 @table @code
-@cindex @code{signal} function attribute, AVR
-@cindex @code{interrupt} function attribute, AVR
+@atindex @code{signal}, AVR
+@atindex @code{interrupt}, AVR
 @item signal
 @itemx interrupt
 These attributes apply to functions.
@@ -6247,8 +6336,8 @@ ISR (ADC_vect, ISR_NOBLOCK) // Uses the "interrupt" attribute.
 When both @code{signal} and @code{interrupt} are specified for the same
 function, then @code{signal} is silently ignored.
 
-@cindex @code{signal(@var{num})} function attribute, AVR
-@cindex @code{interrupt(@var{num})} function attribute, AVR
+@atindex @code{signal(@var{num})}, AVR
+@atindex @code{interrupt(@var{num})}, AVR
 @item signal(@var{num})
 @itemx interrupt(@var{num})
 These attributes apply to functions.
@@ -6293,7 +6382,7 @@ is similar to the @code{ISR_ALIASOF} macro provided by AVR-LibC, but
 without the overhead introduced by @code{ISR_ALIASOF}.
 
 
-@cindex @code{noblock} function attribute, AVR
+@atindex @code{noblock}, AVR
 @item noblock
 This attribute applies to functions.
 
@@ -6304,7 +6393,7 @@ and @code{noblock} together has the same effect like using the @code{interrupt}
 attribute.  Using the @code{noblock} attribute without @code{signal} has no
 effect.
 
-@cindex @code{no_gccisr} function attribute, AVR
+@atindex @code{no_gccisr}, AVR
 @item no_gccisr
 This attribute applies to functions.
 
@@ -6337,8 +6426,8 @@ expects (parts of) the prologue code as outlined above to be present.
 To disable @code{__gcc_isr} generation for the whole compilation unit,
 use option @option{-mno-gas-isr-prologues}, @pxref{AVR Options}.
 
-@cindex @code{OS_main} function attribute, AVR
-@cindex @code{OS_task} function attribute, AVR
+@atindex @code{OS_main}, AVR
+@atindex @code{OS_task}, AVR
 @item OS_main
 @itemx OS_task
 This attribute applies to functions.
@@ -6367,7 +6456,7 @@ or a frame pointer whereas @code{OS_main} and @code{OS_task} do this
 as needed.
 @end itemize
 
-@cindex @code{progmem} variable attribute, AVR
+@atindex @code{progmem}, AVR
 @item progmem
 This attribute applies to variables.
 
@@ -6443,7 +6532,7 @@ at all.
 
 @end table
 
-@cindex @code{io} variable attribute, AVR
+@atindex @code{io}, AVR
 @item io
 @itemx io (@var{addr})
 This attribute applies to variables.
@@ -6469,7 +6558,7 @@ Example:
 extern volatile int porta __attribute__((io));
 @end smallexample
 
-@cindex @code{io_low} variable attribute, AVR
+@atindex @code{io_low}, AVR
 @item io_low
 @itemx io_low (@var{addr})
 The @code{io_low} attribute applies to variables.
@@ -6479,7 +6568,7 @@ compiler that the object lies in the lower half of the I/O area,
 allowing the use of @code{cbi}, @code{sbi}, @code{sbic} and @code{sbis}
 instructions.
 
-@cindex @code{address} variable attribute, AVR
+@atindex @code{address}, AVR
 @item address (@var{addr})
 This attribute applies to variables.
 
@@ -6505,7 +6594,7 @@ will be compiled to
 a_symbol = 1234
 @end smallexample
 
-@cindex @code{absdata} variable attribute, AVR
+@atindex @code{absdata}, AVR
 @item absdata
 This attribute applies to variables.
 
@@ -6545,7 +6634,7 @@ These attributes are supported by the Blackfin back end:
 
 @table @code
 
-@cindex @code{exception_handler} function attribute
+@atindex @code{exception_handler}, Blackfin
 @cindex exception handler functions, Blackfin
 @item exception_handler
 This attribute applies to functions.
@@ -6555,7 +6644,7 @@ is an exception handler.  The compiler generates function entry and
 exit sequences suitable for use in an exception handler when this
 attribute is present.
 
-@cindex @code{interrupt_handler} function attribute, Blackfin
+@atindex @code{interrupt_handler}, Blackfin
 @item interrupt_handler
 This attribute applies to functions.
 
@@ -6564,7 +6653,7 @@ indicate that the specified function is an interrupt handler.  The compiler
 generates function entry and exit sequences suitable for use in an
 interrupt handler when this attribute is present.
 
-@cindex @code{kspisusp} function attribute, Blackfin
+@atindex @code{kspisusp}, Blackfin
 @cindex User stack pointer in interrupts on the Blackfin
 @item kspisusp
 This attribute applies to functions.
@@ -6573,7 +6662,7 @@ When used together with @code{interrupt_handler}, @code{exception_handler}
 or @code{nmi_handler}, code is generated to load the stack pointer
 from the USP register in the function prologue.
 
-@cindex @code{l1_text} function attribute, Blackfin
+@atindex @code{l1_text}, Blackfin
 @item l1_text
 This attribute applies to functions.
 
@@ -6582,7 +6671,7 @@ SRAM@. The function is put into a specific section named @code{.l1.text}.
 With @option{-mfdpic}, function calls with a such function as the callee
 or caller uses inlined PLT.
 
-@cindex @code{l2} attribute, Blackfin
+@atindex @code{l2}, Blackfin
 @item l2
 
 This attribute applies to functions and variables.
@@ -6597,8 +6686,8 @@ Variables with @code{l2} attribute are put into the specific section
 named @code{.l2.data}.
 
 @cindex indirect calls, Blackfin
-@cindex @code{longcall} function attribute, Blackfin
-@cindex @code{shortcall} function attribute, Blackfin
+@atindex @code{longcall}, Blackfin
+@atindex @code{shortcall}, Blackfin
 @item longcall
 @itemx shortcall
 This attribute applies to functions.
@@ -6610,7 +6699,7 @@ require a different (more expensive) calling sequence.  The
 enough for the shorter calling sequence to be used.  These attributes
 override the @option{-mlongcall} switch.
 
-@cindex @code{nesting} function attribute, Blackfin
+@atindex @code{nesting}, Blackfin
 @cindex Allow nesting in an interrupt handler on the Blackfin processor
 @item nesting
 This attribute applies to functions.
@@ -6619,7 +6708,7 @@ Use this attribute together with @code{interrupt_handler},
 @code{exception_handler} or @code{nmi_handler} to indicate that the function
 entry code should enable nested interrupts or exceptions.
 
-@cindex @code{nmi_handler} function attribute, Blackfin
+@atindex @code{nmi_handler}, Blackfin
 @cindex NMI handler functions on the Blackfin processor
 @item nmi_handler
 This attribute applies to functions.
@@ -6629,7 +6718,7 @@ is an NMI handler.  The compiler generates function entry and
 exit sequences suitable for use in an NMI handler when this
 attribute is present.
 
-@cindex @code{saveall} function attribute, Blackfin
+@atindex @code{saveall}, Blackfin
 @cindex save all registers on the Blackfin
 @item saveall
 This attribute applies to functions.
@@ -6638,9 +6727,9 @@ It indicates that
 all registers except the stack pointer should be saved in the prologue
 regardless of whether they are used or not.
 
-@cindex @code{l1_data} variable attribute, Blackfin
-@cindex @code{l1_data_A} variable attribute, Blackfin
-@cindex @code{l1_data_B} variable attribute, Blackfin
+@atindex @code{l1_data}, Blackfin
+@atindex @code{l1_data_A}, Blackfin
+@atindex @code{l1_data_B}, Blackfin
 @item l1_data
 @itemx l1_data_A
 @itemx l1_data_B
@@ -6660,7 +6749,7 @@ attribute are put into the specific section named @code{.l1.data.B}.
 These attributes are supported by the BPF back end:
 
 @table @code
-@cindex @code{kernel helper}, function attribute, BPF
+@atindex @code{kernel helper}, BPF
 @item kernel_helper
 This attribute applies to functions.
 
@@ -6673,7 +6762,7 @@ int bpf_probe_read (void *dst, int size, const void *unsafe_ptr)
   __attribute__ ((kernel_helper (4)));
 @end smallexample
 
-@cindex @code{preserve_access_index} type attribute, BPF
+@atindex @code{preserve_access_index}, BPF
 @item preserve_access_index
 This attribute applies to types.
 
@@ -6692,8 +6781,8 @@ wrapping every such access with @code{__builtin_preserve_access_index}.
 These attributes are supported by the C-SKY back end:
 
 @table @code
-@cindex @code{interrupt} function attribute, C-SKY
-@cindex @code{isr} function attribute, C-SKY
+@atindex @code{interrupt}, C-SKY
+@atindex @code{isr}, C-SKY
 @item interrupt
 @itemx isr
 These attributes apply to functions.
@@ -6715,7 +6804,7 @@ are ignored with a warning otherwise.  @xref{C-SKY Options}.
 These attributes are supported by the Epiphany back end:
 
 @table @code
-@cindex @code{disinterrupt} function attribute, Epiphany
+@atindex @code{disinterrupt}, Epiphany
 @item disinterrupt
 This attribute applies to functions.
 
@@ -6723,7 +6812,7 @@ It causes the compiler to emit
 instructions to disable interrupts for the duration of the given
 function.
 
-@cindex @code{forwarder_section} function attribute, Epiphany
+@atindex @code{forwarder_section}, Epiphany
 @item forwarder_section
 This attribute applies to functions.
 
@@ -6733,7 +6822,7 @@ reached by a branch instruction, so generate a local memory trampoline
 to transfer control.  The single parameter identifies the section where
 the trampoline is placed.
 
-@cindex @code{interrupt} function attribute, Epiphany
+@atindex @code{interrupt}, Epiphany
 @item interrupt
 This attribute applies to functions.
 
@@ -6776,8 +6865,8 @@ void __attribute__ ((interrupt ("dma0, dma1"),
   external_dma_handler ();
 @end smallexample
 
-@cindex @code{long_call} function attribute, Epiphany
-@cindex @code{short_call} function attribute, Epiphany
+@atindex @code{long_call}, Epiphany
+@atindex @code{short_call}, Epiphany
 @cindex indirect calls, Epiphany
 @item long_call
 @itemx short_call
@@ -6796,7 +6885,7 @@ command-line switch and @code{#pragma long_calls} settings.
 These attributes are available for H8/300 targets:
 
 @table @code
-@cindex @code{function_vector} function attribute, H8/300
+@atindex @code{function_vector}, H8/300
 @item function_vector
 This attribute applies to functions.
 
@@ -6807,7 +6896,7 @@ the function vector has a limited size (maximum 128 entries on the H8/300
 and 64 entries on the H8/300H and H8S)
 and shares space with the interrupt vector.
 
-@cindex @code{interrupt_handler} function attribute, H8/300
+@atindex @code{interrupt_handler}, H8/300
 @item interrupt_handler
 This attribute applies to functions.
 
@@ -6816,7 +6905,7 @@ indicate that the specified function is an interrupt handler.  The compiler
 generates function entry and exit sequences suitable for use in an
 interrupt handler when this attribute is present.
 
-@cindex @code{saveall} function attribute, H8/300
+@atindex @code{saveall}, H8/300
 @cindex save all registers on the H8/300, H8/300H, and H8S
 @item saveall
 This attribute applies to functions.
@@ -6825,7 +6914,7 @@ Use it on the H8/300, H8/300H, and H8S to indicate that
 all registers except the stack pointer should be saved in the prologue
 regardless of whether they are used or not.
 
-@cindex @code{monitor} function attribute, H8/300
+@atindex @code{monitor}, H8/300
 @item monitor
 This attribute applies to functions.
 
@@ -6833,7 +6922,7 @@ Use it to indicate a monitor function.  It tells GCC
 to generate entry and exit sequences that disable interrupts during
 execution of the function.
 
-@cindex @code{OS_Task} function attribute, H8/300
+@atindex @code{OS_Task}, H8/300
 @item OS_Task
 This attribute applies to functions.
 
@@ -6841,7 +6930,7 @@ Use it to disable the normal register and stack save and
 restore sequences on function entry and exit.  The function epilogue
 generated by GCC includes only a return instruction.
 
-@cindex @code{eightbit_data} variable attribute, H8/300
+@atindex @code{eightbit_data}, H8/300
 @cindex eight-bit data on the H8/300, H8/300H, and H8S
 @item eightbit_data
 This attribute applies to variable declarations.
@@ -6853,7 +6942,7 @@ The compiler generates more efficient code for certain operations
 on data in the eight-bit data area.  Note the eight-bit data area is limited to
 256 bytes of data.
 
-@cindex @code{tiny_data} variable attribute, H8/300
+@atindex @code{tiny_data}, H8/300
 @cindex tiny data section on the H8/300H and H8S
 @item tiny_data
 This attribute applies to variable declarations.
@@ -6871,7 +6960,7 @@ slightly under 32KB of data.
 These attributes are supported on IA-64 targets:
 
 @table @code
-@cindex @code{syscall_linkage} function attribute, IA-64
+@atindex @code{syscall_linkage}, IA-64
 @item syscall_linkage
 This attribute applies to functions.
 
@@ -6881,7 +6970,7 @@ to restart a system call after an interrupt without having to save/restore
 the input registers.  This also prevents kernel data from leaking into
 application code.
 
-@cindex @code{version_id} attribute, IA-64
+@atindex @code{version_id}, IA-64
 @item version_id
 This attribute applies to global variables or functions.
 
@@ -6897,7 +6986,7 @@ extern int foo () __attribute__((version_id ("20040821")));
 @noindent
 Calls to @code{foo} are mapped to calls to @code{foo@{20040821@}}.
 
-@cindex @code{model} variable attribute, IA-64
+@atindex @code{model}, IA-64
 @item model (@var{model-name})
 This attribute applies to variables.
 
@@ -6917,9 +7006,7 @@ The following attributes are supported by the LoongArch back end:
 
 @table @code
 
-@cindex @code{target (option,...)} loongarch function attribute target
-@item target (option,...)
-@cindex @code{target} LoongArch function attribute
+@atindex @code{target}, LoongArch
 @item target (@var{options})
 This attribute applies to functions.
 
@@ -6947,7 +7034,7 @@ is valid and compiles function @code{foo} for LA64V1.1 with @code{lasx}.
 These are the permitted options:
 
 @table @samp
-@cindex @code{target("strict-align")} function attribute, LoongArch
+@atindex @code{target("strict-align")}, LoongArch
 @item strict-align
 @itemx no-strict-align
 @code{strict-align} indicates that the compiler should not assume that unaligned
@@ -6956,25 +7043,25 @@ that aligned memory references are handled by the system, the inverse attribute
 @code{no-strict-align} can be specified.  The behavior is same as for the
 command-line option @option{-mstrict-align} and @option{-mno-strict-align}.
 
-@cindex @code{target("cmodel=")} function attribute, LoongArch
+@atindex @code{target("cmodel=")}, LoongArch
 @item cmodel=
 Indicates that code should be generated for a particular code model for
 this function.  The behavior and permissible arguments are the same as
 for the command-line option @option{-mcmodel=}.
 
-@cindex @code{target("arch=")} function attribute, LoongArch
+@atindex @code{target("arch=")}, LoongArch
 @item arch=
 Specifies the architecture version and architectural extensions to use
 for this function.  The behavior and permissible arguments are the same as
 for the @option{-march=} command-line option.
 
-@cindex @code{target("tune=")} function attribute, LoongArch
+@atindex @code{target("tune=")}, LoongArch
 @item tune=
 Specifies the core for which to tune the performance of this function.
 The behavior and permissible arguments are the same as for the @option{-mtune=}
 command-line option.
 
-@cindex @code{target("lsx")} function attribute, LoongArch
+@atindex @code{target("lsx")}, LoongArch
 @item lsx
 @itemx no-lsx
 @code{lsx} indicates that vector instruction generation is allowed
@@ -6982,7 +7069,7 @@ command-line option.
 The behavior is same as for the command-line option
 @option{-mlsx} and @option{-mno-lsx}.
 
-@cindex @code{target("lasx")} function attribute, LoongArch
+@atindex @code{target("lasx")}, LoongArch
 @item lasx
 @itemx no-lasx
 @code{lasx} indicates that lasx instruction generation is allowed (not allowed)
@@ -7019,7 +7106,7 @@ But the following method cannot perform 128-bit vectorization.
 $ gcc test.c -o test.s -O2 -mlasx -mno-lasx
 @end smallexample
 
-@cindex @code{target("recipe")} function attribute, LoongArch
+@atindex @code{target("recipe")}, LoongArch
 @item recipe
 @itemx no-recipe
 @code{recipe} indicates that frecipe.@{s/d@} and frsqrt.@{s/d@}
@@ -7027,7 +7114,7 @@ instruction generation is allowed (not allowed) when compiling the function.
 The behavior is same as for the command-line options
 @option{-mrecipe} and @option{-mno-recipe}.
 
-@cindex @code{target("div32")} function attribute, LoongArch
+@atindex @code{target("div32")}, LoongArch
 @item div32
 @itemx no-div32
 @code{div32} determines whether div.w[u] and mod.w[u] instructions on
@@ -7036,7 +7123,7 @@ are evaluated based only on the lower 32 bits of the input registers.
 The behavior is same as for the command-line options
 @option{-mdiv32} and @option{-mno-div32}.
 
-@cindex @code{target("lam-bh")} function attribute, LoongArch
+@atindex @code{target("lam-bh")}, LoongArch
 @item lam-bh
 @itemx no-lam-bh
 @code{lam-bh} indicates that am@{swap/add@}[_db].@{b/h@} instruction generation
@@ -7044,7 +7131,7 @@ is allowed (not allowed) when compiling the function.
 The behavior is same as for the command-line options
 @option{-mlam-bh} and @option{-mno-lam-bh}.
 
-@cindex @code{target("lamcas")} function attribute, LoongArch
+@atindex @code{target("lamcas")}, LoongArch
 @item lamcas
 @itemx no-lamcas
 @code{lamcas} indicates that amcas[_db].@{b/h/w/d@} instruction generation
@@ -7052,7 +7139,7 @@ is allowed (not allowed) when compiling the function.
 The behavior is same as for the command-line options
 @option{-mlamcas} and @option{-mno-lamcas}.
 
-@cindex @code{target("scq")} function attribute, LoongArch
+@atindex @code{target("scq")}, LoongArch
 @item scq
 @itemx no-scq
 @code{scq} indicates that sc.q instruction generation is allowed (not allowed)
@@ -7060,7 +7147,7 @@ when compiling the function.
 The behavior is same as for the command-line options
 @option{-mscq} and @option{-mno-scq}.
 
-@cindex @code{target("ld-seq-sa")} function attribute, LoongArch
+@atindex @code{target("ld-seq-sa")}, LoongArch
 @item ld-seq-sa
 @itemx no-ld-seq-sa
 @code{ld-seq-sa} indicates that same-address load-load barriers (dbar 0x700)
@@ -7084,7 +7171,7 @@ attribute,
 it is not inlined if the code model of the caller function is different
 from the code model of the callee function.
 
-@cindex @code{target_clones (string,...)} LoongArch function attribute
+@atindex @code{target_clones}, LoongArch
 @item target_clones (@var{options})
 This attribute applies to functions.
 
@@ -7177,7 +7264,7 @@ than that of @samp{lsx;priority=1}.
 Note that the option values on the GCC command line are not considered when
 calculating the priority.
 
-@cindex @code{target_version} LoongArch function attribute
+@atindex @code{target_version}, LoongArch
 @item target_version (@var{option})
 This attribute applies to functions.
 
@@ -7228,7 +7315,7 @@ foo (int a)
 @}
 @end smallexample
 
-@cindex @code{model} variable attribute, LoongArch
+@atindex @code{model}, LoongArch
 @item model("@var{name}")
 This attribute applies to variables.
 
@@ -7246,7 +7333,7 @@ specially.  Currently the only supported values of @var{name} are
 These attributes are supported by the M32C back end:
 
 @table @code
-@cindex @code{bank_switch} function attribute, M32C
+@atindex @code{bank_switch}, M32C
 @item bank_switch
 This attribute applies to functions.
 
@@ -7254,7 +7341,7 @@ When added to an interrupt handler with the M32C port, causes the
 prologue and epilogue to use bank switching to preserve the registers
 rather than saving them on the stack.
 
-@cindex @code{fast_interrupt} function attribute, M32C
+@atindex @code{fast_interrupt}, M32C
 @item fast_interrupt
 This attribute applies to functions.
 
@@ -7263,7 +7350,7 @@ function is a fast interrupt handler.  This is just like the
 @code{interrupt} attribute, except that @code{freit} is used to return
 instead of @code{reit}.
 
-@cindex @code{function_vector} function attribute, M16C/M32C
+@atindex @code{function_vector}, M16C/M32C
 @item function_vector
 This attribute applies to functions.
 
@@ -7301,7 +7388,7 @@ then be sure to write this declaration in both files.
 
 This attribute is ignored for R8C target.
 
-@cindex @code{interrupt} function attribute, M32C
+@atindex @code{interrupt}, M32C
 @item interrupt
 This attribute applies to functions.
 
@@ -7317,7 +7404,7 @@ when this attribute is present.
 These attributes are supported by the M32R/D back end:
 
 @table @code
-@cindex @code{interrupt} function attribute, M32R/D
+@atindex @code{interrupt}, M32R/D
 @item interrupt
 This attribute applies to functions.
 
@@ -7326,7 +7413,7 @@ that the specified function is an interrupt handler.  The compiler generates
 function entry and exit sequences suitable for use in an interrupt handler
 when this attribute is present.
 
-@cindex @code{model} attribute, M32R/D
+@atindex @code{model}, M32R/D
 @cindex function addressability on the M32R/D
 @cindex variable addressability on the M32R/D
 @item model (@var{model-name})
@@ -7357,8 +7444,8 @@ generates the much slower @code{seth/add3/jl} instruction sequence).
 These attributes are supported by the m68k back end:
 
 @table @code
-@cindex @code{interrupt} function attribute, m68k
-@cindex @code{interrupt_handler} function attribute, m68k
+@atindex @code{interrupt}, m68k
+@atindex @code{interrupt_handler}, m68k
 @item interrupt
 @itemx interrupt_handler
 These attributes apply to functions.
@@ -7368,7 +7455,7 @@ The compiler
 generates function entry and exit sequences suitable for use in an
 interrupt handler when this attribute is present.  Either name may be used.
 
-@cindex @code{interrupt_thread} function attribute, fido
+@atindex @code{interrupt_thread}, fido
 @item interrupt_thread
 This attribute applies to functions.
 
@@ -7385,7 +7472,7 @@ instruction.  This attribute is available only on fido.
 These attributes are supported on MicroBlaze targets:
 
 @table @code
-@cindex @code{save_volatiles} function attribute, MicroBlaze
+@atindex @code{save_volatiles}, MicroBlaze
 @item save_volatiles
 This attribute applies to functions.
 
@@ -7395,7 +7482,7 @@ registers) are saved in the function prologue.  If the function is a leaf
 function, only volatiles used by the function are saved.  A normal function
 return is generated instead of a return from interrupt.
 
-@cindex @code{break_handler} function attribute, MicroBlaze
+@atindex @code{break_handler}, MicroBlaze
 @cindex break handler functions
 @item break_handler
 This attribute applies to functions.
@@ -7410,8 +7497,8 @@ the @code{rtbd} instead of @code{rtsd}.
 void f () __attribute__ ((break_handler));
 @end smallexample
 
-@cindex @code{interrupt_handler} function attribute, MicroBlaze
-@cindex @code{fast_interrupt} function attribute, MicroBlaze
+@atindex @code{interrupt_handler}, MicroBlaze
+@atindex @code{fast_interrupt}, MicroBlaze
 @item interrupt_handler
 @itemx fast_interrupt
 These attributes apply to functions.
@@ -7427,12 +7514,18 @@ using @code{rtid} instead of @code{rtsd}.
 @node Microsoft Windows Attributes
 @subsubsection Microsoft Windows Attributes
 
-The following attributes are available on Microsoft Windows and Symbian OS
-targets.
+@cindex @code{__declspec}
+On Microsoft Windows and Symbian OS targets, GCC supports the
+@code{__declspec} keyword in addition to @code{__attribute__} and
+the standard C or C++ attribute syntax, for compatibility with other
+compilers.  The @code{__declspec} syntax
+supported by GCC is limited and should only be used as explicitly
+documented in this section.
+
+The following attributes are available on Microsoft Windows and Symbian OS:
 
 @table @code
-@cindex @code{dllexport} attribute
-@cindex @code{__declspec(dllexport)}
+@atindex @code{dllexport}, Microsoft Windows
 @item dllexport
 This attribute can be applied to functions, variables, and C++ classes.
 
@@ -7469,8 +7562,7 @@ including the symbol in the DLL's export table such as using a
 @file{.def} file with an @code{EXPORTS} section or, with GNU ld, using
 the @option{--export-all} linker flag.
 
-@cindex @code{dllimport} attribute
-@cindex @code{__declspec(dllimport)}
+@atindex @code{dllimport}, Microsoft Windows
 @item dllimport
 This attribute applies to functions, variables, and C++ classes.
 
@@ -7525,7 +7617,7 @@ this case, the address of a stub function in the import lib is
 referenced.  On Microsoft Windows targets, the attribute can be disabled
 for functions by setting the @option{-mnop-fun-dllimport} flag.
 
-@cindex @code{selectany} variable attribute
+@atindex @code{selectany}, Microsoft Windows
 @item selectany
 This attribute applies to variables.
 
@@ -7548,7 +7640,7 @@ targets.  You can use @code{__declspec (selectany)} as a synonym for
 @code{__attribute__ ((selectany))} for compatibility with other
 compilers.
 
-@cindex @code{shared} variable attribute
+@atindex @code{shared}, Microsoft Windows
 @item shared
 This attribute applies to variables.
 
@@ -7584,7 +7676,7 @@ The @code{shared} attribute is only available on Microsoft Windows@.
 These attributes are supported by the MIPS back end:
 
 @table @code
-@cindex @code{interrupt} function attribute, MIPS
+@atindex @code{interrupt}, MIPS
 @item interrupt
 This attribute applies to functions.
 
@@ -7604,14 +7696,14 @@ all interrupts from sw0 up to and including the specified interrupt vector.
 You can use the following attributes to modify the behavior
 of an interrupt handler:
 @table @code
-@cindex @code{use_shadow_register_set} function attribute, MIPS
+@atindex @code{use_shadow_register_set}, MIPS
 @item use_shadow_register_set
 Assume that the handler uses a shadow register set, instead of
 the main general-purpose registers.  An optional argument @code{intstack} is
 supported to indicate that the shadow register set contains a valid stack
 pointer.
 
-@cindex @code{keep_interrupts_masked} function attribute, MIPS
+@atindex @code{keep_interrupts_masked}, MIPS
 @item keep_interrupts_masked
 This attribute applies to functions.
 
@@ -7619,7 +7711,7 @@ It tells GCC to keep interrupts masked for the whole function.
 Without this attribute,
 GCC tries to reenable interrupts for as much of the function as it can.
 
-@cindex @code{use_debug_exception_return} function attribute, MIPS
+@atindex @code{use_debug_exception_return}, MIPS
 @item use_debug_exception_return
 This attribute applies to functions.
 
@@ -7648,10 +7740,10 @@ void __attribute__ ((interrupt("vector=hw3"))) v9 ();
 @end smallexample
 
 @cindex indirect calls, MIPS
-@cindex @code{long_call} function attribute, MIPS
-@cindex @code{short_call} function attribute, MIPS
-@cindex @code{near} function attribute, MIPS
-@cindex @code{far} function attribute, MIPS
+@atindex @code{long_call}, MIPS
+@atindex @code{short_call}, MIPS
+@atindex @code{near}, MIPS
+@atindex @code{far}, MIPS
 @item long_call
 @itemx short_call
 @itemx near
@@ -7668,8 +7760,8 @@ attributes are synonyms, and have the opposite
 effect; they specify that non-PIC calls should be made using the more
 efficient @code{jal} instruction.
 
-@cindex @code{mips16} function attribute, MIPS
-@cindex @code{nomips16} function attribute, MIPS
+@atindex @code{mips16}, MIPS
+@atindex @code{nomips16}, MIPS
 @item mips16
 @itemx nomips16
 
@@ -7689,8 +7781,8 @@ not that within individual functions.  Mixed MIPS16 and non-MIPS16 code
 may interact badly with some GCC extensions such as @code{__builtin_apply}
 (@pxref{Constructing Calls}).
 
-@cindex @code{micromips} function attribute
-@cindex @code{nomicromips} function attribute
+@atindex @code{micromips}, MIPS
+@atindex @code{nomicromips}, MIPS
 @item micromips, MIPS
 @itemx nomicromips, MIPS
 This attribute applies to functions.
@@ -7710,7 +7802,7 @@ not that within individual functions.  Mixed microMIPS and non-microMIPS code
 may interact badly with some GCC extensions such as @code{__builtin_apply}
 (@pxref{Constructing Calls}).
 
-@cindex @code{nocompression} function attribute, MIPS
+@atindex @code{nocompression}, MIPS
 @item nocompression
 This attribute applies to functions.
 
@@ -7719,7 +7811,7 @@ to locally turn off MIPS16 and microMIPS code generation.  This attribute
 overrides the @option{-mips16} and @option{-mmicromips} options on the
 command line (@pxref{MIPS Options}).
 
-@cindex @code{use_hazard_barrier_return} function attribute, MIPS
+@atindex @code{use_hazard_barrier_return}, MIPS
 @item use_hazard_barrier_return
 This attribute applies to functions.
 
@@ -7728,7 +7820,7 @@ return that clears all execution and instruction hazards while returning,
 instead of generating a normal return instruction.
 
 @item code_readable
-@cindex @code{code_readable} function attribute, MIPS
+@atindex @code{code_readable}, MIPS
 This attribute applies to functions.
 
 For MIPS targets that support PC-relative addressing modes, this attribute
@@ -7753,7 +7845,7 @@ If there is no argument supplied, the default of @code{"yes"} applies.
 These attributes are supported by the MSP430 back end:
 
 @table @code
-@cindex @code{critical} function attribute, MSP430
+@atindex @code{critical}, MSP430
 @item critical
 This attribute applies to functions.
 
@@ -7766,7 +7858,7 @@ The MSP430 hardware ensures that interrupts are disabled on entry to
 on exit. The @code{critical} attribute is therefore redundant on
 @code{interrupt} functions.
 
-@cindex @code{interrupt} function attribute, MSP430
+@atindex @code{interrupt}, MSP430
 @item interrupt
 This attribute applies to functions.
 
@@ -7784,7 +7876,7 @@ match up with appropriate entries in the linker script.  By default
 the names @code{watchdog} for vector 26, @code{nmi} for vector 30 and
 @code{reset} for vector 31 are recognized.
 
-@cindex @code{reentrant} function attribute, MSP430
+@atindex @code{reentrant}, MSP430
 @item reentrant
 This attribute applies to functions.
 
@@ -7793,7 +7885,7 @@ upon exit.  Reentrant functions cannot also have the @code{naked}
 or @code{critical} attributes.  They can have the @code{interrupt}
 attribute.
 
-@cindex @code{wakeup} function attribute, MSP430
+@atindex @code{wakeup}, MSP430
 @item wakeup
 This attribute only applies to interrupt functions.  It is silently
 ignored if applied to a non-interrupt function.
@@ -7802,9 +7894,9 @@ A wakeup interrupt
 function rouses the processor from any low-power state that it
 might be in when the function exits.
 
-@cindex @code{lower} attribute, MSP430
-@cindex @code{upper} attribute, MSP430
-@cindex @code{either} attribute, MSP430
+@atindex @code{lower}, MSP430
+@atindex @code{upper}, MSP430
+@atindex @code{either}, MSP430
 @item lower
 @itemx upper
 @itemx either
@@ -7857,7 +7949,7 @@ is used, and the @code{.lower} prefix is not added.
 These attributes are supported by the NDS32 back end:
 
 @table @code
-@cindex @code{exception} function attribute
+@atindex @code{exception}, NDS32
 @cindex exception handler functions, NDS32
 @item exception
 This attribute applies to functions.
@@ -7866,7 +7958,7 @@ Use this attribute on the NDS32 target to indicate that the specified function
 is an exception handler.  The compiler will generate corresponding sections
 for use in an exception handler.
 
-@cindex @code{interrupt} function attribute, NDS32
+@atindex @code{interrupt}, NDS32
 @item interrupt
 This attribute applies to functions.
 
@@ -7875,28 +7967,28 @@ is an interrupt handler.  The compiler generates corresponding sections
 for use in an interrupt handler.  You can use the following attributes
 to modify the behavior:
 @table @code
-@cindex @code{nested} function attribute, NDS32
+@atindex @code{nested}, NDS32
 @item nested
 This interrupt service routine is interruptible.
-@cindex @code{not_nested} function attribute, NDS32
+@atindex @code{not_nested}, NDS32
 @item not_nested
 This interrupt service routine is not interruptible.
-@cindex @code{nested_ready} function attribute, NDS32
+@atindex @code{nested_ready}, NDS32
 @item nested_ready
 This interrupt service routine is interruptible after @code{PSW.GIE}
 (global interrupt enable) is set.  This allows interrupt service routine to
 finish some short critical code before enabling interrupts.
-@cindex @code{save_all} function attribute, NDS32
+@atindex @code{save_all}, NDS32
 @item save_all
 The system will help save all registers into stack before entering
 interrupt handler.
-@cindex @code{partial_save} function attribute, NDS32
+@atindex @code{partial_save}, NDS32
 @item partial_save
 The system will help save caller registers into stack before entering
 interrupt handler.
 @end table
 
-@cindex @code{reset} function attribute, NDS32
+@atindex @code{reset}, NDS32
 @cindex reset handler functions
 @item reset
 This attribute applies to functions.
@@ -7906,10 +7998,10 @@ is a reset handler.  The compiler will generate corresponding sections
 for use in a reset handler.  You can use the following attributes
 to provide extra exception handling:
 @table @code
-@cindex @code{nmi} function attribute, NDS32
+@atindex @code{nmi}, NDS32
 @item nmi
 Provide a user-defined function to handle NMI exception.
-@cindex @code{warm} function attribute, NDS32
+@atindex @code{warm}, NDS32
 @item warm
 Provide a user-defined function to handle warm reset exception.
 @end table
@@ -7921,7 +8013,7 @@ Provide a user-defined function to handle warm reset exception.
 These attributes are supported by the Nvidia PTX back end:
 
 @table @code
-@cindex @code{kernel} function attribute, Nvidia PTX
+@atindex @code{kernel}, Nvidia PTX
 @item kernel
 This attribute applies to functions.
 
@@ -7932,7 +8024,7 @@ By default functions are only callable only from other PTX functions.
 
 Kernel functions must have @code{void} return type.
 
-@cindex @code{shared} variable attribute, Nvidia PTX
+@atindex @code{shared}, Nvidia PTX
 @item shared
 This attribute applies to variables.
 
@@ -7949,8 +8041,8 @@ These attributes are supported by the PowerPC back end:
 
 @table @code
 @cindex indirect calls, PowerPC
-@cindex @code{longcall} function attribute, PowerPC
-@cindex @code{shortcall} function attribute, PowerPC
+@atindex @code{longcall}, PowerPC
+@atindex @code{shortcall}, PowerPC
 @item longcall
 @itemx shortcall
 These attributes apply to functions.
@@ -7966,7 +8058,7 @@ the @code{#pragma longcall} setting.
 @xref{RS/6000 and PowerPC Options}, for more information on whether long
 calls are necessary.
 
-@cindex @code{target} function attribute
+@atindex @code{target}, PowerPC
 @item target (@var{options})
 This attribute applies to functions.
 
@@ -7976,53 +8068,53 @@ allows specification of target-specific compilation options.
 On the PowerPC, the following options are allowed:
 
 @table @samp
-@cindex @code{target("altivec")} function attribute, PowerPC
+@atindex @code{target("altivec")}, PowerPC
 @item altivec
 @itemx no-altivec
 Generate code that uses (does not use) AltiVec instructions.  In
 32-bit code, you cannot enable AltiVec instructions unless
 @option{-mabi=altivec} is used on the command line.
 
-@cindex @code{target("cmpb")} function attribute, PowerPC
+@atindex @code{target("cmpb")}, PowerPC
 @item cmpb
 @itemx no-cmpb
 Generate code that uses (does not use) the compare bytes instruction
 implemented on the POWER6 processor and other processors that support
 the PowerPC V2.05 architecture.
 
-@cindex @code{target("dlmzb")} function attribute, PowerPC
+@atindex @code{target("dlmzb")}, PowerPC
 @item dlmzb
 @itemx no-dlmzb
 Generate code that uses (does not use) the string-search @samp{dlmzb}
 instruction on the IBM 405, 440, 464 and 476 processors.  This instruction is
 generated by default when targeting those processors.
 
-@cindex @code{target("fprnd")} function attribute, PowerPC
+@atindex @code{target("fprnd")}, PowerPC
 @item fprnd
 @itemx no-fprnd
 Generate code that uses (does not use) the FP round to integer
 instructions implemented on the POWER5+ processor and other processors
 that support the PowerPC V2.03 architecture.
 
-@cindex @code{target("hard-dfp")} function attribute, PowerPC
+@atindex @code{target("hard-dfp")}, PowerPC
 @item hard-dfp
 @itemx no-hard-dfp
 Generate code that uses (does not use) the decimal floating-point
 instructions implemented on some POWER processors.
 
-@cindex @code{target("isel")} function attribute, PowerPC
+@atindex @code{target("isel")}, PowerPC
 @item isel
 @itemx no-isel
 Generate code that uses (does not use) ISEL instruction.
 
-@cindex @code{target("mfcrf")} function attribute, PowerPC
+@atindex @code{target("mfcrf")}, PowerPC
 @item mfcrf
 @itemx no-mfcrf
 Generate code that uses (does not use) the move from condition
 register field instruction implemented on the POWER4 processor and
 other processors that support the PowerPC V2.01 architecture.
 
-@cindex @code{target("mulhw")} function attribute, PowerPC
+@atindex @code{target("mulhw")}, PowerPC
 @item mulhw
 @itemx no-mulhw
 Generate code that uses (does not use) the half-word multiply and
@@ -8030,20 +8122,20 @@ multiply-accumulate instructions on the IBM 405, 440, 464 and 476 processors.
 These instructions are generated by default when targeting those
 processors.
 
-@cindex @code{target("multiple")} function attribute, PowerPC
+@atindex @code{target("multiple")}, PowerPC
 @item multiple
 @itemx no-multiple
 Generate code that uses (does not use) the load multiple word
 instructions and the store multiple word instructions.
 
-@cindex @code{target("update")} function attribute, PowerPC
+@atindex @code{target("update")}, PowerPC
 @item update
 @itemx no-update
 Generate code that uses (does not use) the load or store instructions
 that update the base register to the address of the calculated memory
 location.
 
-@cindex @code{target("popcntb")} function attribute, PowerPC
+@atindex @code{target("popcntb")}, PowerPC
 @item popcntb
 @itemx no-popcntb
 Generate code that uses (does not use) the popcount and double-precision
@@ -8051,42 +8143,42 @@ FP reciprocal estimate instruction implemented on the POWER5
 processor and other processors that support the PowerPC V2.02
 architecture.
 
-@cindex @code{target("popcntd")} function attribute, PowerPC
+@atindex @code{target("popcntd")}, PowerPC
 @item popcntd
 @itemx no-popcntd
 Generate code that uses (does not use) the popcount instruction
 implemented on the POWER7 processor and other processors that support
 the PowerPC V2.06 architecture.
 
-@cindex @code{target("powerpc-gfxopt")} function attribute, PowerPC
+@atindex @code{target("powerpc-gfxopt")}, PowerPC
 @item powerpc-gfxopt
 @itemx no-powerpc-gfxopt
 Generate code that uses (does not use) the optional PowerPC
 architecture instructions in the Graphics group, including
 floating-point select.
 
-@cindex @code{target("powerpc-gpopt")} function attribute, PowerPC
+@atindex @code{target("powerpc-gpopt")}, PowerPC
 @item powerpc-gpopt
 @itemx no-powerpc-gpopt
 Generate code that uses (does not use) the optional PowerPC
 architecture instructions in the General Purpose group, including
 floating-point square root.
 
-@cindex @code{target("recip-precision")} function attribute, PowerPC
+@atindex @code{target("recip-precision")}, PowerPC
 @item recip-precision
 @itemx no-recip-precision
 Assume (do not assume) that the reciprocal estimate instructions
 provide higher-precision estimates than is mandated by the PowerPC
 ABI.
 
-@cindex @code{target("string")} function attribute, PowerPC
+@atindex @code{target("string")}, PowerPC
 @item string
 @itemx no-string
 Generate code that uses (does not use) the load string instructions
 and the store string word instructions to save multiple registers and
 do small block moves.
 
-@cindex @code{target("vsx")} function attribute, PowerPC
+@atindex @code{target("vsx")}, PowerPC
 @item vsx
 @itemx no-vsx
 Generate code that uses (does not use) vector/scalar (VSX)
@@ -8095,7 +8187,7 @@ more direct access to the VSX instruction set.  In 32-bit code, you
 cannot enable VSX or AltiVec instructions unless
 @option{-mabi=altivec} is used on the command line.
 
-@cindex @code{target("friz")} function attribute, PowerPC
+@atindex @code{target("friz")}, PowerPC
 @item friz
 @itemx no-friz
 Generate (do not generate) the @code{friz} instruction when the
@@ -8104,32 +8196,32 @@ rounding a floating-point value to 64-bit integer and back to floating
 point.  The @code{friz} instruction does not return the same value if
 the floating-point number is too large to fit in an integer.
 
-@cindex @code{target("avoid-indexed-addresses")} function attribute, PowerPC
+@atindex @code{target("avoid-indexed-addresses")}, PowerPC
 @item avoid-indexed-addresses
 @itemx no-avoid-indexed-addresses
 Generate code that tries to avoid (not avoid) the use of indexed load
 or store instructions.
 
-@cindex @code{target("paired")} function attribute, PowerPC
+@atindex @code{target("paired")}, PowerPC
 @item paired
 @itemx no-paired
 Generate code that uses (does not use) the generation of PAIRED simd
 instructions.
 
-@cindex @code{target("longcall")} function attribute, PowerPC
+@atindex @code{target("longcall")}, PowerPC
 @item longcall
 @itemx no-longcall
 Generate code that assumes (does not assume) that all calls are far
 away so that a longer more expensive calling sequence is required.
 
-@cindex @code{target("cpu=@var{CPU}")} function attribute, PowerPC
+@atindex @code{target("cpu=@var{CPU}")}, PowerPC
 @item cpu=@var{CPU}
 Specify the architecture to generate code for when compiling the
 function.  If you select the @code{target("cpu=power7")} attribute when
 generating 32-bit code, VSX and AltiVec instructions are not generated
 unless you use the @option{-mabi=altivec} option on the command line.
 
-@cindex @code{target("tune=@var{TUNE}")} function attribute, PowerPC
+@atindex @code{target("tune=@var{TUNE}")}, PowerPC
 @item tune=@var{TUNE}
 Specify the architecture to tune for when compiling the function.  If
 you do not specify the @code{target("tune=@var{TUNE}")} attribute and
@@ -8142,8 +8234,8 @@ On the PowerPC, the inliner does not inline a
 function that has different target options than the caller, unless the
 callee has a subset of the target options of the caller.
 
-@cindex @code{ms_struct} attribute, PowerPC
-@cindex @code{gcc_struct} attribute, PowerPC
+@atindex @code{ms_struct}, PowerPC
+@atindex @code{gcc_struct}, PowerPC
 @item ms_struct
 @itemx gcc_struct
 These attributes can be applied to variables and struct declarations.
@@ -8151,7 +8243,7 @@ These attributes can be applied to variables and struct declarations.
 For full documentation of the struct attributes please see the
 documentation in @ref{x86 Attributes}.
 
-@cindex @code{altivec} attribute, PowerPC
+@atindex @code{altivec}, PowerPC
 @item altivec
 The @code{altivec} attribute applies to variables and types.
 
@@ -8177,7 +8269,7 @@ These attributes mainly are intended to support the @code{__vector},
 These attributes are supported by the RISC-V back end:
 
 @table @code
-@cindex @code{interrupt} function attribute, RISC-V
+@atindex @code{interrupt}, RISC-V
 @item interrupt
 This attribute applies to functions.
 
@@ -8196,7 +8288,7 @@ Permissible values for this parameter are @code{supervisor},
 @code{machine}, and @code{rnmi}.  If there is no parameter, then it
 defaults to @code{machine}.
 
-@cindex @code{riscv_vector_cc} function attribute, RISC-V
+@atindex @code{riscv_vector_cc}, RISC-V
 @item riscv_vector_cc
 This attribute applies to functions.
 
@@ -8208,7 +8300,7 @@ void foo() __attribute__((riscv_vector_cc));
 [[riscv::vector_cc]] void foo(); // For C++11 and C23
 @end smallexample
 
-@cindex @code{target} function attribute
+@atindex @code{target}, RISC-V
 @item target (@var{options})
 This attribute applies to functions.
 
@@ -8221,7 +8313,7 @@ similar command-line options (@pxref{RISC-V Options}), but on a
 per-function basis.
 
 @table @samp
-@cindex @code{target("arch=")} function attribute, RISC-V
+@atindex @code{target("arch=")}, RISC-V
 @item arch=
 Specifies the architecture version and architectural extensions to use
 for this function.  The behavior and permissible arguments are the same as
@@ -8231,19 +8323,19 @@ like @code{arch=+zba} means enable @code{zba} extension.
 Multiple extension can be enabled by separating them with a comma.  For example:
 @code{arch=+zba,+zbb}.
 
-@cindex @code{target("tune=")} function attribute, RISC-V
+@atindex @code{target("tune=")}, RISC-V
 @item tune=
 Specifies the core for which to tune the performance of this function.
 The behavior and permissible arguments are the same as for the @option{-mtune=}
 command-line option.
 
-@cindex @code{target("cpu=")} function attribute, RISC-V
+@atindex @code{target("cpu=")}, RISC-V
 @item cpu=
 Specifies the core for which to tune the performance of this function and also
 whose architectural features to use.  The behavior and valid arguments are the
 same as for the @option{-mcpu=} command-line option.
 
-@cindex @code{target("max-vectorization")} function attribute, RISC-V
+@atindex @code{target("max-vectorization")}, RISC-V
 @item max-vectorization
 @itemx no-max-vectorization
 @code{max-vectorization} tells GCC's vectorizer to treat all vector
@@ -8291,8 +8383,8 @@ and @code{zbb} extensions and tunes it for @code{rocket}.
 These attributes are supported by the RL78 back end:
 
 @table @code
-@cindex @code{interrupt} function attribute, RL78
-@cindex @code{brk_interrupt} function attribute, RL78
+@atindex @code{interrupt}, RL78
+@atindex @code{brk_interrupt}, RL78
 @item interrupt
 @itemx brk_interrupt
 These attributes apply to functions.
@@ -8306,7 +8398,7 @@ Use @code{brk_interrupt} instead of @code{interrupt} for
 handlers intended to be used with the @code{BRK} opcode (i.e.@: those
 that must end with @code{RETB} instead of @code{RETI}).
 
-@cindex @code{saddr} variable attribute, RL78
+@atindex @code{saddr}, RL78
 @item saddr
 This attribute applies to variables.
 
@@ -8322,7 +8414,7 @@ which can be accessed more efficiently than the default memory region.
 These attributes are supported by the RX back end:
 
 @table @code
-@cindex @code{fast_interrupt} function attribute, RX
+@atindex @code{fast_interrupt}, RX
 @item fast_interrupt
 This attribute applies to functions.
 
@@ -8331,7 +8423,7 @@ function is a fast interrupt handler.  This is just like the
 @code{interrupt} attribute, except that @code{freit} is used to return
 instead of @code{reit}.
 
-@cindex @code{interrupt} function attribute, RX
+@atindex @code{interrupt}, RX
 @item interrupt
 This attribute applies to functions.
 
@@ -8362,7 +8454,7 @@ void __attribute__ ((interrupt (RXD1_VECT,RXD2_VECT,"dct","$default")))
 	txd1_handler ();
 @end smallexample
 
-@cindex @code{vector} function attribute, RX
+@atindex @code{vector}, RX
 @item vector
 This attribute applies to functions.
 
@@ -8378,7 +8470,7 @@ function (i.e.@: it retains the normal C function calling ABI).  See the
 These attributes are supported on the S/390:
 
 @table @code
-@cindex @code{hotpatch} function attribute, S/390
+@atindex @code{hotpatch}, S/390
 @item hotpatch (@var{halfwords-before-function-label},@var{halfwords-after-function-label})
 This attribute applies to functions.
 
@@ -8393,7 +8485,7 @@ both arguments the maximum allowed value is 1000000.
 
 If both arguments are zero, hotpatching is disabled.
 
-@cindex @code{target} function attribute
+@atindex @code{target}, S/390
 @item target (@var{options})
 This attribute applies to functions.
 
@@ -8447,7 +8539,7 @@ does not undefine the @code{__VEC__} macro.
 These attributes are supported on the SH family of processors:
 
 @table @code
-@cindex @code{function_vector} function attribute, SH
+@atindex @code{function_vector}, SH
 @cindex calling functions through the function vector on SH2A
 @item function_vector
 This attribute applies to functions.
@@ -8467,7 +8559,7 @@ saves at least 8 bytes of code; and if other successive calls are being
 made to the same function, it saves 2 bytes of code per each of these
 calls.
 
-@cindex @code{interrupt_handler} function attribute, SH
+@atindex @code{interrupt_handler}, SH
 @item interrupt_handler
 This attribute applies to functions.
 
@@ -8475,7 +8567,7 @@ It indicates that the specified function is an interrupt handler.  The compiler
 generates function entry and exit sequences suitable for use in an
 interrupt handler when this attribute is present.
 
-@cindex @code{nosave_low_regs} function attribute, SH
+@atindex @code{nosave_low_regs}, SH
 @item nosave_low_regs
 This attribute applies to functions.
 
@@ -8484,14 +8576,14 @@ function should not save and restore registers R0..R7.  This can be used on SH3*
 and SH4* targets that have a second R0..R7 register bank for non-reentrant
 interrupt handlers.
 
-@cindex @code{renesas} function attribute, SH
+@atindex @code{renesas}, SH
 @item renesas
 This attribute applies to functions.
 
 On SH targets this attribute specifies that the function or struct follows the
 Renesas ABI.
 
-@cindex @code{resbank} function attribute, SH
+@atindex @code{resbank}, SH
 @item resbank
 This attribute applies to functions.
 
@@ -8506,7 +8598,7 @@ vector table address offset are saved into a register bank.  Register
 banks are stacked in first-in last-out (FILO) sequence.  Restoration
 from the bank is executed by issuing a RESBANK instruction.
 
-@cindex @code{sp_switch} function attribute, SH
+@atindex @code{sp_switch}, SH
 @item sp_switch
 This attribute applies to functions.
 
@@ -8521,7 +8613,7 @@ void f () __attribute__ ((interrupt_handler,
                           sp_switch ("alt_stack")));
 @end smallexample
 
-@cindex @code{trap_exit} function attribute, SH
+@atindex @code{trap_exit}, SH
 @item trap_exit
 This attribute applies to functions.
 
@@ -8529,7 +8621,7 @@ Use this attribute on the SH for an @code{interrupt_handler} to return using
 @code{trapa} instead of @code{rte}.  This attribute expects an integer
 argument specifying the trap number to be used.
 
-@cindex @code{trapa_handler} function attribute, SH
+@atindex @code{trapa_handler}, SH
 @item trapa_handler
 This attribute applies to functions.
 
@@ -8549,8 +8641,8 @@ but it does not save and restore all registers.
 The V850 back end supports these attributes:
 
 @table @code
-@cindex @code{interrupt} function attribute, V850
-@cindex @code{interrupt_handler} function attribute, V850
+@atindex @code{interrupt}, V850
+@atindex @code{interrupt_handler}, V850
 @item interrupt
 @itemx interrupt_handler
 This attribute applies to functions.
@@ -8560,21 +8652,21 @@ that the specified function is an interrupt handler.  The compiler generates
 function entry and exit sequences suitable for use in an interrupt handler
 when either attribute is present.
 
-@cindex @code{sda} variable attribute, V850
+@atindex @code{sda}, V850
 @item sda
 This attribute applies to variables.
 
 Use it to explicitly place a variable in the small data area,
 which can hold up to 64 kilobytes.
 
-@cindex @code{tda} variable attribute, V850
+@atindex @code{tda}, V850
 @item tda
 This attribute applies to variables.
 
 Use it to explicitly place a variable in the tiny data area,
 which can hold up to 256 bytes in total.
 
-@cindex @code{zda} variable attribute, V850
+@atindex @code{zda}, V850
 @item zda
 This attribute applies to variables.
 
@@ -8588,7 +8680,7 @@ of memory.
 These attributes are supported by the Visium back end:
 
 @table @code
-@cindex @code{interrupt} function attribute, Visium
+@atindex @code{interrupt}, Visium
 @item interrupt
 This attribute applies to functions.
 
@@ -8604,7 +8696,7 @@ when this attribute is present.
 These attributes are supported by the x86 back end:
 
 @table @code
-@cindex @code{cdecl} function attribute, x86-32
+@atindex @code{cdecl}, x86-32
 @cindex functions that pop the argument stack on x86-32
 @opindex mrtd
 @item cdecl
@@ -8615,7 +8707,7 @@ assume that the calling function pops off the stack space used to
 pass arguments.  This is
 useful to override the effects of the @option{-mrtd} switch.
 
-@cindex @code{fastcall} function attribute, x86-32
+@atindex @code{fastcall}, x86-32
 @cindex functions that pop the argument stack on x86-32
 @item fastcall
 This attribute applies to functions.
@@ -8627,7 +8719,7 @@ and other typed arguments are passed on the stack.  The called function
 pops the arguments off the stack.  If the number of arguments is variable all
 arguments are pushed on the stack.
 
-@cindex @code{thiscall} function attribute, x86-32
+@atindex @code{thiscall}, x86-32
 @cindex functions that pop the argument stack on x86-32
 @item thiscall
 This attribute applies to functions.
@@ -8642,8 +8734,8 @@ The @code{thiscall} attribute is intended for C++ non-static member functions.
 As a GCC extension, this calling convention can be used for C functions
 and for static member methods.
 
-@cindex @code{ms_abi} function attribute, x86
-@cindex @code{sysv_abi} function attribute, x86
+@atindex @code{ms_abi}, x86
+@atindex @code{sysv_abi}, x86
 @item ms_abi
 @itemx sysv_abi
 These attributes apply to functions.
@@ -8659,7 +8751,7 @@ is the System V ELF ABI.
 Note, the @code{ms_abi} attribute for Microsoft Windows 64-bit targets currently
 requires the @option{-maccumulate-outgoing-args} option.
 
-@cindex @code{callee_pop_aggregate_return} function attribute, x86
+@atindex @code{callee_pop_aggregate_return}, x86
 @item callee_pop_aggregate_return (@var{number})
 This attribute applies to functions.
 
@@ -8674,7 +8766,7 @@ stack for hidden pointer.  However, on x86-32 Microsoft Windows targets,
 the compiler assumes that the
 caller pops the stack for hidden pointer.
 
-@cindex @code{ms_hook_prologue} function attribute, x86
+@atindex @code{ms_hook_prologue}, x86
 @item ms_hook_prologue
 This attribute applies to functions.
 
@@ -8683,7 +8775,7 @@ this function attribute to make GCC generate the ``hot-patching'' function
 prologue used in Win32 API functions in Microsoft Windows XP Service Pack 2
 and newer.
 
-@cindex @code{regparm} function attribute, x86
+@atindex @code{regparm}, x86
 @cindex functions that are passed arguments in registers on x86-32
 @item regparm (@var{number})
 This attribute applies to functions.
@@ -8705,7 +8797,7 @@ safe since the loaders there save EAX, EDX and ECX.  (Lazy binding can be
 disabled with the linker or the loader if desired, to avoid the
 problem.)
 
-@cindex @code{sseregparm} function attribute, x86
+@atindex @code{sseregparm}, x86
 @item sseregparm
 This attribute applies to functions.
 
@@ -8715,7 +8807,7 @@ SSE registers instead of on the stack.  Functions that take a
 variable number of arguments continue to pass all of their
 floating-point arguments on the stack.
 
-@cindex @code{force_align_arg_pointer} function attribute, x86
+@atindex @code{force_align_arg_pointer}, x86
 @item force_align_arg_pointer
 This attribute applies to functions.
 
@@ -8725,7 +8817,7 @@ prologue and epilogue that realigns the run-time stack if necessary.
 This supports mixing legacy codes that run with a 4-byte aligned stack
 with modern codes that keep a 16-byte stack for SSE compatibility.
 
-@cindex @code{stdcall} function attribute, x86-32
+@atindex @code{stdcall}, x86-32
 @cindex functions that pop the argument stack on x86-32
 @item stdcall
 This attribute applies to functions.
@@ -8734,7 +8826,7 @@ On x86-32 targets, the @code{stdcall} attribute causes the compiler to
 assume that the called function pops off the stack space used to
 pass arguments, unless it takes a variable number of arguments.
 
-@cindex @code{no_callee_saved_registers} function attribute, x86
+@atindex @code{no_callee_saved_registers}, x86
 @item no_callee_saved_registers
 This attribute applies to functions.
 
@@ -8745,7 +8837,7 @@ attribute can be used for a function called from the interrupt handler
 assembly stub which will preserve all registers and return from
 interrupt.
 
-@cindex @code{preserve_none} function attribute, x86
+@atindex @code{preserve_none}, x86
 @item preserve_none
 This attribute applies to functions.
 
@@ -8754,7 +8846,7 @@ on x86-64, r12, r13, r14, r15, rdi and rsi registers are used for
 integer parameter passing and this calling convention is subject to
 change.
 
-@cindex @code{no_caller_saved_registers} function attribute, x86
+@atindex @code{no_caller_saved_registers}, x86
 @item no_caller_saved_registers
 This attribute applies to functions.
 
@@ -8768,7 +8860,7 @@ the EFLAGS register.  Since GCC doesn't preserve YMM nor ZMM registers,
 with AVX enabled.  Note that MMX and x87 registers aren't preserved by
 @code{no_caller_saved_registers} attribute.
 
-@cindex @code{interrupt} function attribute, x86
+@atindex @code{interrupt}, x86
 @item interrupt
 This attribute applies to functions.
 
@@ -8832,7 +8924,7 @@ Exception handlers should only be used for exceptions that push an error
 code; you should use an interrupt handler in other cases.  The system
 will crash if the wrong kind of handler is used.
 
-@cindex @code{target} function attribute
+@atindex @code{target}, x86
 @item target (@var{options})
 This attribute applies to functions.
 
@@ -8841,592 +8933,592 @@ allows specification of target-specific compilation options.
 
 On the x86, the following options are allowed:
 @table @samp
-@cindex @code{target("3dnow")} function attribute, x86
+@atindex @code{target("3dnow")}, x86
 @item 3dnow
 @itemx no-3dnow
 Enable/disable the generation of the 3DNow!@: instructions.
 
-@cindex @code{target("3dnowa")} function attribute, x86
+@atindex @code{target("3dnowa")}, x86
 @item 3dnowa
 @itemx no-3dnowa
 Enable/disable the generation of the enhanced 3DNow!@: instructions.
 
-@cindex @code{target("abm")} function attribute, x86
+@atindex @code{target("abm")}, x86
 @item abm
 @itemx no-abm
 Enable/disable the generation of the advanced bit instructions.
 
-@cindex @code{target("adx")} function attribute, x86
+@atindex @code{target("adx")}, x86
 @item adx
 @itemx no-adx
 Enable/disable the generation of the ADX instructions.
 
-@cindex @code{target("aes")} function attribute, x86
+@atindex @code{target("aes")}, x86
 @item aes
 @itemx no-aes
 Enable/disable the generation of the AES instructions.
 
-@cindex @code{target("avx")} function attribute, x86
+@atindex @code{target("avx")}, x86
 @item avx
 @itemx no-avx
 Enable/disable the generation of the AVX instructions.
 
-@cindex @code{target("avx2")} function attribute, x86
+@atindex @code{target("avx2")}, x86
 @item avx2
 @itemx no-avx2
 Enable/disable the generation of the AVX2 instructions.
 
-@cindex @code{target("avx512bitalg")} function attribute, x86
+@atindex @code{target("avx512bitalg")}, x86
 @item avx512bitalg
 @itemx no-avx512bitalg
 Enable/disable the generation of the AVX512BITALG instructions.
 
-@cindex @code{target("avx512bw")} function attribute, x86
+@atindex @code{target("avx512bw")}, x86
 @item avx512bw
 @itemx no-avx512bw
 Enable/disable the generation of the AVX512BW instructions.
 
-@cindex @code{target("avx512cd")} function attribute, x86
+@atindex @code{target("avx512cd")}, x86
 @item avx512cd
 @itemx no-avx512cd
 Enable/disable the generation of the AVX512CD instructions.
 
-@cindex @code{target("avx512dq")} function attribute, x86
+@atindex @code{target("avx512dq")}, x86
 @item avx512dq
 @itemx no-avx512dq
 Enable/disable the generation of the AVX512DQ instructions.
 
-@cindex @code{target("avx512er")} function attribute, x86
+@atindex @code{target("avx512er")}, x86
 @item avx512er
 @itemx no-avx512er
 Enable/disable the generation of the AVX512ER instructions.
 
-@cindex @code{target("avx512f")} function attribute, x86
+@atindex @code{target("avx512f")}, x86
 @item avx512f
 @itemx no-avx512f
 Enable/disable the generation of the AVX512F instructions.
 
-@cindex @code{target("avx512ifma")} function attribute, x86
+@atindex @code{target("avx512ifma")}, x86
 @item avx512ifma
 @itemx no-avx512ifma
 Enable/disable the generation of the AVX512IFMA instructions.
 
-@cindex @code{target("avx512vbmi")} function attribute, x86
+@atindex @code{target("avx512vbmi")}, x86
 @item avx512vbmi
 @itemx no-avx512vbmi
 Enable/disable the generation of the AVX512VBMI instructions.
 
-@cindex @code{target("avx512vbmi2")} function attribute, x86
+@atindex @code{target("avx512vbmi2")}, x86
 @item avx512vbmi2
 @itemx no-avx512vbmi2
 Enable/disable the generation of the AVX512VBMI2 instructions.
 
-@cindex @code{target("avx512vl")} function attribute, x86
+@atindex @code{target("avx512vl")}, x86
 @item avx512vl
 @itemx no-avx512vl
 Enable/disable the generation of the AVX512VL instructions.
 
-@cindex @code{target("avx512vnni")} function attribute, x86
+@atindex @code{target("avx512vnni")}, x86
 @item avx512vnni
 @itemx no-avx512vnni
 Enable/disable the generation of the AVX512VNNI instructions.
 
-@cindex @code{target("avx512vpopcntdq")} function attribute, x86
+@atindex @code{target("avx512vpopcntdq")}, x86
 @item avx512vpopcntdq
 @itemx no-avx512vpopcntdq
 Enable/disable the generation of the AVX512VPOPCNTDQ instructions.
 
-@cindex @code{target("bmi")} function attribute, x86
+@atindex @code{target("bmi")}, x86
 @item bmi
 @itemx no-bmi
 Enable/disable the generation of the BMI instructions.
 
-@cindex @code{target("bmi2")} function attribute, x86
+@atindex @code{target("bmi2")}, x86
 @item bmi2
 @itemx no-bmi2
 Enable/disable the generation of the BMI2 instructions.
 
-@cindex @code{target("cldemote")} function attribute, x86
+@atindex @code{target("cldemote")}, x86
 @item cldemote
 @itemx no-cldemote
 Enable/disable the generation of the CLDEMOTE instructions.
 
-@cindex @code{target("clflushopt")} function attribute, x86
+@atindex @code{target("clflushopt")}, x86
 @item clflushopt
 @itemx no-clflushopt
 Enable/disable the generation of the CLFLUSHOPT instructions.
 
-@cindex @code{target("clwb")} function attribute, x86
+@atindex @code{target("clwb")}, x86
 @item clwb
 @itemx no-clwb
 Enable/disable the generation of the CLWB instructions.
 
-@cindex @code{target("clzero")} function attribute, x86
+@atindex @code{target("clzero")}, x86
 @item clzero
 @itemx no-clzero
 Enable/disable the generation of the CLZERO instructions.
 
-@cindex @code{target("crc32")} function attribute, x86
+@atindex @code{target("crc32")}, x86
 @item crc32
 @itemx no-crc32
 Enable/disable the generation of the CRC32 instructions.
 
-@cindex @code{target("cx16")} function attribute, x86
+@atindex @code{target("cx16")}, x86
 @item cx16
 @itemx no-cx16
 Enable/disable the generation of the CMPXCHG16B instructions.
 
-@cindex @code{target("default")} function attribute, x86
+@atindex @code{target("default")}, x86
 @item default
 @xref{Function Multiversioning}, where it is used to specify the
 default function version.
 
-@cindex @code{target("f16c")} function attribute, x86
+@atindex @code{target("f16c")}, x86
 @item f16c
 @itemx no-f16c
 Enable/disable the generation of the F16C instructions.
 
-@cindex @code{target("fma")} function attribute, x86
+@atindex @code{target("fma")}, x86
 @item fma
 @itemx no-fma
 Enable/disable the generation of the FMA instructions.
 
-@cindex @code{target("fma4")} function attribute, x86
+@atindex @code{target("fma4")}, x86
 @item fma4
 @itemx no-fma4
 Enable/disable the generation of the FMA4 instructions.
 
-@cindex @code{target("fsgsbase")} function attribute, x86
+@atindex @code{target("fsgsbase")}, x86
 @item fsgsbase
 @itemx no-fsgsbase
 Enable/disable the generation of the FSGSBASE instructions.
 
-@cindex @code{target("fxsr")} function attribute, x86
+@atindex @code{target("fxsr")}, x86
 @item fxsr
 @itemx no-fxsr
 Enable/disable the generation of the FXSR instructions.
 
-@cindex @code{target("gfni")} function attribute, x86
+@atindex @code{target("gfni")}, x86
 @item gfni
 @itemx no-gfni
 Enable/disable the generation of the GFNI instructions.
 
-@cindex @code{target("hle")} function attribute, x86
+@atindex @code{target("hle")}, x86
 @item hle
 @itemx no-hle
 Enable/disable the generation of the HLE instruction prefixes.
 
-@cindex @code{target("lwp")} function attribute, x86
+@atindex @code{target("lwp")}, x86
 @item lwp
 @itemx no-lwp
 Enable/disable the generation of the LWP instructions.
 
-@cindex @code{target("lzcnt")} function attribute, x86
+@atindex @code{target("lzcnt")}, x86
 @item lzcnt
 @itemx no-lzcnt
 Enable/disable the generation of the LZCNT instructions.
 
-@cindex @code{target("mmx")} function attribute, x86
+@atindex @code{target("mmx")}, x86
 @item mmx
 @itemx no-mmx
 Enable/disable the generation of the MMX instructions.
 
-@cindex @code{target("movbe")} function attribute, x86
+@atindex @code{target("movbe")}, x86
 @item movbe
 @itemx no-movbe
 Enable/disable the generation of the MOVBE instructions.
 
-@cindex @code{target("movdir64b")} function attribute, x86
+@atindex @code{target("movdir64b")}, x86
 @item movdir64b
 @itemx no-movdir64b
 Enable/disable the generation of the MOVDIR64B instructions.
 
-@cindex @code{target("movdiri")} function attribute, x86
+@atindex @code{target("movdiri")}, x86
 @item movdiri
 @itemx no-movdiri
 Enable/disable the generation of the MOVDIRI instructions.
 
-@cindex @code{target("mwait")} function attribute, x86
+@atindex @code{target("mwait")}, x86
 @item mwait
 @itemx no-mwait
 Enable/disable the generation of the MWAIT and MONITOR instructions.
 
-@cindex @code{target("mwaitx")} function attribute, x86
+@atindex @code{target("mwaitx")}, x86
 @item mwaitx
 @itemx no-mwaitx
 Enable/disable the generation of the MWAITX instructions.
 
-@cindex @code{target("pclmul")} function attribute, x86
+@atindex @code{target("pclmul")}, x86
 @item pclmul
 @itemx no-pclmul
 Enable/disable the generation of the PCLMUL instructions.
 
-@cindex @code{target("pconfig")} function attribute, x86
+@atindex @code{target("pconfig")}, x86
 @item pconfig
 @itemx no-pconfig
 Enable/disable the generation of the PCONFIG instructions.
 
-@cindex @code{target("pku")} function attribute, x86
+@atindex @code{target("pku")}, x86
 @item pku
 @itemx no-pku
 Enable/disable the generation of the PKU instructions.
 
-@cindex @code{target("popcnt")} function attribute, x86
+@atindex @code{target("popcnt")}, x86
 @item popcnt
 @itemx no-popcnt
 Enable/disable the generation of the POPCNT instruction.
 
-@cindex @code{target("prfchw")} function attribute, x86
+@atindex @code{target("prfchw")}, x86
 @item prfchw
 @itemx no-prfchw
 Enable/disable the generation of the PREFETCHW instruction.
 
-@cindex @code{target("ptwrite")} function attribute, x86
+@atindex @code{target("ptwrite")}, x86
 @item ptwrite
 @itemx no-ptwrite
 Enable/disable the generation of the PTWRITE instructions.
 
-@cindex @code{target("rdpid")} function attribute, x86
+@atindex @code{target("rdpid")}, x86
 @item rdpid
 @itemx no-rdpid
 Enable/disable the generation of the RDPID instructions.
 
-@cindex @code{target("rdrnd")} function attribute, x86
+@atindex @code{target("rdrnd")}, x86
 @item rdrnd
 @itemx no-rdrnd
 Enable/disable the generation of the RDRND instructions.
 
-@cindex @code{target("rdseed")} function attribute, x86
+@atindex @code{target("rdseed")}, x86
 @item rdseed
 @itemx no-rdseed
 Enable/disable the generation of the RDSEED instructions.
 
-@cindex @code{target("rtm")} function attribute, x86
+@atindex @code{target("rtm")}, x86
 @item rtm
 @itemx no-rtm
 Enable/disable the generation of the RTM instructions.
 
-@cindex @code{target("sahf")} function attribute, x86
+@atindex @code{target("sahf")}, x86
 @item sahf
 @itemx no-sahf
 Enable/disable the generation of the SAHF instructions.
 
-@cindex @code{target("sgx")} function attribute, x86
+@atindex @code{target("sgx")}, x86
 @item sgx
 @itemx no-sgx
 Enable/disable the generation of the SGX instructions.
 
-@cindex @code{target("sha")} function attribute, x86
+@atindex @code{target("sha")}, x86
 @item sha
 @itemx no-sha
 Enable/disable the generation of the SHA instructions.
 
-@cindex @code{target("shstk")} function attribute, x86
+@atindex @code{target("shstk")}, x86
 @item shstk
 @itemx no-shstk
 Enable/disable the shadow stack built-in functions from CET.
 
-@cindex @code{target("sse")} function attribute, x86
+@atindex @code{target("sse")}, x86
 @item sse
 @itemx no-sse
 Enable/disable the generation of the SSE instructions.
 
-@cindex @code{target("sse2")} function attribute, x86
+@atindex @code{target("sse2")}, x86
 @item sse2
 @itemx no-sse2
 Enable/disable the generation of the SSE2 instructions.
 
-@cindex @code{target("sse3")} function attribute, x86
+@atindex @code{target("sse3")}, x86
 @item sse3
 @itemx no-sse3
 Enable/disable the generation of the SSE3 instructions.
 
-@cindex @code{target("sse4")} function attribute, x86
+@atindex @code{target("sse4")}, x86
 @item sse4
 @itemx no-sse4
 Enable/disable the generation of the SSE4 instructions (both SSE4.1
 and SSE4.2).
 
-@cindex @code{target("sse4.1")} function attribute, x86
+@atindex @code{target("sse4.1")}, x86
 @item sse4.1
 @itemx no-sse4.1
 Enable/disable the generation of the SSE4.1 instructions.
 
-@cindex @code{target("sse4.2")} function attribute, x86
+@atindex @code{target("sse4.2")}, x86
 @item sse4.2
 @itemx no-sse4.2
 Enable/disable the generation of the SSE4.2 instructions.
 
-@cindex @code{target("sse4a")} function attribute, x86
+@atindex @code{target("sse4a")}, x86
 @item sse4a
 @itemx no-sse4a
 Enable/disable the generation of the SSE4A instructions.
 
-@cindex @code{target("ssse3")} function attribute, x86
+@atindex @code{target("ssse3")}, x86
 @item ssse3
 @itemx no-ssse3
 Enable/disable the generation of the SSSE3 instructions.
 
-@cindex @code{target("tbm")} function attribute, x86
+@atindex @code{target("tbm")}, x86
 @item tbm
 @itemx no-tbm
 Enable/disable the generation of the TBM instructions.
 
-@cindex @code{target("vaes")} function attribute, x86
+@atindex @code{target("vaes")}, x86
 @item vaes
 @itemx no-vaes
 Enable/disable the generation of the VAES instructions.
 
-@cindex @code{target("vpclmulqdq")} function attribute, x86
+@atindex @code{target("vpclmulqdq")}, x86
 @item vpclmulqdq
 @itemx no-vpclmulqdq
 Enable/disable the generation of the VPCLMULQDQ instructions.
 
-@cindex @code{target("waitpkg")} function attribute, x86
+@atindex @code{target("waitpkg")}, x86
 @item waitpkg
 @itemx no-waitpkg
 Enable/disable the generation of the WAITPKG instructions.
 
-@cindex @code{target("wbnoinvd")} function attribute, x86
+@atindex @code{target("wbnoinvd")}, x86
 @item wbnoinvd
 @itemx no-wbnoinvd
 Enable/disable the generation of the WBNOINVD instructions.
 
-@cindex @code{target("xop")} function attribute, x86
+@atindex @code{target("xop")}, x86
 @item xop
 @itemx no-xop
 Enable/disable the generation of the XOP instructions.
 
-@cindex @code{target("xsave")} function attribute, x86
+@atindex @code{target("xsave")}, x86
 @item xsave
 @itemx no-xsave
 Enable/disable the generation of the XSAVE instructions.
 
-@cindex @code{target("xsavec")} function attribute, x86
+@atindex @code{target("xsavec")}, x86
 @item xsavec
 @itemx no-xsavec
 Enable/disable the generation of the XSAVEC instructions.
 
-@cindex @code{target("xsaveopt")} function attribute, x86
+@atindex @code{target("xsaveopt")}, x86
 @item xsaveopt
 @itemx no-xsaveopt
 Enable/disable the generation of the XSAVEOPT instructions.
 
-@cindex @code{target("xsaves")} function attribute, x86
+@atindex @code{target("xsaves")}, x86
 @item xsaves
 @itemx no-xsaves
 Enable/disable the generation of the XSAVES instructions.
 
-@cindex @code{target("amx-tile")} function attribute, x86
+@atindex @code{target("amx-tile")}, x86
 @item amx-tile
 @itemx no-amx-tile
 Enable/disable the generation of the AMX-TILE instructions.
 
-@cindex @code{target("amx-int8")} function attribute, x86
+@atindex @code{target("amx-int8")}, x86
 @item amx-int8
 @itemx no-amx-int8
 Enable/disable the generation of the AMX-INT8 instructions.
 
-@cindex @code{target("amx-bf16")} function attribute, x86
+@atindex @code{target("amx-bf16")}, x86
 @item amx-bf16
 @itemx no-amx-bf16
 Enable/disable the generation of the AMX-BF16 instructions.
 
-@cindex @code{target("uintr")} function attribute, x86
+@atindex @code{target("uintr")}, x86
 @item uintr
 @itemx no-uintr
 Enable/disable the generation of the UINTR instructions.
 
-@cindex @code{target("hreset")} function attribute, x86
+@atindex @code{target("hreset")}, x86
 @item hreset
 @itemx no-hreset
 Enable/disable the generation of the HRESET instruction.
 
-@cindex @code{target("kl")} function attribute, x86
+@atindex @code{target("kl")}, x86
 @item kl
 @itemx no-kl
 Enable/disable the generation of the KEYLOCKER instructions.
 
-@cindex @code{target("widekl")} function attribute, x86
+@atindex @code{target("widekl")}, x86
 @item widekl
 @itemx no-widekl
 Enable/disable the generation of the WIDEKL instructions.
 
-@cindex @code{target("avxvnni")} function attribute, x86
+@atindex @code{target("avxvnni")}, x86
 @item avxvnni
 @itemx no-avxvnni
 Enable/disable the generation of the AVXVNNI instructions.
 
-@cindex @code{target("avxifma")} function attribute, x86
+@atindex @code{target("avxifma")}, x86
 @item avxifma
 @itemx no-avxifma
 Enable/disable the generation of the AVXIFMA instructions.
 
-@cindex @code{target("avxvnniint8")} function attribute, x86
+@atindex @code{target("avxvnniint8")}, x86
 @item avxvnniint8
 @itemx no-avxvnniint8
 Enable/disable the generation of the AVXVNNIINT8 instructions.
 
-@cindex @code{target("avxneconvert")} function attribute, x86
+@atindex @code{target("avxneconvert")}, x86
 @item avxneconvert
 @itemx no-avxneconvert
 Enable/disable the generation of the AVXNECONVERT instructions.
 
-@cindex @code{target("cmpccxadd")} function attribute, x86
+@atindex @code{target("cmpccxadd")}, x86
 @item cmpccxadd
 @itemx no-cmpccxadd
 Enable/disable the generation of the CMPccXADD instructions.
 
-@cindex @code{target("amx-fp16")} function attribute, x86
+@atindex @code{target("amx-fp16")}, x86
 @item amx-fp16
 @itemx no-amx-fp16
 Enable/disable the generation of the AMX-FP16 instructions.
 
-@cindex @code{target("prefetchi")} function attribute, x86
+@atindex @code{target("prefetchi")}, x86
 @item prefetchi
 @itemx no-prefetchi
 Enable/disable the generation of the PREFETCHI instructions.
 
-@cindex @code{target("raoint")} function attribute, x86
+@atindex @code{target("raoint")}, x86
 @item raoint
 @itemx no-raoint
 Enable/disable the generation of the RAOINT instructions.
 
-@cindex @code{target("amx-complex")} function attribute, x86
+@atindex @code{target("amx-complex")}, x86
 @item amx-complex
 @itemx no-amx-complex
 Enable/disable the generation of the AMX-COMPLEX instructions.
 
-@cindex @code{target("avxvnniint16")} function attribute, x86
+@atindex @code{target("avxvnniint16")}, x86
 @item avxvnniint16
 @itemx no-avxvnniint16
 Enable/disable the generation of the AVXVNNIINT16 instructions.
 
-@cindex @code{target("sm3")} function attribute, x86
+@atindex @code{target("sm3")}, x86
 @item sm3
 @itemx no-sm3
 Enable/disable the generation of the SM3 instructions.
 
-@cindex @code{target("sha512")} function attribute, x86
+@atindex @code{target("sha512")}, x86
 @item sha512
 @itemx no-sha512
 Enable/disable the generation of the SHA512 instructions.
 
-@cindex @code{target("sm4")} function attribute, x86
+@atindex @code{target("sm4")}, x86
 @item sm4
 @itemx no-sm4
 Enable/disable the generation of the SM4 instructions.
 
-@cindex @code{target("usermsr")} function attribute, x86
+@atindex @code{target("usermsr")}, x86
 @item usermsr
 @itemx no-usermsr
 Enable/disable the generation of the USER_MSR instructions.
 
-@cindex @code{target("apxf")} function attribute, x86
+@atindex @code{target("apxf")}, x86
 @item apxf
 @itemx no-apxf
 Enable/disable the generation of the APX features, including
 EGPR, PUSH2POP2, NDD and PPX.
 
-@cindex @code{target("avx10.1")} function attribute, x86
+@atindex @code{target("avx10.1")}, x86
 @item avx10.1
 @itemx no-avx10.1
 Enable/Disable the generation of the AVX10.1 instructions.
 
-@cindex @code{target("avx10.2")} function attribute, x86
+@atindex @code{target("avx10.2")}, x86
 @item avx10.2
 @itemx no-avx10.2
 Enable/Disable the generation of the AVX10.2 instructions.
 
-@cindex @code{target("amx-avx512")} function attribute, x86
+@atindex @code{target("amx-avx512")}, x86
 @item amx-avx512
 @itemx no-amx-avx512
 Enable/disable the generation of the AMX-AVX512 instructions.
 
-@cindex @code{target("amx-tf32")} function attribute, x86
+@atindex @code{target("amx-tf32")}, x86
 @item amx-tf32
 @itemx no-amx-tf32
 Enable/disable the generation of the AMX-TF32 instructions.
 
-@cindex @code{target("amx-fp8")} function attribute, x86
+@atindex @code{target("amx-fp8")}, x86
 @item amx-fp8
 @itemx no-amx-fp8
 Enable/disable the generation of the AMX-FP8 instructions.
 
-@cindex @code{target("movrs")} function attribute, x86
+@atindex @code{target("movrs")}, x86
 @item movrs
 @itemx no-movrs
 Enable/disable the generation of the MOVRS instructions.
 
-@cindex @code{target("amx-movrs")} function attribute, x86
+@atindex @code{target("amx-movrs")}, x86
 @item amx-movrs
 @itemx no-amx-movrs
 Enable/disable the generation of the AMX-MOVRS instructions.
 
-@cindex @code{target("cld")} function attribute, x86
+@atindex @code{target("cld")}, x86
 @item cld
 @itemx no-cld
 Enable/disable the generation of the CLD before string moves.
 
-@cindex @code{target("fancy-math-387")} function attribute, x86
+@atindex @code{target("fancy-math-387")}, x86
 @item fancy-math-387
 @itemx no-fancy-math-387
 Enable/disable the generation of the @code{sin}, @code{cos}, and
 @code{sqrt} instructions on the 387 floating-point unit.
 
-@cindex @code{target("ieee-fp")} function attribute, x86
+@atindex @code{target("ieee-fp")}, x86
 @item ieee-fp
 @itemx no-ieee-fp
 Enable/disable the generation of floating point that depends on IEEE arithmetic.
 
-@cindex @code{target("inline-all-stringops")} function attribute, x86
+@atindex @code{target("inline-all-stringops")}, x86
 @item inline-all-stringops
 @itemx no-inline-all-stringops
 Enable/disable inlining of string operations.
 
-@cindex @code{target("inline-stringops-dynamically")} function attribute, x86
+@atindex @code{target("inline-stringops-dynamically")}, x86
 @item inline-stringops-dynamically
 @itemx no-inline-stringops-dynamically
 Enable/disable the generation of the inline code to do small string
 operations and calling the library routines for large operations.
 
-@cindex @code{target("align-stringops")} function attribute, x86
+@atindex @code{target("align-stringops")}, x86
 @item align-stringops
 @itemx no-align-stringops
 Do/do not align destination of inlined string operations.
 
-@cindex @code{target("recip")} function attribute, x86
+@atindex @code{target("recip")}, x86
 @item recip
 @itemx no-recip
 Enable/disable the generation of RCPSS, RCPPS, RSQRTSS and RSQRTPS
 instructions followed an additional Newton-Raphson step instead of
 doing a floating-point division.
 
-@cindex @code{target("80387")} function attribute, x86
+@atindex @code{target("80387")}, x86
 @item 80387
 @itemx no-80387
 Generate code containing 80387 instructions for floating point.
 
-@cindex @code{target("general-regs-only")} function attribute, x86
+@atindex @code{target("general-regs-only")}, x86
 @item general-regs-only
 Generate code which uses only the general registers.
 
-@cindex @code{target("arch=@var{ARCH}")} function attribute, x86
+@atindex @code{target("arch=@var{ARCH}")}, x86
 @item arch=@var{ARCH}
 Specify the architecture to generate code for in compiling the function.
 
-@cindex @code{target("tune=@var{TUNE}")} function attribute, x86
+@atindex @code{target("tune=@var{TUNE}")}, x86
 @item tune=@var{TUNE}
 Specify the architecture to tune for in compiling the function.
 
-@cindex @code{target("fpmath=@var{FPMATH}")} function attribute, x86
+@atindex @code{target("fpmath=@var{FPMATH}")}, x86
 @item fpmath=@var{FPMATH}
 Specify which floating-point unit to use.  You must specify the
 @code{target("fpmath=sse,387")} option as
 @code{target("fpmath=sse+387")} because the comma would separate
 different options.
 
-@cindex @code{prefer-vector-width} function attribute, x86
+@atindex @code{prefer-vector-width}, x86
 @item prefer-vector-width=@var{OPT}
 On x86 targets, the @code{prefer-vector-width} attribute informs the
 compiler to use @var{OPT}-bit vector width in instructions
@@ -9463,7 +9555,7 @@ a function with default @option{-march=x86-64} and
 of ISA features and marked with always_inline.
 @end table
 
-@cindex @code{indirect_branch} function attribute, x86
+@atindex @code{indirect_branch}, x86
 @item indirect_branch("@var{choice}")
 This attribute applies to functions.
 
@@ -9475,7 +9567,7 @@ indirect call and jump to inlined call and return thunk.
 @samp{thunk-extern} converts indirect call and jump to external call
 and return thunk provided in a separate object file.
 
-@cindex @code{function_return} function attribute, x86
+@atindex @code{function_return}, x86
 @item function_return("@var{choice}")
 This attribute applies to functions.
 
@@ -9486,7 +9578,7 @@ return thunk.  @samp{thunk-inline} converts function return to inlined
 call and return thunk.  @samp{thunk-extern} converts function return to
 external call and return thunk provided in a separate object file.
 
-@cindex @code{nocf_check} function attribute
+@atindex @code{nocf_check}, x86
 @item nocf_check
 This attribute applies to functions and function types.
 
@@ -9544,7 +9636,7 @@ foo (void)
 @}
 @end smallexample
 
-@cindex @code{cf_check} function attribute, x86
+@atindex @code{cf_check}, x86
 @item cf_check
 This attribute applies to functions.
 
@@ -9552,7 +9644,7 @@ The @code{cf_check} attribute on a function is used to inform the
 compiler that ENDBR instruction should be placed at the function
 entry when @option{-fcf-protection=branch} is enabled.
 
-@cindex @code{indirect_return} function attribute, x86
+@atindex @code{indirect_return}, x86
 @item indirect_return
 This attribute applies to functions.
 
@@ -9560,7 +9652,7 @@ The @code{indirect_return} attribute can be applied to a function,
 as well as variable or type of function pointer to inform the
 compiler that the function may return via indirect branch.
 
-@cindex @code{fentry_name} function attribute, x86
+@atindex @code{fentry_name}, x86
 @item fentry_name("@var{name}")
 This attribute applies to functions.
 
@@ -9569,7 +9661,7 @@ call on function entry when function instrumentation is enabled
 with @option{-pg -mfentry}. When @var{name} is nop then a 5 byte
 nop sequence is generated.
 
-@cindex @code{fentry_section} function attribute, x86
+@atindex @code{fentry_section}, x86
 @item fentry_section("@var{name}")
 This attribute applies to functions.
 
@@ -9577,7 +9669,7 @@ On x86 targets, the @code{fentry_section} attribute sets the name
 of the section to record function entry instrumentation calls in when
 enabled with @option{-pg -mrecord-mcount}
 
-@cindex @code{nodirect_extern_access} attribute
+@atindex @code{nodirect_extern_access}, x86
 @opindex mno-direct-extern-access
 @item nodirect_extern_access
 This attribute applies to functions and variables.
@@ -9585,8 +9677,8 @@ This attribute applies to functions and variables.
 This attribute, attached to a global variable or function, is the
 counterpart to option @option{-mno-direct-extern-access}.
 
-@cindex @code{ms_struct} attribute, x86
-@cindex @code{gcc_struct} attribute, x86
+@atindex @code{ms_struct}, x86
+@atindex @code{gcc_struct}, x86
 @item ms_struct
 @itemx gcc_struct
 These attributes can be applied to variables and struct types.
@@ -9612,7 +9704,7 @@ see @ref{x86 Options}, for details of how structure layout is affected.
 These attributes are supported by the Xstormy16 back end:
 
 @table @code
-@cindex @code{interrupt} function attribute, Xstormy16
+@atindex @code{interrupt}, Xstormy16
 @item interrupt
 This attribute applies to functions.
 
@@ -9621,7 +9713,7 @@ that the specified function is an interrupt handler.  The compiler generates
 function entry and exit sequences suitable for use in an interrupt handler
 when this attribute is present.
 
-@cindex @code{below100} variable attribute, Xstormy16
+@atindex @code{below100}, Xstormy16
 @item below100
 This attribute applies to variables.
 
@@ -30872,7 +30964,7 @@ You must specify @option{-Wno-pmf-conversions} to use this extension.
 Some attributes only make sense for C++ programs.
 
 @table @code
-@cindex @code{abi_tag} attribute
+@atindex @code{abi_tag}
 @item abi_tag ("@var{tag}", ...)
 The @code{abi_tag} attribute can be applied to a function, variable, class
 declaration, or inline namespace.
@@ -30916,7 +31008,7 @@ variable or function.  @option{-Wabi-tag} also warns about this
 situation; you can avoid this warning by explicitly tagging the
 variable or function or moving it into a tagged inline namespace.
 
-@cindex @code{init_priority} variable attribute
+@atindex @code{init_priority}
 @item init_priority (@var{priority})
 This attribute applies to namespace-scope variables.
 
@@ -30946,7 +31038,7 @@ As with the @var{priority} argument to the @code{constructor} and
 @code{init_priority} attribute.  In that case the attribute is rejected
 with an error rather than ignored.
 
-@cindex @code{no_dangling} attribute
+@atindex @code{no_dangling}
 @item no_dangling
 
 This attribute can be applied to a class type, function, or member
@@ -30998,7 +31090,7 @@ decltype(auto) foo(T&& t) @{
 @};
 @end smallexample
 
-@cindex @code{warn_unused} type attribute
+@atindex @code{warn_unused}
 @item warn_unused
 This attribute applies to types.
 
@@ -31016,9 +31108,8 @@ control a resource, such as @code{std::lock_guard}.
 This attribute is also accepted in C, but it is unnecessary because C
 does not have constructors or destructors.
 
-@cindex @code{cold} type attribute
-@item cold
-@cindex @code{hot} type attribute
+@atindex @code{cold}
+@atindex @code{hot}
 @item cold
 @itemx hot
 In addition to functions and labels, GNU C++ allows the @code{cold} and
