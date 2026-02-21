@@ -1458,10 +1458,12 @@ split_function (basic_block return_bb, class split_point *split_point,
     dump_function_to_file (node->decl, dump_file, dump_flags);
 
   /* Create the basic block we place call into.  It is the entry basic block
-     split after last label.  */
+     split after last label and after the last eos clobber and debug stmt.  */
   call_bb = split_point->entry_bb;
   for (gimple_stmt_iterator gsi = gsi_start_bb (call_bb); !gsi_end_p (gsi);)
-    if (gimple_code (gsi_stmt (gsi)) == GIMPLE_LABEL)
+    if (gimple_code (gsi_stmt (gsi)) == GIMPLE_LABEL
+	|| gimple_clobber_p (gsi_stmt (gsi), CLOBBER_STORAGE_END)
+	|| is_gimple_debug (gsi_stmt (gsi)))
       {
 	last_stmt = gsi_stmt (gsi);
 	gsi_next (&gsi);
