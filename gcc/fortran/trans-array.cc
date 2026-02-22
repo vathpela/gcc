@@ -11136,6 +11136,7 @@ structure_alloc_comps (gfc_symbol * der_type, tree decl, tree dest,
 	    {
 	      gfc_se tse;
 	      gfc_expr *c_expr;
+	      gfc_init_se (&tse, NULL);
 	      c_expr = c->initializer;
 	      gfc_conv_expr_type (&tse, c_expr, TREE_TYPE (comp));
 	      gfc_add_block_to_block (&fnblock, &tse.pre);
