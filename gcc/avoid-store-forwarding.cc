@@ -714,7 +714,7 @@ store_forwarding_analyzer::update_stats (function *fn)
   statistics_counter_event (fn, "Cases of store forwarding detected: ",
 			    stats_sf_detected);
   statistics_counter_event (fn, "Cases of store forwarding avoided: ",
-			    stats_sf_detected);
+			    stats_sf_avoided);
 }
 
 unsigned int
