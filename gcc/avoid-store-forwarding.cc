@@ -176,9 +176,7 @@ process_store_forwarding (vec<store_fwd_info> &stores, rtx_insn *load_insn,
      We can also eliminate stores on addresses that are overwritten
      by later stores.  */
 
-  sbitmap forwarded_bytes = sbitmap_alloc (load_size);
-  bitmap_clear (forwarded_bytes);
-
+  auto_sbitmap forwarded_bytes (load_size);
   unsigned int i;
   store_fwd_info* it;
   auto_vec<store_fwd_info> redundant_stores;
