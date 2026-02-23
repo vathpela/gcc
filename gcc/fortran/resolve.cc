@@ -12449,6 +12449,13 @@ gfc_max_forall_iterators_in_chain (gfc_code *code)
 
       if (c->op == EXEC_FORALL || c->op == EXEC_DO_CONCURRENT)
 	sub_iters = gfc_count_forall_iterators (c);
+      else if (c->op == EXEC_BLOCK)
+	{
+	  /* BLOCK/ASSOCIATE bodies live in the block namespace code chain,
+	     not in the generic c->block arm list used by IF/SELECT.  */
+	  if (c->ext.block.ns && c->ext.block.ns->code)
+	    sub_iters = gfc_max_forall_iterators_in_chain (c->ext.block.ns->code);
+	}
       else if (c->block)
 	for (gfc_code *b = c->block; b; b = b->block)
 	  {
