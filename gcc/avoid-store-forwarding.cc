@@ -18,18 +18,17 @@
    along with GCC; see the file COPYING3.  If not see
    <http://www.gnu.org/licenses/>.  */
 
-#include "avoid-store-forwarding.h"
 #include "config.h"
 #include "system.h"
 #include "coretypes.h"
 #include "backend.h"
 #include "target.h"
 #include "rtl.h"
+#include "avoid-store-forwarding.h"
 #include "alias.h"
 #include "rtlanal.h"
 #include "cfgrtl.h"
 #include "tree-pass.h"
-#include "cselib.h"
 #include "predict.h"
 #include "insn-config.h"
 #include "expmed.h"
