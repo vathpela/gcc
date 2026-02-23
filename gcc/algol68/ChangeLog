@@ -1,3 +1,8 @@
+2026-02-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* a68-low-units.cc (lower_subscript_for_trimmers): Do not crash
+	with trimmers with implicit lower and upper bounds.
+
 2026-02-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* a68-parser-bottom-up.cc (reduce_formal_holes): Fix error format

@@ -1,3 +1,41 @@
+2026-02-22  Roger Sayle  <roger@nextmovesoftware.com>
+
+	PR c/123716
+	* gcc.dg/pr123716.c: New test case.
+
+2026-02-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* algol68/execute/trimmer-12.a68: New test.
+
+2026-02-22  Jakub Jelinek  <jakub@redhat.com>
+
+	PR c++/124173
+	* g++.dg/cpp0x/pr124173.C: New test.
+
+2026-02-22  Jakub Jelinek  <jakub@redhat.com>
+
+	PR c++/124184
+	* g++.dg/cpp26/expansion-stmt31.C: New test.
+
+2026-02-22  Nathaniel Shead  <nathanieloshead@gmail.com>
+
+	PR c++/124153
+	* g++.dg/modules/cpp-22.C: New test.
+
+2026-02-22  Valentyn Yukhymenko  <valentin.yukhymenko@gmail.com>
+
+	PR c++/123642
+	* g++.dg/reflect/member4.C: Remove expected error.
+	* g++.dg/reflect/anon4.C: New test based on original bug report.
+
+2026-02-22  Eric Botcazou  <ebotcazou@adacore.com>
+
+	* gnat.dg/asynch2.adb: New test.
+
+2026-02-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* algol68/execute/trimmer-11.a68: New test.
+
 2026-02-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* algol68/compile/warning-hidding-4.a68: Mention bitspack.

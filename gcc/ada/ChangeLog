@@ -1,3 +1,17 @@
+2026-02-22  Eric Botcazou  <ebotcazou@adacore.com>
+
+	PR ada/124192
+	* doc/gnat_rm/standard_and_implementation_defined_restrictions.rst
+	(Max_Tasks): Adjust description.
+	* gnat_rm.texi: Regenerate.
+
+2026-02-22  Eric Botcazou  <ebotcazou@adacore.com>
+
+	PR ada/124179
+	* sem_ch9.adb (Analyze_Triggering_Alternative): Use more robust
+	test for delay and entry call statements and fix thinko in test
+	for procedure call statements.
+
 2026-02-20  Eric Botcazou  <ebotcazou@adacore.com>
 
 	* libgnat/s-stposu.adb (Finalize_Pool): Pass a local copy of the
