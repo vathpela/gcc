@@ -357,7 +357,7 @@ stand_moids (void)
   SLICE (M_ROW_SIMPLOUT) = M_SIMPLOUT;
 }
 
-/* Set up standenv - general RR but not transput.  */
+/* Set up standenv - general RR including transput.  */
 
 static void
 stand_prelude (void)
@@ -389,17 +389,6 @@ stand_prelude (void)
   a68_idf (A68_STD, "longmaxbits", M_LONG_BITS, a68_lower_maxbits);
   a68_idf (A68_STD, "longlongmaxbits", M_LONG_LONG_BITS, a68_lower_maxbits);
   a68_idf (A68_STD, "maxabschar", M_INT, a68_lower_maxabschar);
-  a68_idf (A68_STD, "intwidth", M_INT, a68_lower_intwidth);
-  a68_idf (A68_STD, "longintwidth", M_INT, a68_lower_longintwidth);
-  a68_idf (A68_STD, "longlongintwidth", M_INT, a68_lower_longlongintwidth);
-  a68_idf (A68_STD, "shortintwidth", M_INT, a68_lower_shortintwidth);
-  a68_idf (A68_STD, "shortshortintwidth", M_INT, a68_lower_shortshortintwidth);
-  a68_idf (A68_STD, "realwidth", M_INT, a68_lower_realwidth);
-  a68_idf (A68_STD, "longrealwidth", M_INT, a68_lower_longrealwidth);
-  a68_idf (A68_STD, "longlongrealwidth", M_INT, a68_lower_longlongrealwidth);
-  a68_idf (A68_STD, "expwidth", M_INT, a68_lower_expwidth);
-  a68_idf (A68_STD, "longexpwidth", M_INT, a68_lower_longexpwidth);
-  a68_idf (A68_STD, "longlongexpwidth", M_INT, a68_lower_longlongexpwidth);
   a68_idf (A68_STD, "pi", M_REAL, a68_lower_pi);
   a68_idf (A68_STD, "longpi", M_LONG_REAL, a68_lower_pi);
   a68_idf (A68_STD, "longlongpi", M_LONG_LONG_REAL, a68_lower_pi);
@@ -1299,16 +1288,6 @@ stand_prelude (void)
 			    "STANDARD", "ga68");
 }
 
-/* Transput.  */
-
-static void
-stand_transput (void)
-{
-  //  if (!flag_building_libga68)
-  //    a68_extract_revelation (A68_STANDENV, LINE (INFO (TOP_NODE (&A68_JOB))),
-  //                            "TRANSPUT", "ga68");
-}
-
 /* GNU extensions for the standenv.  */
 
 static void
@@ -1441,5 +1420,4 @@ a68_make_standard_environ (void)
       gnu_prelude ();
       posix_prelude ();
     }
-  stand_transput ();
 }
