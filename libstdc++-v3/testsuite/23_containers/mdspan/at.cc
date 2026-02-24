@@ -89,6 +89,12 @@ template<typename Int, bool ValidForPacks, bool ValidForArrays>
       }
     };
 
+#if !_GLIBCXX_USE_CXX11_ABI
+    if consteval {
+      return true;
+    }
+#endif
+
     verify_throw(-1, 0, 0);
     verify_throw(0, -3, 0);
     verify_throw(0, 0, -5);
