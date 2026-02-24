@@ -1,3 +1,24 @@
+2026-02-23  Marek Polacek  <polacek@redhat.com>
+
+	* parser.cc (cp_parser_splice_expression): For dependent splices return
+	earlier.  Refactor.  For address_p, build an OFFSET_REF.  Don't pass
+	context to finish_id_expression.
+	* semantics.cc (finish_id_expression_1): Adjust an assert to also check
+	flag_reflection.
+
+2026-02-23  Marek Polacek  <polacek@redhat.com>
+
+	PR c++/124150
+	* reflect.cc (eval_substitute): Add an OVERLOAD around
+	a DECL_FUNCTION_TEMPLATE_P.
+
+2026-02-23  Marek Polacek  <polacek@redhat.com>
+
+	PR c++/123641
+	* name-lookup.cc: Move STAT_* and MAYBE_STAT_* macros from here to...
+	* name-lookup.h: ...here.
+	* reflect.cc (namespace_members_of): Use them.  Skip STAT_TYPE_HIDDEN_P.
+
 2026-02-22  Jakub Jelinek  <jakub@redhat.com>
 
 	PR c++/124173

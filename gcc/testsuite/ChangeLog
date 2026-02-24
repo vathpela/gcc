@@ -1,3 +1,153 @@
+2026-02-23  Gonzalo Silvalde Blanco  <gonzalo.silvalde@gmail.com>
+
+	PR fortran/80012
+	* gfortran.dg/pr80012.f90: New test.
+
+2026-02-23  Paul-Antoine Arras  <parras@baylibre.com>
+
+	PR fortran/120505
+	* gfortran.dg/gomp/map-subarray-4.f90: Update scan dumps for -m32.
+
+2026-02-23  Marek Polacek  <polacek@redhat.com>
+
+	PR c++/124150
+	* g++.dg/reflect/substitute4.C: New test.
+
+2026-02-23  Marek Polacek  <polacek@redhat.com>
+
+	PR c++/123641
+	* g++.dg/reflect/members_of8.C: New test.
+
+2026-02-23  Paul-Antoine Arras  <parras@baylibre.com>
+
+	PR fortran/120505
+	* gfortran.dg/gomp/map-subarray-4.f90: New test.
+
+2026-02-23  Paul-Antoine Arras  <parras@baylibre.com>
+
+	PR fortran/120505
+	* gfortran.dg/gomp/map-subarray-3.f90: New test.
+	* gfortran.dg/gomp/map-subarray-5.f90: New test.
+
+2026-02-23  Alice Carlotti  <alice.carlotti@arm.com>
+
+	* g++.target/aarch64/sme/aarch64-sme-acle-asm.exp: Use
+	-march=armv8-a+sme when SME isn't already enabled.
+	* g++.target/aarch64/sme/aarch64-sme.exp: Ditto.
+	* g++.target/aarch64/sme2/aarch64-sme2-acle-asm.exp: Ditto.
+	* gcc.target/aarch64/sme/aarch64-sme-acle-asm.exp: Ditto.
+	* gcc.target/aarch64/sme/aarch64-sme.exp: Ditto.
+	* gcc.target/aarch64/sme2/aarch64-sme2-acle-asm.exp: Ditto.
+
+2026-02-23  Alice Carlotti  <alice.carlotti@arm.com>
+
+	* g++.target/aarch64/sme/exceptions_2.C: Add +sve pragma.
+	* g++.target/aarch64/sme/exceptions_2_nosve.C: New test.
+	* gcc.target/aarch64/sme/acle-asm/ldr_vnum_za_sc.c: Remove
+	svbool_t parameters.
+	* gcc.target/aarch64/sme/acle-asm/ldr_za_sc.c: Ditto.
+	* gcc.target/aarch64/sme/acle-asm/str_vnum_za_sc.c: Ditto.
+	* gcc.target/aarch64/sme/acle-asm/str_za_sc.c: Ditto.
+	* gcc.target/aarch64/sme/acle-asm/test_sme_acle.h
+	(TEST_LOAD_ZA_NOPRED, TEST_STORE_ZA_NOPRED): New macros.
+	* gcc.target/aarch64/sme/call_sm_switch_1.c: Add +sve pragma.
+	* gcc.target/aarch64/sme/call_sm_switch_1_nosve.c: New test.
+	* gcc.target/aarch64/sme/call_sm_switch_3.c: Add +sve pragma.
+	* gcc.target/aarch64/sme/call_sm_switch_3_nosve.c: New test.
+	* gcc.target/aarch64/sme/call_sm_switch_5.c: Add +sve pragma.
+	* gcc.target/aarch64/sme/call_sm_switch_6.c: Add +sve pragma.
+	* gcc.target/aarch64/sme/call_sm_switch_11.c: Add +sve pragma.
+	* gcc.target/aarch64/sme/call_sm_switch_11_nosve.c: New test.
+	* gcc.target/aarch64/sme/inlining_9.c: Add +sve pragma.
+	* gcc.target/aarch64/sme/inlining_10.c: Add +sve pragma.
+	* gcc.target/aarch64/sme/inlining_11.c: Add +sve pragma.
+	* gcc.target/aarch64/sme/locally_streaming_1.c:
+	* gcc.target/aarch64/sme/locally_streaming_1_nosve.c: New test.
+	* gcc.target/aarch64/sme/pr121028.c: Add +sve to pragma.
+	* gcc.target/aarch64/sme/vect-dotprod-twoway.c: Add -mtune.
+	* gcc.target/aarch64/sme2/acle-asm/ldr_zt.c: Use svcntsb instead
+	of svcntb.
+	* gcc.target/aarch64/sme2/acle-asm/str_zt.c: Ditto.
+
+2026-02-23  Alice Carlotti  <alice.carlotti@arm.com>
+
+	* gcc.target/aarch64/pragma_cpp_predefs_4.c: Remove unnecessary
+	uses of +sve2.
+	* gcc.target/aarch64/sve/acle/general-c/binary_int_opt_single_n_2.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/binary_opt_single_n_2.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/binary_single_1.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/binary_za_slice_int_opt_single_1.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/binary_za_slice_lane_1.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/binary_za_slice_lane_2.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/binary_za_slice_lane_3.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/binary_za_slice_lane_4.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/binary_za_slice_opt_single_1.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/binary_za_slice_opt_single_2.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/binary_za_slice_opt_single_3.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/binary_za_slice_uint_opt_single_1.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/binaryxn_2.c: Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/clamp_1.c: Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/compare_scalar_count_1.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/dot_za_slice_int_lane_1.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/dot_za_slice_lane_1.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/dot_za_slice_lane_2.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/dot_za_slice_uint_lane_1.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/shift_right_imm_narrowxn_1.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/storexn_1.c: Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/ternary_mfloat8_lane_1.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/ternary_mfloat8_lane_group_selection_1.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/ternary_qq_or_011_lane_1.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/unary_convertxn_1.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/unary_convertxn_narrow_1.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/unary_convertxn_narrowt_1.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/unary_za_slice_1.c:
+	Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/unaryxn_1.c: Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/write_za_1.c: Ditto.
+	* gcc.target/aarch64/sve/acle/general-c/write_za_slice_1.c:
+	Ditto.
+
+2026-02-23  Alice Carlotti  <alice.carlotti@arm.com>
+
+	* gcc.target/aarch64/no-sve-with-sme-1.c: Removed.
+	* gcc.target/aarch64/no-sve-with-sme-2.c: Removed.
+	* gcc.target/aarch64/no-sve-with-sme-3.c: Removed.
+	* gcc.target/aarch64/no-sve-with-sme-4.c: Removed.
+
+2026-02-23  Alice Carlotti  <alice.carlotti@arm.com>
+
+	* lib/scanasm.exp (check_function_body): Log matching portion
+	of body_regexp separately.
+
+2026-02-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* algol68/execute/char-in-string-1.a68: It is no longer need to
+	access Transput explicitly.
+
 2026-02-22  Roger Sayle  <roger@nextmovesoftware.com>
 
 	PR c/123716

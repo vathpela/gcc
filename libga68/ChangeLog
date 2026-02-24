@@ -1,3 +1,13 @@
+2026-02-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* transput.a68.in: Remove and move content to..
+	* standard.a68.in: .. here.
+	* Makefile.am (libga68_la_DEPENDENCIES): Remove transput.lo.
+	(libga68_la_LIBADD): Likewise.
+	(transput.a68): Remove rule.
+	(standard.a68): Remove transput.a68.
+	* Makefile.in: Regenerate.
+
 2026-02-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* standard.a68.in ({L_}bits_pack): New procedures.

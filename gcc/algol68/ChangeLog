@@ -1,3 +1,23 @@
+2026-02-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* a68.h: Remove prototypes for *_width functions.
+	* a68-parser-prelude.cc (stand_prelude): Do not define *width
+	functions.
+	* a68-low-ints.cc (a68_int_width): Remove.
+	* a68-low-reals.cc (a68_real_width): Likewise.
+	(a68_real_exp_width): Likewise.
+	* a68-low-prelude.cc (a68_lower_longintwidth): Likewise.
+	(a68_lower_intwidth): Likewise.
+	(a68_lower_longlongintwidth): Likewise.
+	(a68_lower_shortintwidth): Likewise.
+	(a68_lower_shortshortintwidth): Likewise.
+	(a68_lower_realwidth): Likewise.
+	(a68_lower_longrealwidth): Likewise.
+	(a68_lower_longlongrealwidth): Likewise.
+	(a68_lower_expwidth): Likewise.
+	(a68_lower_longexpwidth): Likewise.
+	(a68_lower_longlongexpwidth): Likewise.
+
 2026-02-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* a68-low-units.cc (lower_subscript_for_trimmers): Do not crash

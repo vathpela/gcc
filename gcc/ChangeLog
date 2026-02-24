@@ -1,3 +1,67 @@
+2026-02-23  Sandra Loosemore  <sloosemore@baylibre.com>
+
+	PR translation/118988
+	* params.opt (-param=cycle-accurate-model=): Fix wording of help
+	string.
+	(-param=phiopt-factor-max-stmts-live=): Likewise.
+
+2026-02-23  Sandra Loosemore  <sloosemore@baylibre.com>
+
+	* config/gcn/gcn.md (addsi3): Disparage vector alternative.
+	(addptrdi3): Reverse order of vector and scalar alternatives
+	to prefer the latter.
+	(subsi3): Disparage vector alternatives.
+	(mulsi3): Likewise.
+	(muldi3): Likewise.
+	(bitunop <expander>si2): Likewise.
+	(vec_and_scalar_com <expander>si3): Likewise.
+	(vec_and_scalar_nocom <expander>si3): Likewise.
+	(one_cmpldi2): Likewise.
+	(vec_and_scalar64_com <expander>di3): Likwise.
+	(vec_and_scalar64_nocom <expander>di3): Likwise.
+
+2026-02-23  Paul-Antoine Arras  <parras@baylibre.com>
+
+	PR fortran/120505
+	* gimplify.cc (omp_accumulate_sibling_list): When the containing struct
+	is a Fortran array descriptor, sort mapped components by offset.
+
+2026-02-23  Paul-Antoine Arras  <parras@baylibre.com>
+
+	PR fortran/120505
+	* gimplify.cc (omp_mapped_by_containing_struct): Handle Fortran array
+	descriptors.
+	(omp_build_struct_sibling_lists): Allow attach_detach bias to be
+	adjusted on non-target regions.
+	(gimplify_adjust_omp_clauses): Remove GIMPLE-only nodes.
+	* tree-pretty-print.cc (dump_omp_clause): Handle
+	OMP_CLAUSE_MAP_SIZE_NEEDS_ADJUSTMENT and OMP_CLAUSE_MAP_GIMPLE_ONLY.
+	* tree.h (OMP_CLAUSE_MAP_SIZE_NEEDS_ADJUSTMENT,
+	OMP_CLAUSE_MAP_GIMPLE_ONLY): Define.
+
+2026-02-23  Alice Carlotti  <alice.carlotti@arm.com>
+
+	* config/aarch64/aarch64.cc (aarch64_override_options_internal):
+	Remove +sme+nosve sorry, and remove SVE from nosme workaround.
+	* doc/invoke.texi: Remove SVE2 requirement from +sme.
+
+2026-02-23  Alice Carlotti  <alice.carlotti@arm.com>
+
+	* config/aarch64/aarch64-c.cc (aarch64_update_cpp_builtins):
+	Replace TARGET_SVE{2} with explicit feature flag checks.
+	* config/aarch64/aarch64.cc
+	(aarch64_adjust_generic_arch_tuning): Add SME to SVE2 check.
+	* config/aarch64/aarch64.h (TARGET_SVE): Adjust condition.
+	(TARGET_SVE2): Ditto.
+
+2026-02-23  Alice Carlotti  <alice.carlotti@arm.com>
+
+	* config/aarch64/aarch64-sme.md (UNSPEC_GET_CURRENT_VG): New
+	enum value.
+	(aarch64_get_current_vg): New insn.
+	* config/aarch64/aarch64.cc (aarch64_save_callee_saves): Use
+	__arm_get_current_vg if cntd is unavailable.
+
 2026-02-22  Roger Sayle  <roger@nextmovesoftware.com>
 
 	PR c/123716

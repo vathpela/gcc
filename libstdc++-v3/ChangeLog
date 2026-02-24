@@ -1,3 +1,17 @@
+2026-02-23  Tomasz Kamiński  <tkaminsk@redhat.com>
+
+	* include/std/mdspan (__mdspan::__is_multi_index): Removed,
+	replaced with local lambda in mdspan::operator[].
+	(__mdspan::operator[]): Implement in terms of single overload
+	accepting index_type. Use __mdspan::__index_type_cast for type
+	conversion.
+
+2026-02-23  Tomasz Kamiński  <tkaminsk@redhat.com>
+
+	* include/std/mdspan (mdspan::at, mdspan::__index_int_t):
+	Define.
+	* testsuite/23_containers/mdspan/at.cc: New test.
+
 2026-02-20  Jonathan Wakely  <jwakely@redhat.com>
 
 	* testsuite/lib/libstdc++.exp (v3-minimum-std): Remove second
