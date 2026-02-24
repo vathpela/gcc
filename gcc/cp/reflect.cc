@@ -8086,6 +8086,14 @@ consteval_only_p (tree t)
   if (!t)
     return false;
 
+  if (TREE_CODE (t) == TREE_VEC)
+    {
+      for (tree arg : tree_vec_range (t))
+	if (arg && consteval_only_p (arg))
+	  return true;
+      return false;
+    }
+
   /* We need the complete type otherwise we'd have no fields for class
      templates and thus come up with zilch for things like
        template<typename T>
