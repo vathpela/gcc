@@ -791,6 +791,20 @@ region_model_manager::maybe_fold_binop (tree type, enum tree_code op,
 	    return get_or_create_cast (type, arg1);
 	}
       break;
+
+    case TRUNC_DIV_EXPR:
+    case CEIL_DIV_EXPR:
+    case FLOOR_DIV_EXPR:
+    case ROUND_DIV_EXPR:
+    case TRUNC_MOD_EXPR:
+    case CEIL_MOD_EXPR:
+    case FLOOR_MOD_EXPR:
+    case ROUND_MOD_EXPR:
+    case RDIV_EXPR:
+    case EXACT_DIV_EXPR:
+      if (cst1 && zerop (cst1))
+	return get_or_create_unknown_svalue (type);
+      break;
     }
 
   /* For associative ops, fold "(X op CST_A) op CST_B)" to
