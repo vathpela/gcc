@@ -89,7 +89,7 @@ template<typename Int, bool ValidForPacks, bool ValidForArrays>
       }
     };
 
-#if !_GLIBCXX_USE_CXX11_ABI
+#if !__cpp_lib_constexpr_exceptions
     if consteval {
       return true;
     }
