@@ -6557,6 +6557,7 @@ class_members_of (location_t loc, const constexpr_ctx *ctx, tree r,
 		  tree actx, tree call, bool *non_constant_p,
 		  tree *jump_target, enum metafn_code kind, tree fun)
 {
+  r = TYPE_MAIN_VARIANT (r);
   if (kind == METAFN_MEMBERS_OF)
     {
       if (modules_p ())
