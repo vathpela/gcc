@@ -1,26 +1,23 @@
       * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
       *  This function is in the public domain.
-      *  Contributed by James K. Lowden of COBOLworx November 2025.
+      *  Contributed by smckinney of COBOLworx Feb 2026.
       * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-      *  long  read( int  fd,  void *  buf,  unsigned long  count)
+      *  int ftruncate(int fd, off_t length);
         Identification Division.
-        Function-ID. posix-read.
+        Function-ID. posix-ftruncate.
         Data Division.
         Linkage Section.
           77 Return-Value Binary-Long.
-          01 Lk-fd PIC 9(8) Usage COMP-5.
-          01 Lk-buf PIC X ANY LENGTH.
-          01 Lk-count PIC 9(8) Usage COMP.
+          01 Lk-fd PIC 9(8) Usage COMP.
+          01 Lk-offset Binary-Long.
         Procedure Division using
              By Value Lk-fd,
-             By Reference Lk-buf,
-             By Value Lk-count
+             By Value Lk-offset,
              Returning Return-Value.
-
-          Call "read" using
+          Display 'posix-ftruncate fd: ' Lk-fd ', Lk-offset: ' Lk-offset.
+          Call "ftruncate" using
              By Value Lk-fd,
-             By Reference Lk-buf,
-             By Value Lk-count
+             By Value Lk-offset,
              Returning Return-Value.
           Goback.
-        End Function posix-read.
+        End Function posix-ftruncate.
