@@ -683,7 +683,8 @@ region_model_manager::maybe_fold_binop (tree type, enum tree_code op,
       /* X + (-X) -> 0.  */
       if (const unaryop_svalue *unary_op = arg1->dyn_cast_unaryop_svalue ())
 	if (unary_op->get_op () == NEGATE_EXPR
-	    && unary_op->get_arg () == arg0)
+	    && unary_op->get_arg () == arg0
+	    && type && (INTEGRAL_TYPE_P (type) || POINTER_TYPE_P (type)))
 	  return get_or_create_int_cst (type, 0);
       /* X + (Y - X) -> Y.  */
       if (const binop_svalue *bin_op = arg1->dyn_cast_binop_svalue ())
