@@ -5318,6 +5318,7 @@ eval_can_substitute (location_t loc, const constexpr_ctx *ctx,
 				"invalid argument to can_substitute",
 				fun, non_constant_p, jump_target);
       a = resolve_nondeduced_context (a, tf_warning_or_error);
+      a = convert_from_reference (a);
       TREE_VEC_ELT (rvec, i) = a;
     }
   if (DECL_TYPE_TEMPLATE_P (r) || DECL_TEMPLATE_TEMPLATE_PARM_P (r))
