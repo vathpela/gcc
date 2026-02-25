@@ -1,3 +1,54 @@
+2026-02-24  David Malcolm  <dmalcolm@redhat.com>
+
+	PR analyzer/124188
+	* c-c++-common/analyzer/vector-ice-pr124188.c: New test.
+
+2026-02-24  David Malcolm  <dmalcolm@redhat.com>
+
+	PR analyzer/124195
+	* c-c++-common/analyzer/divide-by-zero-1.c: New test.
+	* c-c++-common/analyzer/divide-by-zero-pr124195-2.c: New test.
+	* gcc.dg/analyzer/divide-by-zero-pr124195-1.c: New test.
+
+2026-02-24  Robin Dapp  <rdapp@oss.qualcomm.com>
+
+	PR target/124147
+	* gcc.target/riscv/rvv/xtheadvector/pr124147.c: New test.
+
+2026-02-24  Robin Dapp  <rdapp@oss.qualcomm.com>
+
+	PR rtl-optimization/123381
+	* gcc.target/riscv/rvv/autovec/pr123381.c: New test.
+
+2026-02-24  Wilco Dijkstra  <wilco.dijkstra@arm.com>
+
+	PR target/121240
+	* gcc.target/aarch64/const_create_using_fmov.c: Fix test.
+	* gcc.target/aarch64/pr121240.c: Add new test.
+	* gcc.target/aarch64/vec-init-single-const.c: Fix test.
+	* gcc.target/aarch64/vect-cse-codegen.c: Fix test.
+
+2026-02-24  Torbjörn SVENSSON  <torbjorn.svensson@foss.st.com>
+
+	PR testsuite/124064
+	* g++.target/arm/bfloat_cpp_typecheck.C: Drop xfail.
+
+2026-02-24  Torbjörn SVENSSON  <torbjorn.svensson@foss.st.com>
+
+	* lib/target-supports.exp: Add -mfpu=auto to
+	arm_v8_3a_complex_neon. This aligns with
+	arm_v8_3a_fp16_complex_neon.
+
+2026-02-24  Eric Botcazou  <ebotcazou@adacore.com>
+	    Liam Powell  <liam@liampwll.com>
+
+	* gnat.dg/specs/aggr12.ads: New test.
+
+2026-02-24  Marek Polacek  <polacek@redhat.com>
+
+	* g++.dg/parse/typename6.C: Adjust dg-error.
+	* g++.dg/reflect/pr122634-2.C: Likewise.
+
 2026-02-23  Gonzalo Silvalde Blanco  <gonzalo.silvalde@gmail.com>
 
 	PR fortran/80012

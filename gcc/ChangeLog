@@ -1,3 +1,181 @@
+2026-02-24  Sandra Loosemore  <sloosemore@baylibre.com>
+
+	PR other/88472
+	* Makefile.in (ATTR_URLS_HTML_DEPS): Point at new index file.
+	* attr-urls.def: Regenerated.
+	* gcc-attribute-urlifier.cc (test_attribute_urlifier): Adjust
+	URLs to match formatting in the new index.
+	* regenerate-attr-urls.py (parse_html_line_attribute_index):
+	Update pattern to match formatting in the new combined index.
+	Don't segregate entries into separate function/variable/etc
+	arrays.
+	(INDEX_REL_PATH): Point at the new index file.
+	(class TestParsingIndex): Update patterns in self-tests to match
+	the current formatting.
+
+2026-02-24  Sandra Loosemore  <sloosemore@baylibre.com>
+
+	PR other/88472
+	* doc/extend.texi (Common Attributes): Change @cindex entries for
+	attributes to @atindex.  Add some additional @cindex entries.
+	(AArch64 Attributes): Likewise.
+	(AMD GCN Attributes): Likewise.
+	(ARC Attributes): Likewise.
+	(ARM Attributes): Likewise.
+	(AVR Attributes): Likewise.
+	(Blackfin Attributes): Likewise.
+	(BPF Attributes): Likewise.
+	(C-SKY Attributes): Likewise.
+	(Epiphany Attributes): Likewise.
+	(H8/300 Attributes): Likewise.
+	(IA-64 Attributes): Likewise.
+	(LoongArch Attributes): Likewise.
+	(M32C Attributes): Likewise.
+	(M32R/D Attributes): Likewise.
+	(m68k Attributes): Likewise.
+	(MicroBlaze Attributes): Likewise.
+	(Microsoft Windows Attributes): Likewise.
+	(MIPS Attributes): Likewise.
+	(MSP430 Attributes): Likewise.
+	(NDS32 Attributes): Likewise.
+	(Nvidia PTX Attributes): Likewise.
+	(PowerPC Attributes): Likewise.
+	(RISC-V Attributes): Likewise.
+	(RL78 Attributes): Likewise.
+	(RX Attributes): Likewise.
+	(S/390 Attributes): Likewise.
+	(SH Attributes): Likewise.
+	(Symbian OS Attributes): Likewise.
+	(V850 Attributes): Likewise.
+	(Visium Attributes): Likewise.
+	(x86 Attributes): Likewise.
+	(Xstormy16 Attributes): Likewise.
+	(C++ Attributes): Likewise.
+	* doc/gcc.texi: Define a new "at" index for attributes.
+	(Attribute Index): New appendix.
+
+2026-02-24  Sandra Loosemore  <sloosemore@baylibre.com>
+
+	PR other/88472
+	* doc/extend.texi (Common Attributes): Document the "naked"
+	attribute here.
+	(ARC Attributes): Delete entry for "naked".
+	(ARM Attributes): Likewise.
+	(AVR Attributes): Likewise.
+	(BPF Attributes): Likewise.
+	(C-SKY Attributes): Likewise.
+	(MCORE Attributes): Delete entire section since "naked" was
+	the only thing listed.
+	(MSP430 Attributes): Delete entry for "naked".
+	(NDS32 Attributes): Likewise.
+	(RISC-V Attributes): Likewise.
+	(RL78 Attributes): Likewise.
+	(RX Attributes): Likewise.
+	(x86 Attributes): Likewise.
+
+2026-02-24  Sandra Loosemore  <sloosemore@baylibre.com>
+
+	PR other/88472
+	* doc/extend.texi (Common Attributes): Consolidate documentation
+	for "cold" and "hot" attributes, including the C++-specific
+	behavior.
+	(C++ Attributes): Likewise, just point to the main entry.
+
+2026-02-24  Sandra Loosemore  <sloosemore@baylibre.com>
+
+	* doc/extend.texi (RISC-V Attributes): Format and index options
+	for the "target" attribute consistently with the documentation
+	for other back ends.
+
+2026-02-24  Sandra Loosemore  <sloosemore@baylibre.com>
+
+	* doc/extend.texi (Common Attributes): Add LoongArch to lists of
+	targets supporting target_clones and target_version.
+	(LoongArch Attributes): Copy-edit for grammar and markup.  Wrap
+	excessively long lines.  Rearrange the introductory material for
+	the target attribute.  Correct index entries for target attribute
+	options.
+	(Function Multiversioning): Add LoongArch to list of targets
+	supporting this feature.  Fix nearby typo.
+
+2026-02-24  Sandra Loosemore  <sloosemore@baylibre.com>
+
+	* doc/extend.texi (AArch64 Attributes): Reorganize material in this
+	section, correct terminology and formatting.
+
+2026-02-24  Sandra Loosemore  <sloosemore@baylibre.com>
+
+	* doc/extend.texi (Attributes): General copy-editing.
+	(C++ Attributes): Likewise.
+
+2026-02-24  Sandra Loosemore  <sloosemore@baylibre.com>
+
+	PR other/88472
+	* doc/extend.texi (Attributes): Start each attribute's
+	documentation with a short paragraph describing what it applies to.
+	(C++ Attributes): Likewise.
+
+2026-02-24  Sandra Loosemore  <sloosemore@baylibre.com>
+
+	PR other/88472
+	* doc/extend.texi (Attributes): Merge respective subsections of
+	Function Attributes, Variable Attributes, Type Attributes,
+	Label Attributes, Enumerator Attributes, and Statement Attributes
+	into new sections Common Attributes and Target-Specific Attributes.
+	Fix cross-references.
+	* doc/invoke.texi: Fix cross-references.
+	* doc/trouble.texi: Likewise.
+
+2026-02-24  Sandra Loosemore  <sloosemore@baylibre.com>
+
+	PR c++/102397
+	* doc/extend.texi (Attributes): Rewrite and expand discussion
+	of standard vs legacy syntax, with several examples.
+	(Attribute Syntax): Rename section to...
+	(GNU Attribute Syntax): ...this.  Prune discussion of standard
+	attribute syntax.  Fix cross-references.
+
+2026-02-24  Robin Dapp  <rdapp@oss.qualcomm.com>
+
+	* config/riscv/vector.md:  Change 'X' to 'r' in _lra insns.
+
+2026-02-24  Robin Dapp  <rdapp@oss.qualcomm.com>
+
+	PR target/124147
+	* config/riscv/autovec.md: Work around fractional-LMUL modes for
+	TARGET_XTHEADVECTOR.
+	* config/riscv/riscv-protos.h (get_m1_mode): Export.
+	* config/riscv/riscv-v.cc (get_m1_mode): Allow to get a VLS m1
+	vector.
+
+2026-02-24  Robin Dapp  <rdapp@oss.qualcomm.com>
+
+	PR rtl-optimization/123381
+	* lra-constraints.cc (process_alt_operands): Detect cycles in
+	three-operand moves with clobber.
+	(curr_insn_transform): Don't write back a scratch operand.
+
+2026-02-24  Wilco Dijkstra  <wilco.dijkstra@arm.com>
+
+	PR target/121240
+	* config/aarch64/aarch64-simd.md (mov<mode>): Expand vector constants
+	early.
+	* config/aarch64/aarch64.cc (aarch64_select_rtx_section): Force
+	vector immediates <= 16 bytes to constdata.
+
+2026-02-24  Richard Biener  <rguenther@suse.de>
+
+	PR tree-optimization/123117
+	PR target/120234
+	* tree-ssa-forwprop.cc (simplify_vector_constructor): Fix
+	sign conversion check guarding unpacking.
+
+2026-02-24  Martin Jambor  <mjambor@suse.cz>
+
+	PR ipa/123629
+	* ipa-cp.cc (ipcp_val_replacement_ok_p): Also verify that the
+	vector of known contexts has sufficient length.
+
 2026-02-23  Sandra Loosemore  <sloosemore@baylibre.com>
 
 	PR translation/118988

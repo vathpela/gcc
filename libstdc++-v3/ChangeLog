@@ -1,3 +1,11 @@
+2026-02-24  Tomasz Kamiński  <tkaminsk@redhat.com>
+
+	* testsuite/23_containers/mdspan/at.cc: Updated guard.
+
+2026-02-24  Tomasz Kamiński  <tkaminsk@redhat.com>
+
+	* testsuite/23_containers/mdspan/at.cc: Updated test.
+
 2026-02-23  Tomasz Kamiński  <tkaminsk@redhat.com>
 
 	* include/std/mdspan (__mdspan::__is_multi_index): Removed,
