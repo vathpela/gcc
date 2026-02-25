@@ -538,11 +538,18 @@ lower_subscript_for_trimmers (NODE_T *p, LOW_CTX_T ctx,
 	    tree dim_lower_bound = save_expr (a68_multiple_lower_bound (multiple, size_dim));
 	    tree lower_bound = dim_lower_bound;
 	    tree upper_bound = save_expr (a68_multiple_upper_bound (multiple, size_dim));
-	    tree at = ssize_int (1);
+	    tree at = NULL_TREE;
+
+	    bool explicit_lower_bound = false;
+	    bool explicit_upper_bound = false;
 
 	    NODE_T *q = SUB (p);
+
+	    /* Process trimscript if present.  */
 	    if (q != NO_NODE)
 	      {
+		at = ssize_int (1);
+
 		if (IS (q, AT_SYMBOL))
 		  {
 		    /* Both bounds are implicit.  */
@@ -557,11 +564,11 @@ lower_subscript_for_trimmers (NODE_T *p, LOW_CTX_T ctx,
 			if (IS (q, AT_SYMBOL))
 			  {
 			    /* Upper bound is implicit, AT specified.  */
-			    gcc_assert (IS (q, AT_SYMBOL));
 			    at = save_expr (fold_convert (ssizetype, a68_lower_tree (NEXT (q), ctx)));
 			  }
 			else
 			  {
+			    explicit_upper_bound = true;
 			    upper_bound
 			      = save_expr (fold_convert (ssizetype, a68_lower_tree (q, ctx)));
 			    FORWARD (q);
@@ -575,7 +582,7 @@ lower_subscript_for_trimmers (NODE_T *p, LOW_CTX_T ctx,
 		  }
 		else
 		  {
-		    /* Lower bound is explicit.  */
+		    explicit_lower_bound = true;
 		    lower_bound = fold_convert (ssizetype, a68_lower_tree (q, ctx));
 		    FORWARD (q);
 		    gcc_assert (IS (q, COLON_SYMBOL));
@@ -586,6 +593,7 @@ lower_subscript_for_trimmers (NODE_T *p, LOW_CTX_T ctx,
 			  at = save_expr (fold_convert (ssizetype, a68_lower_tree (NEXT (q), ctx)));
 			else
 			  {
+			    explicit_upper_bound = true;
 			    upper_bound
 			      = save_expr (fold_convert (ssizetype, a68_lower_tree (q, ctx)));
 			    FORWARD (q);
@@ -595,37 +603,40 @@ lower_subscript_for_trimmers (NODE_T *p, LOW_CTX_T ctx,
 			  }
 		      }
 		  }
-	      }
 
-	    /* Time for some bounds checking.
+		/* Time for some bounds checking.
 
-	       Note that in trimmers, given the current dimension's bounds
-	       (L,U), we cannot simply do the check:
+		   Note that in trimmers, given the current dimension's bounds
+		   (L,U), we cannot simply do the check:
 
-	            L <= lower_bound <= U
-		    L <= upper_bound <= U
+		     L <= lower_bound <= U
+		     L <= upper_bound <= U
 
-	       This is because the multiple may be flat, and the dimension may
-	       have bounds such like U < L.  In that case, the expressions
-	       above would always eval to false for any lower_bound and
-	       upper_bound.
+		   This is because the multiple may be flat, and the dimension
+		   may have bounds such like U < L.  In that case, the
+		   expressions above would always eval to false for any
+		   lower_bound and upper_bound.
 
-	       So we check for this instead:
+		   So we check for this instead:
 
-	            L <= lower_bound AND upper_bound <= U
+	             L <= lower_bound AND upper_bound <= U
 
-               This allows to trim a "flat dimension" using a trimmer where
-	       upper_bound < lower_bound.  The result is, of course, another
-	       "flat dimension" in the multiple result of the trimming.  */
+		     This allows to trim a "flat dimension" using a trimmer
+		     where upper_bound < lower_bound.  The result is, of
+		     course, another "flat dimension" in the multiple result of
+		     the trimming.  */
 
-	    if (OPTION_BOUNDS_CHECKING (&A68_JOB))
-	      {
-		a68_add_stmt (a68_multiple_single_bound_check (p, size_dim, multiple,
-							       lower_bound,
-							       false /* upper_bound */));
-		a68_add_stmt (a68_multiple_single_bound_check (p, size_dim, multiple,
-							       upper_bound,
-							       true /* upper_bound */));
+		if (OPTION_BOUNDS_CHECKING (&A68_JOB))
+		  {
+		    if (explicit_lower_bound)
+		      a68_add_stmt (a68_multiple_single_bound_check (p, size_dim, multiple,
+								     lower_bound,
+								     false /* upper_bound */));
+		    if (explicit_upper_bound)
+		      a68_add_stmt (a68_multiple_single_bound_check (p, size_dim, multiple,
+								     upper_bound,
+								     true /* upper_bound */));
+		  }
 	      }
 
 	    /* new_elements += i * strides[dim] */
@@ -650,16 +661,19 @@ lower_subscript_for_trimmers (NODE_T *p, LOW_CTX_T ctx,
 	    a68_add_stmt (a68_multiple_set_elements_size (new_multiple,
 							  elements_size));
 
+	    /* Correct bounds to the revised lower bound, if necessary.  */
+	    if (at != NULL_TREE)
+	      {
+		/* Correct bounds to honor the revised lower bound.  */
+		tree d = fold_build2 (MINUS_EXPR, ssizetype, lower_bound, at);
+		lower_bound = fold_build2 (MINUS_EXPR, ssizetype, lower_bound, d);
+		upper_bound = fold_build2 (MINUS_EXPR, ssizetype, upper_bound, d);
+	      }
+
 	    /* Fill the triplet for this dimension in new_multiple.  */
 	    tree size_new_dim = size_int (*new_dim);
-	    tree d = fold_build2 (MINUS_EXPR, ssizetype, lower_bound, at);
-
-	    a68_add_stmt (a68_multiple_set_lower_bound (new_multiple, size_new_dim,
-							fold_build2 (MINUS_EXPR, ssizetype,
-								     lower_bound, d)));
-	    a68_add_stmt (a68_multiple_set_upper_bound (new_multiple, size_new_dim,
-							fold_build2 (MINUS_EXPR, ssizetype,
-								     upper_bound, d)));
+	    a68_add_stmt (a68_multiple_set_lower_bound (new_multiple, size_new_dim, lower_bound));
+	    a68_add_stmt (a68_multiple_set_upper_bound (new_multiple, size_new_dim, upper_bound));
 	    a68_add_stmt (a68_multiple_set_stride (new_multiple, size_new_dim, stride));
 
 	    *new_dim += 1;
