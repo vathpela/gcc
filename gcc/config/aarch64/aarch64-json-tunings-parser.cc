@@ -109,9 +109,6 @@ static std::enable_if_t<std::is_pointer<T>::value
 parse_object_helper (const json::object *field_obj, T &member,
 		     parse_func_type<T> parse_func)
 {
-  if (!member)
-    return;
-
   /* Use static storage for the non-const copy.
      This works because tune_params does not have nested structures of the
      same type, but has room for errors if we end up having pointers to the
@@ -125,7 +122,10 @@ parse_object_helper (const json::object *field_obj, T &member,
     }
   already_initialized = true;
   using NonConstType = std::remove_const_t<std::remove_pointer_t<T>>;
-  static NonConstType new_obj = *member;
+  if (!member)
+    warning (0, "JSON tuning overrides an unspecified structure in the base "
+		"tuning; fields not provided in JSON will default to 0");
+  static NonConstType new_obj = member ? *member : NonConstType{};
   parse_func (field_obj, new_obj);
   member = &new_obj;
 }
