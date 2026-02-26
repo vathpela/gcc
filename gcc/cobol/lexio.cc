@@ -36,8 +36,6 @@
 #include "copybook.h"
 #include "lexio.h"
 
-#include <iostream>
-
 extern int yy_flex_debug;
 
 source_format_t& cdf_source_format();
@@ -1905,12 +1903,6 @@ cdftext::process_file( filespan_t mfile, int output, bool second_pass ) {
 
   // parse CDF directives
   while( mfile.next_line() ) {
-    if( false ) {
-      std::string line( mfile.ccur(), const_cast<const char *>(mfile.eol) );
-      std::cerr << __func__ << ": "
-                << mfile.lineno() << ":" << mfile.colno() << ": "
-                << line;
-    }
     yylloc = mfile.as_location();
     auto copied = parse_copy_directive(mfile);
     if( copied.parsed && copied.fd != -1 ) {
