@@ -1,3 +1,81 @@
+2026-02-25  Philipp Tomsich  <philipp.tomsich@vrull.eu>
+
+	* avoid-store-forwarding.cc
+	(store_forwarding_analyzer::process_store_forwarding): Use
+	auto_sbitmap for forwarded_bytes to ensure it is freed on all
+	return paths.
+
+2026-02-25  Philipp Tomsich  <philipp.tomsich@vrull.eu>
+
+	* avoid-store-forwarding.cc
+	(store_forwarding_analyzer::update_stats): Use stats_sf_avoided
+	for the "avoided" counter.
+
+2026-02-25  Philipp Tomsich  <philipp.tomsich@vrull.eu>
+
+	* avoid-store-forwarding.cc: Move config.h before
+	avoid-store-forwarding.h; place avoid-store-forwarding.h
+	after rtl.h; remove unused cselib.h include.
+	* avoid-store-forwarding.h: Remove includes of config.h,
+	system.h, coretypes.h, backend.h, rtl.h.
+
+2026-02-25  Cupertino Miranda  <cupertino.miranda@oracle.com>
+
+	PR target/120241
+	* config/bpf/core-builtins.cc
+	(is_attr_preserve_access): Correct for pointer types.
+	(maybe_get_base_for_field_expr, core_access_index_map,
+	core_access_clean, core_is_access_index, core_mark_as_access_index):
+	Remove.
+	(make_gimple_core_safe_access_index): Remove function.
+	(struct walker_data): New struct to pass data to tree walker.
+	(callback_should_do_core_access, should_do_core_access): Add
+	function to identify expressions that should not be converted to
+	CO-RE.
+	(core_make_builtins): Add callback tree walker function to
+	convert expressions to CO-RE.
+	(callback_find_next_split_location, core_should_split_expr,
+	find_next_split_location, gimple_core_early_split_expr): Add
+	function to split expressions in CO-RE and non-CO-RE
+	expressions.
+	(execute_lower_bpf_core): Adapt to new code.
+	* config/bpf/bpf.opt: Add option Wco-re.
+	* doc/invoke.texi: Add documentation for Wco-re.
+
+2026-02-25  Andrew Pinski  <andrew.pinski@oss.qualcomm.com>
+
+	PR tree-optimization/110091
+	* ipa-split.cc (split_function): Find the bb
+	which is used for return in the outlined function.
+	Move the clobbers that are at the end of that bb
+	to be after the new call.
+
+2026-02-25  Andrew Pinski  <andrew.pinski@oss.qualcomm.com>
+
+	PR tree-optimization/110091
+	* ipa-split.cc (split_function): Split after
+	the clobbers/debug stmts rather than after the labels.
+
+2026-02-25  Takayuki 'January June' Suwa  <jjsuwa_sys3175@yahoo.co.jp>
+
+	* config/xtensa/xtensa.md (spaceshipsi4):
+	New RTL generation pattern.
+
+2026-02-25  Richard Biener  <rguenther@suse.de>
+
+	PR target/120234
+	* config/i386/i386.cc (ix86_vector_costs::add_stmt_cost):
+	For constructor elements always look through a conversion.
+	Rewrite load and vector extraction matching to be more obvious.
+	Allow arbitrary conversions from the vector extract to elide
+	costing of a gpr<->xmm move.
+
+2026-02-25  Andrew Pinski  <andrew.pinski@oss.qualcomm.com>
+
+	PR target/123285
+	* config/aarch64/aarch64-early-ra.cc (early_ra::form_chains): Process clobbers
+	and ABI clobbers before starting to form the chain.
+
 2026-02-24  Sandra Loosemore  <sloosemore@baylibre.com>
 
 	PR other/88472
