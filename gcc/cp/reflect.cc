@@ -8118,7 +8118,7 @@ check_out_of_consteval_use_r (tree *tp, int *walk_subtrees, void *pset)
 
   /* No need to look into types or unevaluated operands.  */
   if (TYPE_P (t)
-      || unevaluated_p (TREE_CODE (t))
+      || (unevaluated_p (TREE_CODE (t)) && !REFLECT_EXPR_P (t))
       /* Don't walk INIT_EXPRs, because we'd emit bogus errors about
 	 member initializers.  */
       || TREE_CODE (t) == INIT_EXPR
