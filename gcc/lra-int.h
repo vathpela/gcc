@@ -310,6 +310,7 @@ extern void lra_push_insn_by_uid (unsigned int);
 extern void lra_push_insn_and_update_insn_regno_info (rtx_insn *);
 extern rtx_insn *lra_pop_insn (void);
 extern unsigned int lra_insn_stack_length (void);
+extern vec<rtx_insn *> lra_constraint_insn_stack_clear (void);
 
 extern rtx lra_create_new_reg (machine_mode, rtx, enum reg_class, HARD_REG_SET *,
 			       const char *);
