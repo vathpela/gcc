@@ -3836,62 +3836,47 @@ package body Sem_Aggr is
 
          Choice        : Node_Id;
          Copy          : Node_Id;
-         Ent           : Entity_Id;
          Expr          : Node_Id;
          Key_Expr      : Node_Id := Empty;
          Id            : Entity_Id;
-         Id_Name       : Name_Id;
-         Typ           : Entity_Id := Empty;
-         Loop_Param_Id : Entity_Id := Empty;
+         Scop          : Entity_Id;
+         Typ           : Entity_Id;
 
       begin
-         Error_Msg_Ada_2022_Feature ("iterated component", Loc);
+         Error_Msg_Ada_2022_Feature ("iterated element", Loc);
 
-         --  If this is an Iterated_Element_Association then either a
-         --  an Iterator_Specification or a Loop_Parameter specification
+         --  Create a scope in which to introduce an index, to make it visible
+         --  for the analysis of element expression.
+
+         Scop := New_Internal_Entity (E_Loop, Current_Scope, Sloc (Comp), 'L');
+         Set_Etype  (Scop, Standard_Void_Type);
+         Set_Parent (Scop, Parent (Comp));
+         Push_Scope (Scop);
+
+         --  If this is an Iterated_Element_Association, then either an
+         --  Iterator_Specification or a Loop_Parameter specification
          --  is present.
 
          if Nkind (Comp) = N_Iterated_Element_Association then
-            --  Create a temporary scope to avoid some modifications from
-            --  escaping the Preanalyze call below. The original tree will
-            --  be reanalyzed later.
-
-            Ent := New_Internal_Entity
-                     (E_Loop, Current_Scope, Sloc (Comp), 'L');
-            Set_Etype  (Ent, Standard_Void_Type);
-            Set_Parent (Ent, Parent (Comp));
-            Push_Scope (Ent);
-
-            if Present (Loop_Parameter_Specification (Comp)) then
-               Copy := Copy_Separate_Tree (Comp);
-               Set_Parent (Copy, Parent (Comp));
-
-               Preanalyze (Loop_Parameter_Specification (Copy));
-
-               if Present (Iterator_Specification (Copy)) then
-                  Loop_Param_Id :=
-                    Defining_Identifier (Iterator_Specification (Copy));
-               else
-                  Loop_Param_Id :=
-                    Defining_Identifier (Loop_Parameter_Specification (Copy));
-               end if;
-
-               Id_Name := Chars (Loop_Param_Id);
-
+            if Present (Iterator_Specification (Comp)) then
+               Preanalyze (Iterator_Specification (Comp));
             else
-               Copy := Copy_Separate_Tree (Iterator_Specification (Comp));
+               Preanalyze (Loop_Parameter_Specification (Comp));
+            end if;
 
-               Preanalyze (Copy);
+            --  Note that analyzing Loop_Parameter_Specification (Comp) above
+            --  may have turned it into Iterator_Specification (Comp), so the
+            --  following statement cannot be merged with the above one.
 
-               Loop_Param_Id := Defining_Identifier (Copy);
-
-               Id_Name := Chars (Loop_Param_Id);
+            if Present (Iterator_Specification (Comp)) then
+               Id := Defining_Identifier (Iterator_Specification (Comp));
+            else
+               Id := Defining_Identifier (Loop_Parameter_Specification (Comp));
             end if;
 
             --  Key expression must have the type of the key. We preanalyze
-            --  a copy of the original expression, because it will be
-            --  reanalyzed and copied as needed during expansion of the
-            --  corresponding loop.
+            --  the expression, because it will be copied and reanalyzed as
+            --  needed during expansion of the corresponding loop.
 
             Key_Expr := Key_Expression (Comp);
             if Present (Key_Expr) then
@@ -3902,38 +3887,18 @@ package body Sem_Aggr is
                        & "(RM22 4.3.5(24))",
                      Comp);
                else
-                  Preanalyze_And_Resolve
-                    (Copy_Separate_Tree (Key_Expr), Key_Type);
+                  Preanalyze_And_Resolve (Key_Expr, Key_Type);
                end if;
             end if;
 
-            End_Scope;
-
-            Typ := Etype (Loop_Param_Id);
+         --  This is an N_Iterated_Component_Association. If there is iterator
+         --  specification, then its preanalysis will make the index visible.
 
          elsif Present (Iterator_Specification (Comp)) then
-            --  Create a temporary scope to avoid some modifications from
-            --  escaping the Preanalyze call below. The original tree will
-            --  be reanalyzed later.
+            Preanalyze (Iterator_Specification (Comp));
+            Id := Defining_Identifier (Iterator_Specification (Comp));
 
-            Ent := New_Internal_Entity
-                     (E_Loop, Current_Scope, Sloc (Comp), 'L');
-            Set_Etype  (Ent, Standard_Void_Type);
-            Set_Parent (Ent, Parent (Comp));
-            Push_Scope (Ent);
-
-            Copy := Copy_Separate_Tree (Iterator_Specification (Comp));
-
-            Loop_Param_Id :=
-              Defining_Identifier (Iterator_Specification (Comp));
-
-            Id_Name := Chars (Loop_Param_Id);
-
-            Preanalyze (Copy);
-
-            End_Scope;
-
-            Typ := Etype (Defining_Identifier (Copy));
+         --  Otherwise, analyze discrete choices and make the index visible
 
          else
             Choice := First (Discrete_Choices (Comp));
@@ -3967,24 +3932,21 @@ package body Sem_Aggr is
                Typ := Entity (Choice);
 
             elsif Is_Object_Reference (Choice) then
-               declare
-                  I_Spec : constant Node_Id :=
-                    Make_Iterator_Specification (Sloc (N),
-                      Defining_Identifier =>
-                        Relocate_Node (Defining_Identifier (Comp)),
-                      Name                => Copy,
-                      Reverse_Present     => Reverse_Present (Comp),
-                      Iterator_Filter     => Empty,
-                      Subtype_Indication  => Empty);
+               End_Scope;
 
-               begin
-                  --  Recurse to expand association as iterator_spec
+               --  Recurse to expand association as Iterator_Specification
 
-                  Set_Iterator_Specification (Comp, I_Spec);
-                  Set_Defining_Identifier (Comp, Empty);
-                  Resolve_Iterated_Association (Comp, Key_Type, Elmt_Type);
-                  return;
-               end;
+               Set_Iterator_Specification (Comp,
+                 Make_Iterator_Specification (Sloc (N),
+                   Defining_Identifier =>
+                     Relocate_Node (Defining_Identifier (Comp)),
+                   Name                => Copy,
+                   Reverse_Present     => Reverse_Present (Comp),
+                   Iterator_Filter     => Empty,
+                   Subtype_Indication  => Empty));
+               Set_Defining_Identifier (Comp, Empty);
+               Resolve_Iterated_Association (Comp, Key_Type, Elmt_Type);
+               return;
 
             elsif Present (Key_Type) then
                Analyze_And_Resolve (Choice, Key_Type);
@@ -3994,36 +3956,17 @@ package body Sem_Aggr is
                Typ := Etype (Choice);  --  assume unique for now
             end if;
 
-            Loop_Param_Id := Defining_Identifier (Comp);
+            Id := Defining_Identifier (Comp);
 
-            Id_Name := Chars (Loop_Param_Id);
+            Enter_Name (Id);
+
+            --  Decorate the index variable
+
+            Set_Etype (Id, Typ);
+            Mutate_Ekind (Id, E_Variable);
+            Set_Is_Not_Self_Hidden (Id);
+            Set_Scope (Id, Scop);
          end if;
-
-         --  Create a scope in which to introduce an index, which is usually
-         --  visible in the expression for the component, and needed for its
-         --  analysis.
-
-         Id  := Make_Defining_Identifier (Sloc (Comp), Id_Name);
-         Ent := New_Internal_Entity (E_Loop, Current_Scope, Sloc (Comp), 'L');
-         Set_Etype  (Ent, Standard_Void_Type);
-         Set_Parent (Ent, Parent (Comp));
-         Push_Scope (Ent);
-
-         --  Insert and decorate the loop variable in the current scope.
-         --  The expression has to be analyzed once the loop variable is
-         --  directly visible. Mark the variable as referenced to prevent
-         --  spurious warnings, given that subsequent uses of its name in the
-         --  expression will reference the internal (synonym) loop variable.
-
-         Enter_Name (Id);
-
-         pragma Assert (Present (Typ));
-         Set_Etype (Id, Typ);
-
-         Mutate_Ekind (Id, E_Variable);
-         Set_Is_Not_Self_Hidden (Id);
-         Set_Scope (Id, Ent);
-         Set_Referenced (Id);
 
          --  Check for violation of 4.3.5(27/5)
 
@@ -4032,12 +3975,12 @@ package body Sem_Aggr is
            and then
              (Is_Indexed_Aggregate (N, Add_Unnamed_Subp, New_Indexed_Subp)
                or else Present (Add_Named_Subp))
-           and then Base_Type (Key_Type) /= Base_Type (Typ)
+           and then Base_Type (Key_Type) /= Base_Type (Etype (Id))
          then
             Error_Msg_Node_2 := Key_Type;
             Error_Msg_NE
               ("loop parameter type & must be same as key type & " &
-               "(RM22 4.3.5(27))", Loop_Param_Id, Typ);
+               "(RM22 4.3.5(27))", Id, Etype (Id));
          end if;
 
          --  Analyze a copy of the expression, to verify legality. We use
