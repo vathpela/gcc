@@ -10892,7 +10892,7 @@ intrinsic:      function_udf
 
 	|       BASECONVERT  '(' varg[r1] varg[r2] varg[r3] ')' {
                   location_set(@1);
-                  $$ = new_alphanumeric("BASECONVERT");
+                  $$ = new_alphanumeric("BASECONVERT", $r1->field->codeset.encoding);
 		  cbl_unimplemented("BASECONVERT");
                   if( ! intrinsic_call_3($$, BASECONVERT, $r1, $r2, $r3 )) YYERROR;
                 }
@@ -11223,7 +11223,7 @@ intrinsic:      function_udf
                      YYERROR;
                      break;
                   }
-		   $$ = new_alphanumeric("TRIM");
+                  $$ = new_alphanumeric("TRIM", $r1->field->codeset.encoding);
                   cbl_refer_t * how = new_reference($trim_trailing);
                   if( ! intrinsic_call_2($$, TRIM, $r1, how) ) YYERROR;
                 }

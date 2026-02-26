@@ -3783,14 +3783,22 @@ symbol_temporaries_free() {
 cbl_field_t *
 new_alphanumeric( const cbl_name_t name, cbl_encoding_t encoding ) {
   cbl_field_t * field = new_temporary_impl(FldAlphanumeric, name);
+////  if( encoding != no_encoding_e ) {
+////    field->codeset.set(encoding);
+////  }
+////  //// Dubner hacking away:  If name is non-null, then assume this is a
+////  //// function definition, and force the codeset, which otherwise will have
+////  //// defaulted to current_encoding('A'), and the valid() test in codeset.set
+////  //// will have prevented it from being changed.
+////  if( name && encoding != no_encoding_e ) {
+////    field->codeset.set_explicit(encoding);
+////  }
+  /* Jim's original code was hedged with protections apparently intended to
+     prevent encodings from changing.  This proved unsatisfactor, especially
+     when I started implementing setting the temporary return type of functions
+     that take on the characteristics of their first parameter.  So, I went
+     from codeset.set_encoding() to codeset.set_explicit().  */
   if( encoding != no_encoding_e ) {
-    field->codeset.set(encoding);
-  }
-  //// Dubner hacking away:  If name is non-null, then assume this is a
-  //// function definition, and force the codeset, which otherwise will have
-  //// defaulted to current_encoding('A'), and the valid() test in codeset.set
-  //// will have prevented it from being changed.
-  if( name && encoding != no_encoding_e ) {
     field->codeset.set_explicit(encoding);
   }
   temporaries.add(field);

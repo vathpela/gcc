@@ -3527,9 +3527,11 @@ __gg__trim( cblc_field_t *dest,
             size_t        arg2_offset,
             size_t        arg2_size)
   {
-  cbl_encoding_t from = arg1->encoding;
-  cbl_encoding_t to   = dest->encoding;
-  charmap_t *charmap = __gg__get_charmap(to);
+  // We assume that dest is an intermediate_e with the same encoding as arg1.
+  assert(     dest->type == FldAlphanumeric 
+          && (dest->attr & intermediate_e)
+          &&  dest->encoding == arg1->encoding );
+  charmap_t *charmap = __gg__get_charmap(arg1->encoding);
   int stride = charmap->stride();
   cbl_char_t mapped_space = charmap->mapped_character(ascii_space);
 
@@ -3539,80 +3541,61 @@ __gg__trim( cblc_field_t *dest,
                                                           arg2_offset,
                                                           arg2_size);
   //static const int BOTH     = 0;
-  static const int LEADING  = 1;  // Remove leading  spaces
-  static const int TRAILING = 2;  // Remove trailing spaces
+  #define LEADING  1  // Remove leading  spaces
+  #define TRAILING 2  // Remove trailing spaces
 
-  if(   dest->type != FldAlphanumeric ||
-        !(dest->attr & intermediate_e) )
+  char *left  = reinterpret_cast<char *>(arg1->data) + arg1_offset;
+  char *right = left + arg1_size-stride; // Points AT the character, not beyond
+  switch(type)
     {
-    fprintf(stderr,
-            "We expect the target of a FUNCTION TRIM to "
-            "be an intermediate alphanumeric\n");
-    abort();
-    }
-
-  // What is this all about?
-  dest->capacity = dest->offset;
-
-  // Make a copy of the input:
-  char *copy = static_cast<char *>(malloc(arg1_size));
-  massert(copy);
-  memcpy(copy, arg1->data+arg1_offset, arg1_size);
-
-  // Convert it to the destination encoding
-  __gg__convert_encoding_length(copy, arg1_size, from, to);
-
-  // No matter what, we want to find the leftmost non-space and the
-  // rightmost non-space:
-
-  char *left  = copy;
-  char *right = left + arg1_size-stride;
-
-  // Find left and right: the first and last non-spaces
-  while( left <= right )
-    {
-    cbl_char_t cleft  = charmap->getch(left,  (size_t)0);
-    cbl_char_t cright = charmap->getch(right, (size_t)0);
-
-    if( cleft != mapped_space && cright != mapped_space )
+    case 0: // Strip off leading and trailing spaces
+      while(left <= right)
+        {
+        if( charmap->getch(left, (size_t)0) != mapped_space )
+          {
+          break;
+          }
+        left += stride;
+        }
+      while(left <= right)
+        {
+        if( charmap->getch(right, (size_t)0) != mapped_space )
+          {
+          break;
+          }
+        right -= stride;
+        }
+      break;
+    
+    case LEADING: // Just leading
       {
+      while(left <= right)
+        {
+        if( charmap->getch(left,  (size_t)0) != mapped_space )
+          {
+          break;
+          }
+        left += stride;
+        }
       break;
       }
-    if( cleft == mapped_space )
-      {
-      left += stride;
-      }
-    if( cright == mapped_space )
-      {
-      right -= stride;
-      }
-    }
-  if( type == LEADING )
-    {
-    // We want to leave any trailing spaces, so we return 'right' to its
-    // original value:
-    right = copy + arg1_size-1;
-    }
-  else if( type == TRAILING )
-    {
-    // We want to leave any leading spaces, so we return 'left' to its
-    // original value:
-    left = copy;
-    }
 
-  if( left > right )
-    {
-    // When the arg1 input string was empty, we want left to be right+1.
-    // The left/right loop can sometimes end up with left equal to right+2.
-    // That needs to be fixed:
-    left = right+stride;
+    case TRAILING: // Just trailing
+      {
+      while(left <= right)
+        {
+        if( charmap->getch(right,  (size_t)0) != mapped_space )
+          {
+          break;
+          }
+        right -= stride;
+        }
+      break;
+      }
     }
-
   size_t ncount = right+stride - left;
   __gg__adjust_dest_size(dest, ncount);
-
   memmove(dest->data, left, ncount);
-  free(copy);
   }
 
 #if HAVE_INITSTATE_R && HAVE_SRANDOM_R && HAVE_RANDOM_R
