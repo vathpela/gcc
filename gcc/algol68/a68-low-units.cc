@@ -41,6 +41,7 @@
 #include "convert.h"
 
 #include "a68.h"
+#include "a68-pretty-print.h"
 
 /* Note that enclosed clauses, which are units, are handled in
    a68-low-clauses.  */
@@ -250,8 +251,19 @@ a68_lower_denotation (NODE_T *p, LOW_CTX_T ctx)
 	s = SUB (p);
 
       type = CTYPE (moid);
+      errno = 0;
+#if defined(INT64_T_IS_LONG)
       int64_t val = strtol (NSYMBOL (s), &end, 10);
+#else
+      int64_t val = strtoll (NSYMBOL (s), &end, 10);
+#endif
       gcc_assert (end[0] == '\0');
+      if (errno == ERANGE || val > wi::max_value (type).to_shwi ())
+	{
+	  a68_moid_format_token m (moid);
+	  a68_error (s, "denotation is too large for %e", &m);
+	}
+
       return build_int_cst (type, val);
     }
   if (moid == M_BITS
