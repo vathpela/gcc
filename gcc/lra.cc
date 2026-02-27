@@ -1808,8 +1808,8 @@ lra_rtx_hash (rtx x)
 /* Bitmap used to put an insn on the stack only in one exemplar.  */
 static sbitmap lra_constraint_insn_stack_bitmap;
 
-/* Vectors used for the stack.  */
-static vec<rtx_insn *> lra_constraint_insn_stack, lra_constraint_insn_stack2;
+/* The stack itself.  */
+vec<rtx_insn *> lra_constraint_insn_stack;
 
 /* Put INSN on the stack.  If ALWAYS_UPDATE is true, always update the reg
    info for INSN, otherwise only update it if INSN is not already on the
@@ -1866,16 +1866,6 @@ unsigned int
 lra_insn_stack_length (void)
 {
   return lra_constraint_insn_stack.length ();
-}
-
-/* Purge the stack and return stack vector before purging.  */
-vec<rtx_insn *>
-lra_constraint_insn_stack_clear (void)
-{
-  std::swap (lra_constraint_insn_stack, lra_constraint_insn_stack2);
-  lra_constraint_insn_stack.truncate (0);
-  bitmap_clear (lra_constraint_insn_stack_bitmap);
-  return lra_constraint_insn_stack2;
 }
 
 /* Push insns FROM to TO (excluding it) going in reverse order.	 */
@@ -2468,7 +2458,6 @@ lra (FILE *f, int verbose)
      expensive when a lot of RTL changes are made.  */
   df_set_flags (DF_NO_INSN_RESCAN);
   lra_constraint_insn_stack.create (get_max_uid ());
-  lra_constraint_insn_stack2.create (get_max_uid ());
   lra_constraint_insn_stack_bitmap = sbitmap_alloc (get_max_uid ());
   bitmap_clear (lra_constraint_insn_stack_bitmap);
   lra_live_ranges_init ();
@@ -2646,7 +2635,6 @@ lra (FILE *f, int verbose)
   finish_reg_info ();
   sbitmap_free (lra_constraint_insn_stack_bitmap);
   lra_constraint_insn_stack.release ();
-  lra_constraint_insn_stack2.release ();
   finish_insn_recog_data ();
   lra_finish_equiv ();
   regstat_free_n_sets_and_refs ();

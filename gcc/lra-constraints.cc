@@ -5514,9 +5514,10 @@ bool
 lra_constraints (bool first_p)
 {
   bool changed_p;
-  int i, hard_regno;
-  unsigned int uid;
+  int i, hard_regno, new_insns_num;
+  unsigned int min_len, new_min_len, uid;
   rtx set, x, reg, nosubreg_dest;
+  rtx_insn *original_insn;
   basic_block last_bb;
   bitmap_iterator bi;
 
@@ -5626,18 +5627,36 @@ lra_constraints (bool first_p)
      substituted by their equivalences.  */
   EXECUTE_IF_SET_IN_BITMAP (equiv_insn_bitmap, 0, uid, bi)
     lra_push_insn_by_uid (uid);
+  min_len = lra_insn_stack_length ();
+  new_insns_num = 0;
   last_bb = NULL;
   changed_p = false;
-  auto constraint_insns = lra_constraint_insn_stack_clear ();
-  while (constraint_insns.length () != 0)
+  original_insn = NULL;
+  while ((new_min_len = lra_insn_stack_length ()) != 0)
     {
-      curr_insn = constraint_insns.pop ();
+      curr_insn = lra_pop_insn ();
+      --new_min_len;
       curr_bb = BLOCK_FOR_INSN (curr_insn);
       if (curr_bb != last_bb)
 	{
 	  last_bb = curr_bb;
 	  bb_reload_num = lra_curr_reload_num;
 	}
+      if (min_len > new_min_len)
+	{
+	  min_len = new_min_len;
+	  new_insns_num = 0;
+	  original_insn = curr_insn;
+	}
+      else if (combine_reload_insn (curr_insn, original_insn))
+	{
+	  continue;
+        }
+      if (new_insns_num > MAX_RELOAD_INSNS_NUMBER)
+	internal_error
+	  ("maximum number of generated reload insns per insn achieved (%d)",
+	   MAX_RELOAD_INSNS_NUMBER);
+      new_insns_num++;
       if (DEBUG_INSN_P (curr_insn))
 	{
 	  /* We need to check equivalence in debug insn and change
@@ -5728,15 +5747,7 @@ lra_constraints (bool first_p)
 	  init_curr_insn_input_reloads ();
 	  init_curr_operand_mode ();
 	  if (curr_insn_transform (false))
-	    {
-	      if (lra_insn_stack_length () != 0)
-		{
-		  auto reload_insn = lra_pop_insn ();
-		  if (!combine_reload_insn (reload_insn, curr_insn))
-		    lra_push_insn (reload_insn);
-		}
-	      changed_p = true;
-	    }
+	    changed_p = true;
 	  /* Check non-transformed insns too for equiv change as USE
 	     or CLOBBER don't need reloads but can contain pseudos
 	     being changed on their equivalences.  */
