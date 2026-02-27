@@ -429,7 +429,8 @@ force_expand_binop (machine_mode mode, optab binoptab,
 }
 
 /* Create a new vector value in VMODE with all elements set to OP.  If OP
-   is not a constant, the mode of it must be the element mode of VMODE.
+   is not a constant, the mode of it must be the element mode of VMODE
+   (if the element is BImode, additionally OP is allowed to be in QImode).
    If OP is a constant, then the return value will be a constant.  */
 
 rtx
@@ -440,7 +441,9 @@ expand_vector_broadcast (machine_mode vmode, rtx op)
 
   gcc_checking_assert (VECTOR_MODE_P (vmode));
   gcc_checking_assert (CONST_INT_P (op)
-		       || GET_MODE_INNER (vmode) == GET_MODE (op));
+		       || GET_MODE_INNER (vmode) == GET_MODE (op)
+		       || (GET_MODE_INNER (vmode) == BImode
+			   && GET_MODE (op) == QImode));
 
   if (valid_for_const_vector_p (vmode, op))
     return gen_const_vec_duplicate (vmode, op);
