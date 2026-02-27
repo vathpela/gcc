@@ -1614,6 +1614,12 @@ The preprocessor symbols @code{__SEG_FS} and @code{__SEG_GS} are
 defined when these address spaces are supported.
 @end table
 
+@anchor{Function Attributes}
+@anchor{Variable Attributes}
+@anchor{Type Attributes}
+@anchor{Label Attributes}
+@anchor{Enumerator Attributes}
+@anchor{Statement Attributes}
 @node Attributes
 @section Attributes Specific to GCC
 @cindex attributes
@@ -1639,7 +1645,7 @@ C++ dialects prior to C++11, which did not include this feature.  You
 can suppress these warnings by prefixing the attribute name with the
 @code{__extension__} keyword; @xref{Alternate Keywords}.
 
-The traditional syntax is described in detail in @ref{GNU Attribute Syntax}.
+The traditional syntax is described in detail in @ref{Attribute Syntax}.
 Refer to the C or C++ standards for the exact rules regarding placement
 of standard attributes.
 
@@ -1787,9 +1793,12 @@ ordinary functions or C++ member functions.
 @menu
 * Common Attributes::		Attributes supported on most targets.
 * Target-Specific Attributes::  Attributes supported on particular targets.
-* GNU Attribute Syntax::        Formal syntax for attributes.
+* Attribute Syntax::            Formal syntax for traditional GNU attributes.
 @end menu
 
+@anchor{Common Function Attributes}
+@anchor{Common Variable Attributes}
+@anchor{Common Type Attributes}
 @node Common Attributes
 @subsection Common Attributes
 
@@ -5696,6 +5705,7 @@ The default for the attribute is controlled by @option{-fzero-call-used-regs}.
 * Xstormy16 Attributes::
 @end menu
 
+@anchor{AArch64 Function Attributes}
 @node AArch64 Attributes
 @subsubsection AArch64 Attributes
 
@@ -5918,6 +5928,7 @@ architectural feature rules specified above.
 
 @end table
 
+@anchor{AMD GCN Function Attributes}
 @node AMD GCN Attributes
 @subsubsection AMD GCN Attributes
 
@@ -6010,6 +6021,9 @@ OpenACC/OpenMP).
 @end table
 @end table
 
+@anchor{ARC Function Attributes}
+@anchor{ARC Type Attributes}
+@anchor{ARC Variable Attributes}
 @node ARC Attributes
 @subsubsection ARC Attributes
 
@@ -6105,6 +6119,8 @@ without involving the additional semantic implications of
 loads and stores of data declared @code{uncached}.
 @end table
 
+@anchor{ARM Function Attributes}
+@anchor{ARM Type Attributes}
 @node ARM Attributes
 @subsubsection ARM Attributes
 
@@ -6284,6 +6300,8 @@ most Symbian OS code uses @code{__declspec}.)
 
 @end table
 
+@anchor{AVR Function Attributes}
+@anchor{AVR Variable Attributes}
 @node AVR Attributes
 @subsubsection AVR Attributes
 
@@ -6627,6 +6645,8 @@ See also the @option{-mabsdata} @ref{AVR Options,command-line option}.
 
 @end table
 
+@anchor{Blackfin Function Attributes}
+@anchor{Blackfin Variable Attributes}
 @node Blackfin Attributes
 @subsubsection Blackfin Attributes
 
@@ -6743,6 +6763,8 @@ the specific section named @code{.l1.data.A}. Those with @code{l1_data_B}
 attribute are put into the specific section named @code{.l1.data.B}.
 @end table
 
+@anchor{BPF Function Attributes}
+@anchor{BPF Type Attributes}
 @node BPF Attributes
 @subsubsection BPF Attributes
 
@@ -6775,6 +6797,7 @@ of that type. The behavior is equivalent to manually
 wrapping every such access with @code{__builtin_preserve_access_index}.
 @end table
 
+@anchor{C-SKY Function Attributes}
 @node C-SKY Attributes
 @subsubsection C-SKY Attributes
 
@@ -6798,6 +6821,7 @@ are ignored with a warning otherwise.  @xref{C-SKY Options}.
 @end table
 
 
+@anchor{Epiphany Function Attributes}
 @node Epiphany Attributes
 @subsubsection Epiphany Attributes
 
@@ -6879,6 +6903,8 @@ command-line switch and @code{#pragma long_calls} settings.
 @end table
 
 
+@anchor{H8/300 Function Attributes}
+@anchor{H8/300 Variable Attributes}
 @node H8/300 Attributes
 @subsubsection H8/300 Attributes
 
@@ -6954,6 +6980,8 @@ on data in the tiny data section.  Note the tiny data area is limited to
 slightly under 32KB of data.
 @end table
 
+@anchor{IA-64 Function Attributes}
+@anchor{IA-64 Variable Attributes}
 @node IA-64 Attributes
 @subsubsection IA-64 Attributes
 
@@ -6999,6 +7027,8 @@ independent and hence this attribute must not be used for objects
 defined by shared libraries.
 @end table
 
+@anchor{LoongArch Function Attributes}
+@anchor{LoongArch Variable Attributes}
 @node LoongArch Attributes
 @subsubsection LoongArch Attributes
 
@@ -7327,6 +7357,7 @@ specially.  Currently the only supported values of @var{name} are
 @code{normal} and @code{extreme}.
 @end table
 
+@anchor{M32C Function Attributes}
 @node M32C Attributes
 @subsubsection M32C Attributes
 
@@ -7398,6 +7429,8 @@ function entry and exit sequences suitable for use in an interrupt handler
 when this attribute is present.
 @end table
 
+@anchor{M32R/D Function Attributes}
+@anchor{M32R/D Variable Attributes}
 @node M32R/D Attributes
 @subsubsection M32R/D Attributes
 
@@ -7438,6 +7471,7 @@ and may not be reachable with the @code{bl} instruction (the compiler
 generates the much slower @code{seth/add3/jl} instruction sequence).
 @end table
 
+@anchor{m68k Function Attributes}
 @node m68k Attributes
 @subsubsection m68k Attributes
 
@@ -7466,6 +7500,7 @@ sequences and replaces the return instruction with a @code{sleep}
 instruction.  This attribute is available only on fido.
 @end table
 
+@anchor{MicroBlaze Function Attributes}
 @node MicroBlaze Attributes
 @subsubsection MicroBlaze Attributes
 
@@ -7511,6 +7546,8 @@ emits appropriate prologue code and generates a return from the handler
 using @code{rtid} instead of @code{rtsd}.
 @end table
 
+@anchor{Microsoft Windows Function Attributes}
+@anchor{Microsoft Windows Variable Attributes}
 @node Microsoft Windows Attributes
 @subsubsection Microsoft Windows Attributes
 
@@ -7670,6 +7707,7 @@ linkers work.  See @code{section} attribute for more information.
 The @code{shared} attribute is only available on Microsoft Windows@.
 @end table
 
+@anchor{MIPS Function Attributes}
 @node MIPS Attributes
 @subsubsection MIPS Attributes
 
@@ -7839,6 +7877,8 @@ The function can read the instruction stream in a pc-relative mode.
 If there is no argument supplied, the default of @code{"yes"} applies.
 @end table
 
+@anchor{MSP430 Function Attributes}
+@anchor{MSP430 Variable Attributes}
 @node MSP430 Attributes
 @subsubsection MSP430 Attributes
 
@@ -7943,6 +7983,7 @@ is used, and the @code{.lower} prefix is not added.
 
 @end table
 
+@anchor{NDS32 Function Attributes}
 @node NDS32 Attributes
 @subsubsection NDS32 Attributes
 
@@ -8007,6 +8048,8 @@ Provide a user-defined function to handle warm reset exception.
 @end table
 @end table
 
+@anchor{Nvidia PTX Function Attributes}
+@anchor{Nvidia PTX Variable Attributes}
 @node Nvidia PTX Attributes
 @subsubsection Nvidia PTX Attributes
 
@@ -8034,6 +8077,9 @@ within one thread block refer to the same instance of the variable.
 The runtime does not initialize variables in this memory space.
 @end table
 
+@anchor{PowerPC Function Attributes}
+@anchor{PowerPC Type Attributes}
+@anchor{PowerPC Variable Attributes}
 @node PowerPC Attributes
 @subsubsection PowerPC Attributes
 
@@ -8263,6 +8309,7 @@ These attributes mainly are intended to support the @code{__vector},
 @code{__pixel}, and @code{__bool} AltiVec keywords.
 @end table
 
+@anchor{RISC-V Function Attributes}
 @node RISC-V Attributes
 @subsubsection RISC-V Attributes
 
@@ -8376,7 +8423,8 @@ and @code{zbb} extensions and tunes it for @code{rocket}.
 
 @end table
 
-
+@anchor{RL78 Function Attributes}
+@anchor{RL78 Variable Attributes}
 @node RL78 Attributes
 @subsubsection RL78 Attributes
 
@@ -8408,6 +8456,7 @@ which can be accessed more efficiently than the default memory region.
 
 @end table
 
+@anchor{RX Function Attributes}
 @node RX Attributes
 @subsubsection RX Attributes
 
@@ -8464,6 +8513,7 @@ function (i.e.@: it retains the normal C function calling ABI).  See the
 @code{interrupt} attribute for a description of its arguments.
 @end table
 
+@anchor{S/390 Function Attributes}
 @node S/390 Attributes
 @subsubsection S/390 Attributes
 
@@ -8533,6 +8583,7 @@ change any feature macros.  For example,
 does not undefine the @code{__VEC__} macro.
 @end table
 
+@anchor{SH Function Attributes}
 @node SH Attributes
 @subsubsection SH Attributes
 
@@ -8629,12 +8680,15 @@ On SH targets this attribute is similar to @code{interrupt_handler}
 but it does not save and restore all registers.
 @end table
 
+@anchor{Symbian OS Function Attributes}
 @node Symbian OS Attributes
 @subsubsection Symbian OS Attributes
 
 @xref{Microsoft Windows Attributes}, for discussion of the
 @code{dllexport} and @code{dllimport} attributes.
 
+@anchor{V850 Function Attributes}
+@anchor{V850 Variable Attributes}
 @node V850 Attributes
 @subsubsection V850 Attributes
 
@@ -8674,6 +8728,7 @@ Use it to explicitly place a variable in the first 32 kilobytes
 of memory.
 @end table
 
+@anchor{Visium Function Attributes}
 @node Visium Attributes
 @subsubsection Visium Attributes
 
@@ -8690,6 +8745,9 @@ function entry and exit sequences suitable for use in an interrupt handler
 when this attribute is present.
 @end table
 
+@anchor{x86 Function Attributes}
+@anchor{x86 Type Attributes}
+@anchor{x86 Variable Attributes}
 @node x86 Attributes
 @subsubsection x86 Attributes
 
@@ -9698,6 +9756,8 @@ see @ref{x86 Options}, for details of how structure layout is affected.
 @end table
 
 
+@anchor{Xstormy16 Function Attributes}
+@anchor{Xstormy16 Variable Attributes}
 @node Xstormy16 Attributes
 @subsubsection Xstormy16 Attributes
 
@@ -9725,7 +9785,7 @@ placed in either the @code{.bss_below100} section or the
 @end table
 
 
-@node GNU Attribute Syntax
+@node Attribute Syntax
 @subsection GNU Attribute Syntax
 @cindex attribute syntax
 @cindex C standard attributes
@@ -17692,7 +17752,7 @@ restrictions as the argument to @code{typeof} (@pxref{Typeof}).  The
 @var{attribute} argument is an attribute name optionally followed by
 a comma-separated list of arguments enclosed in parentheses.  Both forms
 of attribute names---with and without double leading and trailing
-underscores---are recognized.  @xref{GNU Attribute Syntax}, for details.
+underscores---are recognized.  @xref{Attribute Syntax}, for details.
 When no attribute arguments are specified for an attribute that expects
 one or more arguments the function returns @code{true} if
 @var{type-or-expression} has been declared with the attribute regardless
