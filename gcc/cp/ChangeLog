@@ -1,3 +1,21 @@
+2026-02-26  Marek Polacek  <polacek@redhat.com>
+
+	PR c++/124204
+	* reflect.cc (eval_can_substitute): Call convert_from_reference.
+
+2026-02-26  Marek Polacek  <polacek@redhat.com>
+
+	PR c++/123662
+	PR c++/123611
+	* cvt.cc (convert_to_void): Only call check_out_of_consteval_use
+	when stmts_are_full_exprs_p.
+
+2026-02-26  Marek Polacek  <polacek@redhat.com>
+	    Jakub Jelinek   <jakub@redhat.com>
+
+	PR c++/124215
+	* reflect.cc (class_members_of): Use TYPE_MAIN_VARIANT of R.
+
 2026-02-25  Marek Polacek  <polacek@redhat.com>
 
 	* reflect.cc (check_out_of_consteval_use_r): Walk BIND_EXPR_BODY.

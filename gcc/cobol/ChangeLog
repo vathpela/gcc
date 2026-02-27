@@ -1,3 +1,14 @@
+2026-02-26  Robert Dubner  <rdubner@symas.com>
+
+	* parse.y: BASECONVERT and TRIM take their type from their first
+	parameter.
+	* parse_util.h (intrinsic_return_field): The function_descrs[] is
+	adjusted so that a number of functions take their return type from
+	their first calling parameter.  intrinsic_return_field() has been
+	refined.
+	* symbols.cc (new_alphanumeric):  Use set_explicit() instead of
+	set() in support of refined intrinsic function return type.
+
 2026-02-24  Robert Dubner  <rdubner@symas.com>
 
 	* gcobc: Adjust how -fPIC is applied, and other refinements.

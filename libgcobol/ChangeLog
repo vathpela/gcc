@@ -1,3 +1,8 @@
+2026-02-26  Robert Dubner  <rdubner@symas.com>
+
+	* intrinsic.cc (__gg__trim):  Rewritten to work properly, and avoid
+	unnecessary variable codeset encoding translation.
+
 2026-02-24  Robert Dubner  <rdubner@symas.com>
 
 	* intrinsic.cc (string_to_dest): Move call to

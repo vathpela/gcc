@@ -1,3 +1,8 @@
+2026-02-26  James Bohl  <bohlj47@gmail.com>
+
+	* a68-low-units.cc (a68_lower_denotation): Add error on
+	integral denotation overflow.
+
 2026-02-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* a68-imports-archive.cc (Archive_file): Handle Darwin #1/NN

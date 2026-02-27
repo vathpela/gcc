@@ -1,3 +1,24 @@
+2026-02-26  Torbjörn SVENSSON  <torbjorn.svensson@foss.st.com>
+
+	* testsuite/29_atomics/atomic_ref/requirements_neg.cc: Add
+	using std::size_t.
+
+2026-02-26  Yuao Ma  <c8ef@outlook.com>
+
+	* include/bits/atomic_base.h (__atomic_base<_PTp*>::fetch_min,
+	__atomic_base<_PTp*>::fetch_max,
+	__atomic_ref<_Pt, false, false, true>::fetch_min,
+	__atomic_ref<_Pt, false, false, true>::fetch_max): Define new
+	functions.
+	* include/std/atomic (atomic<_Tp*>::fetch_min,
+	atomic<_Tp*>::fetch_max): Likewise.
+	(atomic_fetch_min_explicit, atomic_fetch_max_explicit,
+	atomic_fetch_min, atomic_fetch_max): Change parameter from
+	__atomic_base<_ITp>* to atomic<_Tp>*.
+	* testsuite/29_atomics/atomic/pointer_fetch_minmax.cc: New test.
+	* testsuite/29_atomics/atomic_ref/pointer_fetch_minmax.cc: New
+	test.
+
 2026-02-25  Nathan Myers  <ncm@cantrip.org>
 
 	PR libstdc++/117404

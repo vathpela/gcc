@@ -1,3 +1,11 @@
+2026-02-26  Eric Botcazou  <ebotcazou@adacore.com>
+
+	PR ada/124201
+	* exp_aggr.adb (Expand_Iterated_Component): Replace the iteration
+	variable in the key expression and iterator filter, if any.
+	* sem_aggr.adb (Resolve_Iterated_Component_Association): Preanalyze
+	the specification and key expression directly.
+
 2026-02-25  Eric Botcazou  <ebotcazou@adacore.com>
 
 	PR ada/124226

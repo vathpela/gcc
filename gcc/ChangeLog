@@ -1,3 +1,66 @@
+2026-02-26  Vladimir N. Makarov  <vmakarov@redhat.com>
+
+	PR target/115042
+	* lra-int.h (lra_constraint_insn_stack_clear): New prototype.
+	* lra.cc (lra_constraint_insn_stack2): New vector.
+	(lra_constraint_insn_stack_clear): New function.
+	(lra): Initialize/finalize lra_constraint_insn_stack2.
+	* lra-constraints.cc (lra_constraints): Use
+	lra_constraint_insn_stack_clear to postpone processing new reload
+	insns.
+
+2026-02-26  Robin Dapp  <rdapp@oss.qualcomm.com>
+
+	PR target/122448
+	* config/riscv/riscv-vsetvl.cc (compute_reaching_defintion):
+	Rename...
+	(compute_reaching_definition): ...To this.
+	(pre_vsetvl::compute_vsetvl_def_data):  Compute reaching
+	definitions for vsetvl VL -> vsetvl AVL.
+	(pre_vsetvl::compute_transparent): Include VL uses.
+	(pre_vsetvl::fuse_local_vsetvl_info): Initialize m_reg_use_loc.
+	(pre_vsetvl::earliest_fuse_vsetvl_info): Don't hoist if any
+	successor would use VL.
+
+2026-02-26  Xi Ruoyao  <xry111@xry111.site>
+
+	PR middle-end/124250
+	PR target/123807
+	* optabs.cc (expand_vector_broadcast): Add a checking assert to
+	verify the precondition about the input modes.
+	(expand_binop): Extend the shift amount if it's narrower than
+	the element of the shifted vector.
+
+2026-02-26  Roger Sayle  <roger@nextmovesoftware.com>
+
+	PR target/124194
+	* config/i386/sse.md (*<avx512>_cmp<mode>3_dup_op): Also return
+	CONSTM1_RTX for the case cmp_imm == 7 (predicate TRUE).
+
+2026-02-26  Roger Sayle  <roger@nextmovesoftware.com>
+
+	PR c/119651
+	PR c/123472
+	* fold-const.cc (tree_nonzero_bits): Rename the original as a
+	static function taking an additional precision parameter.  Make
+	this implementation robust to error_mark_node.  Preserve the
+	original API by checking for error_operand_p before invoking the
+	static helper function.
+
+2026-02-26  H.J. Lu  <hjl.tools@gmail.com>
+
+	PR target/119979
+	PR target/120888
+	* targhooks.cc (default_promote_function_mode_sign_extend): New.
+	* targhooks.h (default_promote_function_mode_sign_extend):
+	Likewise.
+	* config/mcore/mcore.cc (TARGET_PROMOTE_FUNCTION_MODE): Use
+	default_promote_function_mode_sign_extend.
+	(TARGET_PROMOTE_PROTOTYPES): Removed.
+	* config/xtensa/xtensa.cc (xtensa_promote_function_mode): Removed.
+	(TARGET_PROMOTE_FUNCTION_MODE): Use
+	default_promote_function_mode_sign_extend.
+
 2026-02-25  Philipp Tomsich  <philipp.tomsich@vrull.eu>
 
 	* avoid-store-forwarding.cc
