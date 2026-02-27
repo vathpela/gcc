@@ -253,12 +253,16 @@ a68_lower_denotation (NODE_T *p, LOW_CTX_T ctx)
       type = CTYPE (moid);
       errno = 0;
 #if defined(INT64_T_IS_LONG)
-      int64_t val = strtol (NSYMBOL (s), &end, 10);
+      uint64_t val = strtoul (NSYMBOL (s), &end, 10);
 #else
-      int64_t val = strtoll (NSYMBOL (s), &end, 10);
+      uint64_t val = strtoull (NSYMBOL (s), &end, 10);
 #endif
       gcc_assert (end[0] == '\0');
-      if (errno == ERANGE || val > wi::max_value (type).to_shwi ())
+      uint64_t max_positive = uint64_t (wi::max_value (type).to_shwi ());
+      uint64_t max_negative = -uint64_t (wi::min_value (type).to_shwi ());
+      if (errno == ERANGE
+	  || (NEGATED (p) && (val > max_negative))
+	  || (!NEGATED (p) && (val > max_positive)))
 	{
 	  a68_moid_format_token m (moid);
 	  a68_error (s, "denotation is too large for %e", &m);
