@@ -1777,6 +1777,9 @@ and suffixed by two underscores; for example, the alternate name of
 library header files in case they are included into files that have
 redefined the base name of the attribute as a preprocessor macro.
 
+GCC also accepts the keyword @code{__attribute} as a synonym for
+@code{__attribute__}.
+
 Some function attributes take one or more arguments that refer to
 the function's parameters by their positions within the function parameter
 list.  Such attribute arguments are referred to as @dfn{positional arguments}.
@@ -9859,6 +9862,8 @@ This allows you to use them in header files without
 being concerned about a possible macro of the same name.  For example,
 you may use the attribute name @code{__noreturn__} instead of @code{noreturn}.
 
+GCC also accepts the keyword @code{__attribute} as a synonym for
+@code{__attribute__}.
 
 @subsubheading Label Attributes
 
