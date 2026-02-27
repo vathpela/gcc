@@ -441,7 +441,7 @@ supervisor_main_loop (int *argc __attribute__ ((unused)),
 	    }
 	  else
 	    {
-	      dprintf (2,
+	      fprintf (stderr,
 		       "ERROR: Image %d(pid: %d) failed with signal %d, "
 		       "exitstatus %d.\n",
 		       j + 1, finished_pid, WTERMSIG (chstatus),
@@ -450,15 +450,14 @@ supervisor_main_loop (int *argc __attribute__ ((unused)),
 		{
 		  if (finished_pid == getpid ())
 		    {
-		      dprintf (
-			2,
+		       fprintf (stderr,
 			"WARNING: Supervisor process got signal %d. Killing "
 			"childs and exiting.\n",
 			WTERMSIG (chstatus));
 		      kill_all_images (m);
 		      exit (1);
 		    }
-		  dprintf (2,
+		  fprintf (stderr,
 			   "WARNING: Got signal %d for unknown process %d. "
 			   "Ignoring and trying to continue.\n",
 			   WTERMSIG (chstatus), finished_pid);
