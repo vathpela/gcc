@@ -3,7 +3,7 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  testjob:
+  format-checks:
     runs-on: sourceware-runner
     outputs:
       styleoutput: ${{ steps.check_gnu_style.outputs.styleresult }}
