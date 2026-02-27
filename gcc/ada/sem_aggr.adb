@@ -3836,7 +3836,6 @@ package body Sem_Aggr is
 
          Choice        : Node_Id;
          Copy          : Node_Id;
-         Expr          : Node_Id;
          Key_Expr      : Node_Id := Empty;
          Id            : Entity_Id;
          Scop          : Entity_Id;
@@ -3983,14 +3982,12 @@ package body Sem_Aggr is
                "(RM22 4.3.5(27))", Id, Etype (Id));
          end if;
 
-         --  Analyze a copy of the expression, to verify legality. We use
-         --  a copy because the expression will be analyzed anew when the
-         --  enclosing aggregate is expanded, and the construct is rewritten
-         --  as a loop with a new index variable.
+         --  Preanalyze the expression, to verify legality. We preanalyze it
+         --  because the expression will be analyzed anew when the enclosing
+         --  aggregate is expanded, and the construct is rewritten as a loop
+         --  with a new index variable.
 
-         Expr := Copy_Separate_Tree (Expression (Comp));
-         Set_Parent (Expr, Comp);
-         Preanalyze_And_Resolve (Expr, Elmt_Type);
+         Preanalyze_And_Resolve (Expression (Comp), Elmt_Type);
          End_Scope;
       end Resolve_Iterated_Association;
 

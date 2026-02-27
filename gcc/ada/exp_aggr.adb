@@ -7017,14 +7017,11 @@ package body Exp_Aggr is
       -------------------------------
 
       procedure Expand_Iterated_Component (Comp : Node_Id) is
-         Expr : constant Node_Id := Expression (Comp);
-
-         Key_Expr           : Node_Id;
-         Loop_Id            : Entity_Id;
-         L_Range            : Node_Id;
-         L_Iteration_Scheme : Node_Id;
-         Loop_Stat          : Node_Id;
-         Stats              : List_Id;
+         Key_Expr         : Node_Id;
+         Loop_Id          : Entity_Id;
+         Loop_Iter_Scheme : Node_Id;
+         Loop_Stat        : Node_Id;
+         Stats            : List_Id;
 
          procedure Replace_Iteration_Variable (N : Node_Id; Var : Entity_Id);
          --  Replace the iteration variable of N, a N_Iterator_Specification or
@@ -7062,6 +7059,9 @@ package body Exp_Aggr is
                   Set_Iterator_Filter (N,
                     New_Copy_Tree (Iterator_Filter (N), Map => Map));
                end if;
+
+               Set_Expression (Comp,
+                 New_Copy_Tree (Expression (Comp), Map => Map));
             end if;
 
             Set_Defining_Identifier (N, Var);
@@ -7079,18 +7079,18 @@ package body Exp_Aggr is
             --  Specification is present.
 
             if Present (Iterator_Specification (Comp)) then
-               L_Iteration_Scheme :=
+               Loop_Iter_Scheme :=
                  Make_Iteration_Scheme (Loc,
                    Iterator_Specification => Iterator_Specification (Comp));
                Loop_Id :=
-                  Make_Defining_Identifier (Loc,
-                    Chars => Chars (Defining_Identifier
-                               (Iterator_Specification (Comp))));
+                 Make_Defining_Identifier (Loc,
+                   Chars => Chars (Defining_Identifier
+                              (Iterator_Specification (Comp))));
                Replace_Iteration_Variable
-                 (Iterator_Specification (Comp), Loop_Id);
+                 (Iterator_Specification (Loop_Iter_Scheme), Loop_Id);
 
             else
-               L_Iteration_Scheme :=
+               Loop_Iter_Scheme :=
                  Make_Iteration_Scheme (Loc,
                    Loop_Parameter_Specification =>
                      Loop_Parameter_Specification (Comp));
@@ -7099,14 +7099,14 @@ package body Exp_Aggr is
                    Chars => Chars (Defining_Identifier
                               (Loop_Parameter_Specification (Comp))));
                Replace_Iteration_Variable
-                 (Loop_Parameter_Specification (Comp), Loop_Id);
+                 (Loop_Parameter_Specification (Loop_Iter_Scheme), Loop_Id);
             end if;
 
             Key_Expr := Key_Expression (Comp);
 
          else pragma Assert (Nkind (Comp) = N_Iterated_Component_Association);
             if Present (Iterator_Specification (Comp)) then
-               L_Iteration_Scheme :=
+               Loop_Iter_Scheme :=
                  Make_Iteration_Scheme (Loc,
                    Iterator_Specification => Iterator_Specification (Comp));
                Loop_Id :=
@@ -7114,7 +7114,7 @@ package body Exp_Aggr is
                    Chars => Chars (Defining_Identifier
                               (Iterator_Specification (Comp))));
                Replace_Iteration_Variable
-                 (Iterator_Specification (Comp), Loop_Id);
+                 (Iterator_Specification (Loop_Iter_Scheme), Loop_Id);
 
             --  Loop_Parameter_Specification is parsed with a choice list
             --  where the range is the first (and only) choice.
@@ -7123,15 +7123,16 @@ package body Exp_Aggr is
                Loop_Id :=
                  Make_Defining_Identifier (Loc,
                    Chars => Chars (Defining_Identifier (Comp)));
-               L_Range := Relocate_Node (First (Discrete_Choices (Comp)));
-
-               L_Iteration_Scheme :=
+               Loop_Iter_Scheme :=
                  Make_Iteration_Scheme (Loc,
                    Loop_Parameter_Specification =>
                      Make_Loop_Parameter_Specification (Loc,
-                       Defining_Identifier => Loop_Id,
+                       Defining_Identifier => Defining_Identifier (Comp),
                        Reverse_Present => Reverse_Present (Comp),
-                       Discrete_Subtype_Definition => L_Range));
+                       Discrete_Subtype_Definition =>
+                         Relocate_Node (First (Discrete_Choices (Comp)))));
+               Replace_Iteration_Variable
+                 (Loop_Parameter_Specification (Loop_Iter_Scheme), Loop_Id);
             end if;
 
             Key_Expr := Empty;
@@ -7149,7 +7150,7 @@ package body Exp_Aggr is
                   New_Occurrence_Of (Entity (Add_Unnamed_Subp), Loc),
                 Parameter_Associations => New_List (
                   New_Copy_Tree (Lhs),
-                  New_Copy_Tree (Expr))));
+                  Expression (Comp))));
 
          --  Named or indexed aggregate. If a Key_Expression is present, it
          --  serves as the additional parameter. Otherwise the key is given
@@ -7165,13 +7166,13 @@ package body Exp_Aggr is
                   (if Present (Key_Expr)
                    then Key_Expr
                    else New_Occurrence_Of (Loop_Id, Loc)),
-                  New_Copy_Tree (Expr))));
+                  Expression (Comp))));
          end if;
 
          Loop_Stat := Make_Implicit_Loop_Statement
                         (Node             => N,
                          Identifier       => Empty,
-                         Iteration_Scheme => L_Iteration_Scheme,
+                         Iteration_Scheme => Loop_Iter_Scheme,
                          Statements       => Stats);
 
          Append (Loop_Stat, Aggr_Code);
