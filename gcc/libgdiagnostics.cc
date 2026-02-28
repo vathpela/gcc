@@ -485,28 +485,31 @@ public:
       (outfile, indent, "impl_logical_location_manager");
   }
 
-  const char *get_short_name (key k) const final override
+  label_text
+  get_short_name (key k) const final override
   {
     if (auto loc = ptr_from_key (k))
-      return loc->m_short_name.get_str ();
+      return label_text::borrow (loc->m_short_name.get_str ());
     else
-      return nullptr;
+      return label_text ();
   }
 
-  const char *get_name_with_scope (key k) const final override
+  label_text
+  get_name_with_scope (key k) const final override
   {
     if (auto loc = ptr_from_key (k))
-      return loc->m_fully_qualified_name.get_str ();
+      return label_text::borrow (loc->m_fully_qualified_name.get_str ());
     else
-      return nullptr;
+      return label_text ();
   }
 
-  const char *get_internal_name (key k) const final override
+  label_text
+  get_internal_name (key k) const final override
   {
     if (auto loc = ptr_from_key (k))
-      return loc->m_decorated_name.get_str ();
+      return label_text::borrow (loc->m_decorated_name.get_str ());
     else
-      return nullptr;
+      return label_text ();
   }
 
   kind get_kind (key k) const final override
