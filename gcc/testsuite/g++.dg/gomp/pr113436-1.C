@@ -1,6 +1,6 @@
 // PR middle-end/113436
 // { dg-do "compile" }
-// { dg-options "-std=gnu++20 -fopenmp -fdump-tree-omplower" }
+// { dg-options "-fopenmp -fdump-tree-omplower" }
 
 // #include <omp.h>
 typedef __UINTPTR_TYPE__ omp_uintptr_t;
@@ -31,7 +31,7 @@ typedef enum omp_allocator_handle_t __GOMP_UINTPTR_T_ENUM
 void f()
 {
   int a[10];
-  auto &aRef = a;
+  int (&aRef)[10] = a;
 
   #pragma omp target firstprivate(aRef) \
 		     allocate(align(128), allocator(omp_low_lat_mem_alloc): aRef)
