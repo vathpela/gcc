@@ -17,6 +17,7 @@
    along with GCC; see the file COPYING3.  If not see
    <http://www.gnu.org/licenses/>.  */
 
+#define INCLUDE_MAP
 #define INCLUDE_STRING
 #define INCLUDE_VECTOR
 #define INCLUDE_TYPE_TRAITS
