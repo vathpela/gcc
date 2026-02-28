@@ -1895,6 +1895,7 @@ OBJS-libcommon = \
 	diagnostics/option-classifier.o \
 	diagnostics/paths.o \
 	diagnostics/paths-output.o \
+	diagnostics/physical-location-maker.o \
 	diagnostics/source-printing.o \
 	diagnostics/state-graphs-to-dot.o \
 	diagnostics/selftest-context.o \

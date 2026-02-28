@@ -39,6 +39,7 @@ along with GCC; see the file COPYING3.  If not see
 #include "diagnostics/logical-locations.h"
 #include "diagnostics/dumping.h"
 #include "diagnostics/changes.h"
+#include "diagnostics/physical-location-maker.h"
 #include "libgdiagnostics.h"
 #include "libgdiagnostics-private.h"
 #include "pretty-print-format-impl.h"
@@ -648,7 +649,8 @@ struct diagnostic_manager
 {
 public:
   diagnostic_manager ()
-  : m_current_diag (nullptr),
+  : m_phys_loc_maker (&m_line_table),
+    m_current_diag (nullptr),
     m_prev_diag_logical_loc (nullptr),
     m_debug_physical_locations (false)
   {
@@ -761,8 +763,9 @@ public:
     if (m_debug_physical_locations)
       fprintf (stderr, "new_location_from_file_and_line (%s, %i)",
 	       file->get_name (), line_num);
-    ensure_linemap_for_file_and_line (file, line_num);
-    location_t loc = linemap_position_for_column (&m_line_table, 0);
+    location_t loc
+      = m_phys_loc_maker.new_location_from_file_and_line (file->get_name (),
+							  line_num);
     return new_location (loc);
   }
 
@@ -774,8 +777,10 @@ public:
     if (m_debug_physical_locations)
       fprintf (stderr, "new_location_from_file_line_column (%s, %i, %i)",
 	       file->get_name (), line_num, column_num);
-    ensure_linemap_for_file_and_line (file, line_num);
-    location_t loc = linemap_position_for_column (&m_line_table, column_num);
+    location_t loc
+      = m_phys_loc_maker.new_location_from_file_line_column (file->get_name (),
+							     line_num,
+							     column_num);
     return new_location (loc);
   }
 
@@ -892,31 +897,6 @@ public:
   void
   take_global_graph (std::unique_ptr<diagnostic_graph> graph);
 
-private:
-  void
-  ensure_linemap_for_file_and_line (const diagnostic_file *file,
-				    diagnostic_line_num_t linenum)
-  {
-    /* Build a simple linemap describing some locations. */
-    if (LINEMAPS_ORDINARY_USED (&m_line_table) == 0)
-      linemap_add (&m_line_table, LC_ENTER, false, file->get_name (), 0);
-    else
-      {
-	line_map_ordinary *last_map
-	  = LINEMAPS_LAST_ORDINARY_MAP (&m_line_table);
-	if (last_map->to_file != file->get_name ()
-	    || linenum < last_map->to_line)
-	  {
-	    line_map *map
-	      = const_cast<line_map *>
-	      (linemap_add (&m_line_table, LC_RENAME_VERBATIM, false,
-			    file->get_name (), 0));
-	    ((line_map_ordinary *)map)->included_from = UNKNOWN_LOCATION;
-	  }
-      }
-    linemap_line_start (&m_line_table, linenum, 100);
-  }
-
   const diagnostic_physical_location *
   new_location (location_t loc)
   {
@@ -940,6 +920,7 @@ private:
 
   diagnostics::context m_dc;
   line_maps m_line_table;
+  diagnostics::physical_location_maker m_phys_loc_maker;
   impl_client_version_info m_client_version_info;
   std::vector<std::unique_ptr<sink>> m_sinks;
   hash_map<nofree_string_hash, diagnostic_file *> m_str_to_file_map;
