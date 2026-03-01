@@ -799,9 +799,6 @@ LIBGFOR_CHECK_FMA4
 # Check if AVX128 works
 LIBGFOR_CHECK_AVX128
 
-# Check if __builtin_clzl behaves (it doesn't on Msys2/ucrt64).
-LIBGFOR_CHECK_SANE_BUILTIN_CLZL
-
 # Determine what GCC version number to use in filesystem paths.
 GCC_BASE_VER
 

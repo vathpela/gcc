@@ -78,16 +78,8 @@ allocator_init_supervisor (allocator *a, allocator_shared *s, shared_memory sm)
 static size_t
 next_power_of_two (size_t size)
 {
-#ifdef HAVE_SANE_BUILTIN_CLZL
-  assert (size);
-#if (__INTPTR_WIDTH__ == 64)
-  return 1 << (VOIDP_BITS - __builtin_clzl (size - 1));
-#else
-  return 1 << (VOIDP_BITS - __builtin_clz (size - 1));
-#endif
-#else
-  return 1 << (int)ceil(log2(size));
-#endif
+  assert (size != 1);
+  return (size_t)1 << (__SIZEOF_LONG_LONG__ * __CHAR_BIT__ - __builtin_clzll (size - 1));
 }
 
 shared_mem_ptr

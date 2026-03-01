@@ -579,14 +579,3 @@ main ()
   fi
 ])
 
-AC_DEFUN([LIBGFOR_CHECK_SANE_BUILTIN_CLZL], [
-  AC_RUN_IFELSE([AC_LANG_PROGRAM([[
-      int main()
-      {
-	return __builtin_clzl(256) != 8;
-      }]], [[]])],
-    AC_DEFINE(HAVE_SANE_BUILTIN_CLZL, 1,
-      [Define if __builtin_clzl behaves as expected.])
-    AM_CONDITIONAL([HAVE_SANE_BUILTIN_CLZL],true),
-    [AM_CONDITIONAL([HAVE_SANE_BUILTIN_CLZL],false)])
-])
