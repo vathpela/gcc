@@ -443,7 +443,7 @@ along with GCC; see the file COPYING3.  If not see
     }								\
   while (0)
 
-#if !HAVE_GNU_AS
+#if HAVE_SOLARIS_AS
 #undef TARGET_ASM_ASSEMBLE_VISIBILITY
 #define TARGET_ASM_ASSEMBLE_VISIBILITY solaris_assemble_visibility
 

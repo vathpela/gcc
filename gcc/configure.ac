@@ -2736,6 +2736,25 @@ gas_flag="$with_gnu_as",
    gas_flag=no
 fi])
 
+AC_MSG_CHECKING(Solaris assembler)
+case $target in
+  *-*-solaris2*)
+    if $gcc_cv_as -V 2>&1 | grep 'Compiler Common.*SunOS' > /dev/null; then
+      solaris_as=yes
+      gas_flag=no
+    elif $gcc_cv_as --version 2>/dev/null | grep GNU > /dev/null; then
+      gas_flag=yes
+    fi
+    ;;
+  *)
+    solaris_as=no
+    ;;
+esac
+AC_MSG_RESULT($solaris_as)
+solaris_as_bool=`if test $solaris_as = yes; then echo 1; else echo 0; fi`
+AC_DEFINE_UNQUOTED(HAVE_SOLARIS_AS, $solaris_as_bool,
+	[Define to 1 if using the Solaris assembler.])
+
 ORIGINAL_AS_FOR_TARGET=$gcc_cv_as
 AC_SUBST(ORIGINAL_AS_FOR_TARGET)
 case "$ORIGINAL_AS_FOR_TARGET" in
