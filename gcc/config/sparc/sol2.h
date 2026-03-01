@@ -264,7 +264,7 @@ extern const char *host_detect_local_cpu (int argc, const char **argv);
 %{!mcpu*:%(asm_cpu_default)} \
 "
 
-#if HAVE_GNU_LD
+#if !HAVE_SOLARIS_LD
 #define ARCH32_EMULATION "elf32_sparc_sol2"
 #define ARCH64_EMULATION "elf64_sparc_sol2"
 #endif
@@ -356,7 +356,7 @@ extern const char *host_detect_local_cpu (int argc, const char **argv);
 #endif /* HAVE_SOLARIS_AS */
 
 /* Undefine this so that attribute((init_priority)) works with GNU ld.  */
-#if HAVE_GNU_LD
+#if !HAVE_SOLARIS_LD
 #undef CTORS_SECTION_ASM_OP
 #undef DTORS_SECTION_ASM_OP
 #endif

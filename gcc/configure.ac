@@ -2838,6 +2838,25 @@ gnu_ld_flag="$with_gnu_ld",
    gnu_ld_flag=no
  fi])
 
+AC_MSG_CHECKING(Solaris linker)
+case $target in
+  *-*-solaris2*)
+    if $gcc_cv_ld -V 2>/dev/null | grep 'Solaris Link Editors' > /dev/null; then
+      gnu_ld_flag=no
+      solaris_ld=yes
+    elif $gcc_cv_ld --version 2>/dev/null | grep GNU > /dev/null; then
+      gnu_ld_flag=yes
+    fi
+    ;;
+  *)
+    solaris_ld=no
+    ;;
+esac
+AC_MSG_RESULT($solaris_ld)
+solaris_ld_bool=`if test $solaris_ld = yes; then echo 1; else echo 0; fi`
+AC_DEFINE_UNQUOTED(HAVE_SOLARIS_LD, $solaris_ld_bool,
+	[Define to 1 if using the Solaris linker.])
+
 ORIGINAL_PLUGIN_LD_FOR_TARGET=$gcc_cv_ld
 PLUGIN_LD_SUFFIX=`basename $gcc_cv_ld | sed -e "s,$target_alias-,,"`
 # if the PLUGIN_LD is set ld-new, just have it as ld

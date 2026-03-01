@@ -85,7 +85,7 @@ along with GCC; see the file COPYING3.  If not see
 
 #define ARCH64_SUBDIR "amd64"
 
-#if HAVE_GNU_LD
+#if !HAVE_SOLARIS_LD
 #define ARCH32_EMULATION "elf_i386_sol2"
 #define ARCH64_EMULATION "elf_x86_64_sol2"
 #endif
@@ -218,7 +218,7 @@ along with GCC; see the file COPYING3.  If not see
 
 /* Unlike GNU ld, Sun ld doesn't coalesce .ctors.N/.dtors.N sections, so
    inhibit their creation.  Also cf. sparc/sysv4.h.  */
-#if !HAVE_GNU_LD
+#if HAVE_SOLARIS_LD
 #define CTORS_SECTION_ASM_OP	"\t.section\t.ctors, \"aw\""
 #define DTORS_SECTION_ASM_OP	"\t.section\t.dtors, \"aw\""
 #endif
